@@ -1,22 +1,22 @@
 #!/bin/bash
 # OldNotifier.sh -- notifier for The Old Reader
-# (c) 2014 Somasis <somasissounds@gmail.com>
+# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 
 ## Don't change these variables, use $XDG_CONFIG_HOME/oldnotifier.conf for your own settings!
 email=
 password=
 notify_for="total"
-notify_every="1h"
-wait_until_top_of_house="false"
+notify_every="1s"
+wait_until_top_of_hour="false"
+retrieve_preference='wget'
 
-if [[ -z "$XDG_CONFIG_HOME" ]];then
-    XDG_CONFIG_HOME="$HOME/.config"
-fi
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
-. "$XDG_CONFIG_HOME/oldnotifier.conf"
+. "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null
+. "$XDG_CONFIG_HOME/oldnotifier.conf" 2>&1 >/dev/null
 
 if [[ "$email" != *@* ]];then
-    echo "You must supply an email, not a username"
+    echo "You must supply an email"
     exit 1
 fi
 
@@ -28,7 +28,11 @@ if [[ "$wait_until_top_of_hour" == "true" ]];then
     sleep "$sleep_seconds"
 fi
 
-key=$(curl -sd "client=OldNotifier.sh&accountType=HOSTED&service=reader&Email=$email&Passwd=$password" "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
+user_agent="OldNotifer.sh - https://github.com/Somasis/scripts"
+
+post_data="client=OldNotifier.sh&accountType=HOSTED&service=reader&Email=$email&Passwd=$password"
+header_data=
+key=$(retrieve "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
     echo "Key is invalid, check your password or email configuration"
@@ -36,7 +40,9 @@ if [[ -z "$key" ]];then
 fi
 
 while true; do
-    unread_raw=$(curl -sH "Authorization: GoogleLogin auth=$key" "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
+    post_data=
+    header_data="Authorization: GoogleLogin auth=$key"
+    unread_raw=$(retrieve "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
     if [[ -z "$unread_raw" ]];then
         echo "Failed to get unread count, run this script with bash -x to get debug output"
         exit 3
