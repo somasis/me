@@ -6,7 +6,7 @@
 email=
 password=
 notify_for="total"
-notify_every="1s"
+notify_every="30m"
 wait_until_top_of_hour="false"
 retrieve_preference='wget'
 
