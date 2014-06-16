@@ -36,7 +36,7 @@ retrieve() {
         fi
         eval "curl $args -- $url"
     else
-        echo "I don't know how to retrieve the web page; install \`curl\` or \`wget\`"
+        echo "I don't know how to retrieve the url; install \`curl\` or \`wget\`"
         exit 4
     fi
     url=
