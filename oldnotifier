@@ -42,7 +42,7 @@ while true; do
         exit 3
     fi
 
-    unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f20)
+    unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f2)
     unread_feeds=$(echo "$unread_raw" | grep '^feed/' | cut -d'/' -f2)
     unread_labels=$(echo "$unread_raw" | grep 'label/' | cut -d'/' -f4)
 
