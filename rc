@@ -1,0 +1,43 @@
+#!/bin/bash
+# rc - enable/disable/start/stop/etc daemons, Debian/Ubuntu systems only
+# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+. "$SCRIPT_DIR/common.sh"
+
+action="$1"
+action=$(echo "$action" | tr '[A-Z]' '[a-z]')
+shift
+daemon="$1"
+
+if [[ $UID != 0 ]]; then
+    exec sudo "$SCRIPT_DIR/${0##*/}" "$action" "$@" 
+elif [[ "$action" != @(start|stop|restart|enable|disable|list) ]]; then
+    echo "${0##*/} (start|stop|restart|enable|disable|list) [daemon]"
+    exit 1
+fi
+
+if [[ -z "$daemon" && "$action" != "list" ]];then
+    echo "${0##*/} (start|stop|restart|enable|disable|list) [daemon]"
+    exit 2
+fi
+
+if [[ "$action" == "enable" ]];then
+    update-rc.d "$daemon" enable
+elif [[ "$action" == "disable" ]];then
+    update-rc.d "$daemon" disable
+elif [[ "$action" == "list" ]];then
+    upstart=$(service --status-all 2>&1 | cut -c2-)
+    initctl=$(initctl list 2>&1 | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
+    initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
+    upstart=$(echo -e "$upstart" | sed -e "s/..-..../\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/\[ ? .*//" | grep -v '^$')
+    if [[ -z "$daemon" ]];then
+        (echo "$upstart"
+        echo "$initctl") | sort -ud
+    else
+        (echo "$upstart"
+        echo "$initctl") | grep --color=never " $daemon$"
+    fi
+else
+    service "$daemon" $action
+fi
