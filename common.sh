@@ -38,9 +38,40 @@ if [[ "$use_color" == "true" ]];then
     COLOR_BG_CYAN=$'\033[46m'
     COLOR_BG_WHITE=$'\033[47m'
     COLOR_RESET=$'\033[0m'
+    
+    COLOR_RANDOM=$(eval echo "\$COLOR_$(for _rand_color in BLACK RED GREEN YELLOW BLUE PINK CYAN WHITE;do echo "$_rand_color";done | shuf -n1)")
+    COLOR_BOLD_RANDOM=$(eval echo "\$COLOR_BOLD_$(for _rand_color in BLACK RED GREEN YELLOW BLUE PINK CYAN WHITE;do echo "$_rand_color";done | shuf -n1)")
+    COLOR_BG_RANDOM=$(eval echo "\$COLOR_BOLD_$(for _rand_color in BLACK RED GREEN YELLOW BLUE PINK CYAN WHITE;do echo "$_rand_color";done | shuf -n1)")
 fi
 
-retrieve() {
+show_help() { # show_help [exit code] [error message]
+    if [[ "$1" == [0-9]* ]];then
+        script_exit_code="$1"
+        shift
+    fi
+    script_error="$@"
+    if [[ ! -z "$script_error" ]];then
+        echo -e "Error: $script_error"
+        echo
+    fi
+    echo -e "$COLOR_BOLD_RANDOM${script_name:-${0##*/}}$COLOR_RESET $script_arguments"
+    if [[ ! -z "$script_version" ]];then
+        echo -e "${script_name:-${0##*/}} $script_version"
+    fi
+    if [[ ! -z "$script_description" ]];then
+        echo -e "$script_description"
+    fi
+    if [[ ! -z  "$script_credit" ]];then
+        echo
+        echo -e "$script_credit"
+    fi
+    echo
+    if [[ ! -z "$script_exit_code" ]];then
+        exit "$script_exit_code"
+    fi
+}
+
+retrieve() { # retrieve <url>
     if [[ -z "$retrieve_preference" ]] || command -v "$retrieve_preference" 2>&1 >/dev/null;then
         preference=wget
     fi

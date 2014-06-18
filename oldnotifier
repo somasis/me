@@ -1,5 +1,5 @@
 #!/bin/bash
-# OldNotifier.sh -- notifier for The Old Reader
+# oldnotifier -- notifier for The Old Reader
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 
 ## Don't change these variables, use $XDG_CONFIG_HOME/oldnotifier.conf for your own settings!
@@ -9,11 +9,23 @@ notify_for="total"
 notify_every="30m"
 wait_until_top_of_hour="false"
 retrieve_preference='wget'
+icon='internet-feed-reader'
+
+script_description="A notifier for The Old Reader."
+script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
 . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null
 . "$XDG_CONFIG_HOME/oldnotifier.conf" 2>&1 >/dev/null
+
+show_help
+
+if ! command -v notify-send 2>&1 >/dev/null;then
+    echo "\`notify-send\` is not installed, it is needed for notifications."
+    echo "Try looking for a package named \"libnotify-bin\", \"libnotify\", or \"notify-osd\"."
+    exit 6
+fi
 
 if [[ "$email" != *@* ]];then
     echo "You must supply an email"
@@ -28,10 +40,10 @@ if [[ "$wait_until_top_of_hour" == "true" ]];then
     sleep "$sleep_seconds"
 fi
 
-user_agent="OldNotifer.sh - https://github.com/Somasis/scripts"
-
-post_data="client=OldNotifier.sh&accountType=HOSTED&service=reader&Email=$email&Passwd=$password"
+user_agent="oldnotifier - https://github.com/Somasis/scripts"
+post_data="client=oldnotifier&Email=$email&Passwd=$password"
 header_data=
+
 key=$(retrieve "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
@@ -49,12 +61,40 @@ while true; do
     fi
 
     unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f2)
-    unread_feeds=$(echo "$unread_raw" | grep '^feed/' | cut -d'/' -f2)
-    unread_labels=$(echo "$unread_raw" | grep 'label/' | cut -d'/' -f4)
-
-    if [[ "$notify_for" == "total" ]];then
-        notify-send "The Old Reader" "You have $unread_total unread articles"
+    unread_feeds=$(echo "$unread_raw" | grep '^feed/' | cut -d'/' -f2 | tr '\n' ',')
+    unread_labels=$(echo "$unread_raw" | grep 'label/' | cut -d'/' -f4 | tr '\n' ',')
+    
+    unread_other=$(OLDIFS="$IFS"
+    IFS=","
+    for unread_label in $unread_labels;do
+        unread_label_name=$(echo "$unread_label" | cut -d':' -f1)
+        unread_label_count=$(echo "$unread_label" | cut -d':' -f2)
+        if [[ "$unread_label_count" -gt 0 ]];then
+            if [[ "$unread_label_count" -gt 1 ]];then
+                article_word="articles"
+                grammar_ugh="are"
+            else
+                article_word="article"
+                grammar_ugh="is"
+            fi
+            echo "There $grammar_ugh $unread_label_count unread $article_word in $unread_label_name."
+        fi
+    done
+    IFS="$OLDIFS"
+    OLDIFS=
+    )
+    
+    if [[ "$unread_total" -gt 0 ]];then
+        if [[ "$unread_total" -gt 1 ]];then
+            article_word="articles"
+        else
+            article_word="article"
+        fi
+        notify-send -i "$icon" "The Old Reader" "You have $unread_total unread $article_word.\n$unread_other"
+        echo -e "You have $unread_total unread $article_word.
+$unread_other"
     fi
+
     
     sleep "$notify_every"
 done
