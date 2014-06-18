@@ -119,3 +119,5 @@ retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--head
     post_data=
     header_data=
 }
+
+# EOF

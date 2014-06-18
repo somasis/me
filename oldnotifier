@@ -18,7 +18,22 @@ script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
-. "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null
+
+error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
+
+error_bootstrap() {
+    echo "$error_bootstrap"; exit 10
+}
+
+if [[ ! -f "$SCRIPT_DIR/common.sh" || "$(tail -n1 '$SCRIPT_DIR/common.sh' 2>&1)" != "# EOF" ]];then
+    wget -qO "$SCRIPT_DIR/common.sh" "https://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+    echo "Bootstrapped common.sh functions, script will continue like normal."
+    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+    
+else
+    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+fi
+
 . "$XDG_CONFIG_HOME/oldnotifier.conf" 2>&1 >/dev/null
 
 show_help
