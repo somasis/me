@@ -10,6 +10,8 @@ notify_every="30m"
 wait_until_top_of_hour="false"
 retrieve_preference='wget'
 icon='internet-feed-reader'
+user_agent="oldnotifier - https://github.com/Somasis/scripts"
+
 
 script_description="A notifier for The Old Reader."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
@@ -40,11 +42,7 @@ if [[ "$wait_until_top_of_hour" == "true" ]];then
     sleep "$sleep_seconds"
 fi
 
-user_agent="oldnotifier - https://github.com/Somasis/scripts"
-post_data="client=oldnotifier&Email=$email&Passwd=$password"
-header_data=
-
-key=$(retrieve "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
+key=$(retrieve --post-data="client=oldnotifier&Email=$email&Passwd=$password" "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
     echo "Key is invalid, check your password or email configuration"
@@ -52,9 +50,7 @@ if [[ -z "$key" ]];then
 fi
 
 while true; do
-    post_data=
-    header_data="Authorization: GoogleLogin auth=$key"
-    unread_raw=$(retrieve "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
+    unread_raw=$(retrieve --header-data="Authorization: GoogleLogin auth=$key" "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
     if [[ -z "$unread_raw" ]];then
         echo "Failed to get unread count, run this script with bash -x to get debug output"
         exit 3
