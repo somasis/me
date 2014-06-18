@@ -25,7 +25,7 @@ error_bootstrap() {
     echo "$error_bootstrap"; exit 10
 }
 
-if [[ ! -f "$SCRIPT_DIR/common.sh" || "$(tail -n1 '$SCRIPT_DIR/common.sh' 2>&1)" != "# EOF" ]];then
+if [[ ! -f "$SCRIPT_DIR/common.sh" ]];then
     wget -qO "$SCRIPT_DIR/common.sh" "https://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
     echo "Bootstrapped common.sh functions, script will continue like normal."
     . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
