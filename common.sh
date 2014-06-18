@@ -73,7 +73,7 @@ show_help() { # show_help [exit code] [error message]
 
 retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--header-data=headerdata] <url>
     for retrieve_arg in $@;do
-        if [[ "$retrieve_arg" == '--user-agent='* ]];then
+        if [[ "$retrieve_arg" == '--user-agent='* && -z "$user_agent" ]];then
             user_agent=$(echo "$retrieve_arg" | cut -d'=' -f2-)
         elif [[ "$retrieve_arg" == '--post-data='* ]];then
             post_data="$post_data $(echo "$retrieve_arg" | cut -d'=' -f2-)"
