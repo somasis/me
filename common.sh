@@ -72,31 +72,31 @@ show_help() { # show_help [exit code] [error message]
 }
 
 retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--header-data=headerdata] <url>
-    for retrieve_arg in $@;do
+    for retrieve_arg in "$@";do
         if [[ "$retrieve_arg" == '--user-agent='* && -z "$user_agent" ]];then
             user_agent=$(echo "$retrieve_arg" | cut -d'=' -f2-)
         elif [[ "$retrieve_arg" == '--post-data='* ]];then
-            post_data="$post_data $(echo "$retrieve_arg" | cut -d'=' -f2-)"
+            post_data="$post_data$(echo "$retrieve_arg" | cut -d'=' -f2-)"
         elif [[ "$retrieve_arg" == '--header-data='* ]];then
-            header_data="$header_data $(echo "$retrieve_arg" | cut -d'=' -f2-)"
+            header_data="$header_data$(echo "$retrieve_arg" | cut -d'=' -f2-)"
         else
-            url="$retrieve_arg"
+            url="$@"
         fi
+        shift
     done
     if [[ -z "$retrieve_preference" ]] || command -v "$retrieve_preference" 2>&1 >/dev/null;then
         preference=wget
     fi
-    url="$@"
     if [[ "$retrieve_preference" == "wget" ]] && command -v wget 2>&1 >/dev/null;then
         args="-qO -"
         if [[ ! -z "$user_agent" ]];then
             args="-U \"$user_agent\" $args"
         fi
         if [[ ! -z "$post_data" ]];then
-            args="--post-data=\"$post_data\" $args"
+            args="--post-data="\"$post_data\"" $args"
         fi
         if [[ ! -z "$header_data" ]];then
-            args="--header=\"$header_data\" $args"
+            args="--header="\"$header_data\"" $args"
         fi
         eval "wget $args -- $url"
     elif [[ "$retrieve_preference" == "curl" ]] && command -v curl 2>&1 >/dev/null;then
