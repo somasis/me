@@ -2,23 +2,40 @@
 # rc - enable/disable/start/stop/etc daemons, Debian/Ubuntu systems only
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-. "$SCRIPT_DIR/common.sh"
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
+echo "$SCRIPT_DIR"
+if [[ "$1" == "--host="* ]];then
+    host="$1"
+    host=$(echo "$host" | cut -d'=' -f2-)
+    shift
+    (cat "$SCRIPT_DIR/common.sh"; echo; cat "$SCRIPT_DIR/${0##*/}") | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
+    exit
+fi
+
+if [[ ! -z "$SSH_CONNECTION" && $- =~ i ]];then
+    . "$SCRIPT_DIR/common.sh"
+fi
 
 action="$1"
 action=$(echo "$action" | tr '[A-Z]' '[a-z]')
 shift
 daemon="$1"
 
+show_help() {
+    echo "${0##*/} [--host=ssh.enabled.host.com] (start|stop|restart|enable|disable|list) [daemon]"
+}
+
 if [[ $UID != 0 ]]; then
-    exec sudo "$SCRIPT_DIR/${0##*/}" "$action" "$@" 
+    exec sudo bash -$- "$SCRIPT_DIR/${0##*/}" "$action" "$@"
+    exit_code="$?"
+    exit "$exit_code"
 elif [[ "$action" != @(start|stop|restart|enable|disable|list) ]]; then
-    echo "${0##*/} (start|stop|restart|enable|disable|list) [daemon]"
+    show_help
     exit 1
 fi
 
 if [[ -z "$daemon" && "$action" != "list" ]];then
-    echo "${0##*/} (start|stop|restart|enable|disable|list) [daemon]"
+    show_help
     exit 2
 fi
 
