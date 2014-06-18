@@ -71,7 +71,18 @@ show_help() { # show_help [exit code] [error message]
     fi
 }
 
-retrieve() { # retrieve <url>
+retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--header-data=headerdata] <url>
+    for retrieve_arg in $@;do
+        if [[ "$retrieve_arg" == '--user-agent='* ]];then
+            user_agent=$(echo "$retrieve_arg" | cut -d'=' -f2-)
+        elif [[ "$retrieve_arg" == '--post-data='* ]];then
+            post_data="$post_data $(echo "$retrieve_arg" | cut -d'=' -f2-)"
+        elif [[ "$retrieve_arg" == '--header-data='* ]];then
+            header_data="$header_data $(echo "$retrieve_arg" | cut -d'=' -f2-)"
+        else
+            url="$retrieve_arg"
+        fi
+    done
     if [[ -z "$retrieve_preference" ]] || command -v "$retrieve_preference" 2>&1 >/dev/null;then
         preference=wget
     fi
