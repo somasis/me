@@ -85,7 +85,7 @@ retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--head
         shift
     done
     if [[ -z "$retrieve_preference" ]] || command -v "$retrieve_preference" 2>&1 >/dev/null;then
-        preference=wget
+        retrieve_preference=wget
     fi
     if [[ "$retrieve_preference" == "wget" ]] && command -v wget 2>&1 >/dev/null;then
         args="-qO -"
