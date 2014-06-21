@@ -38,9 +38,9 @@ if [[ -z "$daemon" && "$action" != "list" ]];then
 fi
 
 if [[ "$action" == "enable" ]];then
-    update-rc.d "$daemon" enable
+    update-rc.d "$daemon" enable 2>/dev/null || 
 elif [[ "$action" == "disable" ]];then
-    update-rc.d "$daemon" disable
+    update-rc.d "$daemon" disable 2>/dev/null
 elif [[ "$action" == "list" ]];then
     upstart=$(service --status-all 2>&1 | cut -c2-)
     initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
@@ -61,8 +61,8 @@ elif [[ "$action" == "list" ]];then
         echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
         echo "$daemon_list" | grep --color=never "RUNNING" | sort -ud
     else
-        echo "$daemon_list" | grep --color=never " $daemon$"
+        echo "$daemon_list" | grep --color=never " $daemon$" || exit "$?"
     fi
 else
-    service "$daemon" "$action"
+    service "$daemon" "$action" 2>/dev/null || "/etc/init.d/$daemon" "$action"
 fi
