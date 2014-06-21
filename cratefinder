@@ -1,0 +1,50 @@
+#!/bin/bash
+
+turntable_input="alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo"
+record_time="30s"
+lastfmsubmit_path="/usr/lib/lastfmsubmitd/lastfmsubmit"
+
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+
+if ! command -v echoprint-codegen 2>&1 >/dev/null;then
+    echo "Error: You need to install \`echoprint-codegen\`. Look in your package manager for it, or get it from https://github.com/echonest/echoprint-codegen"
+    exit 1
+fi
+
+error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
+
+error_bootstrap() {
+    echo "$error_bootstrap"; exit 10
+}
+
+if [[ ! -f "$SCRIPT_DIR/common.sh" ]];then
+    wget -qO "$SCRIPT_DIR/common.sh" "https://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+    echo "Bootstrapped common.sh functions, script will continue like normal."
+    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+    
+else
+    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+fi
+ 
+parecord -d "$turntable_input" --file-format=wav "/tmp/$$.wav" &
+
+while true;do
+    last_artist="$artist"
+    last_title="$title"
+    last_result="$result"
+    record_pid=$(echo $(jobs -l | grep -- parecord | cut -d '+' -f2) | cut -d' ' -f1)
+    sleep "$record_time"
+    kill "$record_pid"
+    result=$(echoprint-codegen "/tmp/$$.wav" 0 30 | curl -s -X POST -H "Content-Type:application/octet-stream" "http://developer.echonest.com/api/v4/song/identify?api_key=AUVIBYA2SG5H5G5RU" --data-binary "@/dev/stdin")
+    echo "Results: $result"
+    title=$(echo "$result" | sed 's/.*title\": \";s/\", \".*//')
+    echo "Title: $title"
+    artist=$(echo "$result" | sed 's/.*artist_name\": \";s/\", \".*//')
+    echo "Artist: $artist"
+    if [[ "$result" == "$last_result" || "$artist" == "$last_artist" && "$title" == "$last_title" ]];then
+        echo "Same song, not submitting..."
+    else
+        "$lastfmsubmit_path" -e utf8 -l -a "$artist" -b "$album" --title "$title" --debug --stdout
+    fi
+    parecord -d "$turntable_input" --file-format=wav "/tmp/$$.wav" &
+done
