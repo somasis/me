@@ -38,7 +38,7 @@ if [[ -z "$daemon" && "$action" != "list" ]];then
 fi
 
 if [[ "$action" == "enable" ]];then
-    update-rc.d "$daemon" enable 2>/dev/null || 
+    update-rc.d "$daemon" enable 2>/dev/null
 elif [[ "$action" == "disable" ]];then
     update-rc.d "$daemon" disable 2>/dev/null
 elif [[ "$action" == "list" ]];then
