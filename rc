@@ -3,7 +3,7 @@
 # (c) 2014 Somasis <https://github.com/somasis> - MIT License
 
 script_arguments="[--host=ssh-enabled-host.com] (start|stop|restart|enable|disable|list)"
-script_description="A script to make managing of daemons much easier.\nCurrently for Upstart systems only."
+script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV systems only."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
@@ -38,17 +38,21 @@ if [[ -z "$daemon" && "$action" != "list" ]];then
 fi
 
 if [[ "$action" == "enable" ]];then
-    update-rc.d "$daemon" enable
+    update-rc.d "$daemon" enable 2>/dev/null
 elif [[ "$action" == "disable" ]];then
-    update-rc.d "$daemon" disable
+    update-rc.d "$daemon" disable 2>/dev/null
 elif [[ "$action" == "list" ]];then
-    upstart=$(service --status-all 2>&1 | cut -c2-)
-    initctl=$(initctl list 2>&1 | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
+    upstart=$(service --status-all 2>/dev/null | cut -c2-)
+    initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
     initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
-    upstart=$(echo "$upstart" | sed -e "s/..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/\[ ? .*//" | grep -v '^$')
+    upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
     if [[ -z "$daemon" ]];then
         (echo "$upstart"
-        echo "$initctl") | sort -ud
+        echo "$initctl") | grep --color=never "STOPPED"
+        (echo "$upstart"
+        echo "$initctl") | grep --color=never "UNKNOWN"
+        (echo "$upstart"
+        echo "$initctl") | grep --color=never "RUNNING"
     else
         (echo "$upstart"
         echo "$initctl") | grep --color=never " $daemon$"
