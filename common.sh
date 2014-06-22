@@ -49,11 +49,6 @@ show_help() { # show_help [exit code] [error message]
         script_exit_code="$1"
         shift
     fi
-    script_error="$@"
-    if [[ ! -z "$script_error" ]];then
-        echo -e "Error: $script_error"
-        echo
-    fi
     echo -e "$COLOR_BOLD_RANDOM${script_name:-${0##*/}}$COLOR_RESET $script_arguments"
     if [[ ! -z "$script_version" ]];then
         echo -e "${script_name:-${0##*/}} $script_version"
@@ -61,8 +56,13 @@ show_help() { # show_help [exit code] [error message]
     if [[ ! -z "$script_description" ]];then
         echo -e "$script_description"
     fi
-    if [[ ! -z  "$script_credit" ]];then
+    script_error="$@"
+    if [[ ! -z "$script_error" ]];then
         echo
+        echo -e "Error: $script_error"
+        echo
+    fi
+    if [[ ! -z  "$script_credit" ]];then
         echo -e "$script_credit"
     fi
     echo
@@ -120,4 +120,12 @@ retrieve() { # retrieve [--user-agent=user-agent] [--post-data=postdata] [--head
     header_data=
 }
 
-# EOF
+sleepuntil() { # sleepuntil - borrowed with some modifications from http://stackoverflow.com/a/19067658 
+    local slp tzoff now
+    local hms=(${1//:/ })
+    printf -v now '%(%s)T' -1
+    printf -v tzoff '%(%z)T\n' $now
+    tzoff=$((0${tzoff:0:1}(3600*${tzoff:1:2}+60*${tzoff:3:2})))
+    slp=$(((86400+(now-now%86400)+10#$hms*3600+10#${hms[1]}*60+${hms[2]}-tzoff-now)%86400))
+    sleep $slp
+}
