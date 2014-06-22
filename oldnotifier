@@ -36,39 +36,37 @@ fi
 
 . "$XDG_CONFIG_HOME/oldnotifier.conf" 2>&1 >/dev/null
 
-show_help
-
 if ! command -v notify-send 2>&1 >/dev/null;then
-    echo "\`notify-send\` is not installed, it is needed for notifications."
-    echo "Try looking for a package named \"libnotify-bin\", \"libnotify\", or \"notify-osd\"."
+    show_help 6 "\`notify-send\` is not installed, it is needed for notifications.\nTry looking for a package named \"libnotify-bin\", \"libnotify\", or \"notify-osd\"."
     exit 6
 fi
 
 if [[ "$email" != *@* ]];then
-    echo "You must supply an email"
-    exit 1
+    show_help 1 "You must supply an email.\nYou can change the configuration by adding your own settings to \"$XDG_CONFIG_HOME/oldnotifier.conf\"."
 fi
 
+show_help
+
 if [[ "$wait_until_top_of_hour" == "true" ]];then
-    current_epoch=$(date +"%s")
-    target_epoch=$(date -d "$(( $(date +%H) + 1 )):00:00" +%s)
-    sleep_seconds=$(( $target_epoch - $current_epoch ))
-    echo "Waiting until $(date +$(( $(date +%H) + 1 )):00)..."
-    sleep "$sleep_seconds"
+    if [[ "$(( $(date +%H) + 1 ))" -ne 24 ]];then
+        echo "Waiting until $(date +$(( $(date +%H) + 1 )):00)..."
+        sleepuntil "$(date +$(( $(date +%H) + 1 )):00)"
+    else
+        echo "Waiting until 12:00..."
+        sleepuntil "12:00"
+    fi
 fi
 
 key=$(retrieve --post-data="client=oldnotifier&Email=$email&Passwd=$password" "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
-    echo "Key is invalid, check your password or email configuration"
-    exit 2
+    show_help 2 "Key is invalid, check your password or email configuration"
 fi
 
 while true; do
     unread_raw=$(retrieve --header-data="Authorization: GoogleLogin auth=$key" "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
     if [[ -z "$unread_raw" ]];then
-        echo "Failed to get unread count, run this script with bash -x to get debug output"
-        exit 3
+        show_help 3 "Failed to get unread count, run this script with bash -x to get debug output"
     fi
 
     unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f2)
