@@ -8,7 +8,8 @@ password=
 notify_for="total"
 notify_every="30m"
 wait_until_top_of_hour="false"
-retrieve_preference='wget'
+retrieve_preference="wget"
+protocol="https"
 icon='internet-feed-reader'
 user_agent="oldnotifier - https://github.com/Somasis/scripts"
 
@@ -26,7 +27,7 @@ error_bootstrap() {
 }
 
 if [[ ! -f "$SCRIPT_DIR/common.sh" ]];then
-    wget -qO "$SCRIPT_DIR/common.sh" "https://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+    wget -qO "$SCRIPT_DIR/common.sh" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
     echo "Bootstrapped common.sh functions, script will continue like normal."
     . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
     
@@ -57,14 +58,14 @@ if [[ "$wait_until_top_of_hour" == "true" ]];then
     fi
 fi
 
-key=$(retrieve --post-data="client=oldnotifier&Email=$email&Passwd=$password" "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
+key=$(retrieve --post-data="client=oldnotifier&Email=$email&Passwd=$password" "$protocol://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
     show_help 2 "Key is invalid, check your password or email configuration"
 fi
 
 while true; do
-    unread_raw=$(retrieve --header-data="Authorization: GoogleLogin auth=$key" "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
+    unread_raw=$(retrieve --header-data="Authorization: GoogleLogin auth=$key" "$protocol://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
     if [[ -z "$unread_raw" ]];then
         show_help 3 "Failed to get unread count, run this script with bash -x to get debug output"
     fi
