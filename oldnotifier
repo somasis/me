@@ -49,12 +49,12 @@ fi
 show_help
 
 if [[ "$wait_until_top_of_hour" == "true" ]];then
-    if [[ "$(( $(date +%H) + 1 ))" -ne 24 ]];then
+    if [[ "$(( $(date +%H) + 1 ))" -lt 24 ]];then
         echo "Waiting until $(date +$(( $(date +%H) + 1 )):00)..."
         sleepuntil "$(date +$(( $(date +%H) + 1 )):00)"
     else
-        echo "Waiting until 12:00..."
-        sleepuntil "12:00"
+        echo "Waiting until 0:00..."
+        sleepuntil "0:00"
     fi
 fi
 
