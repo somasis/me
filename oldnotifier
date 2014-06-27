@@ -1,45 +1,88 @@
 #!/bin/bash
 # oldnotifier -- notifier for The Old Reader
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# https://github.com/Somasis/scripts/
+#
+# Prerequisites: notify-send, curl or wget, Old Reader account
+#   notify-send might be found in `libnotify-bin`, `libnotify`, or `notify-send`
+#
+# How to run: Just run `oldnotifier` without any arguments.
+#   All settings are just variables in oldnotifier.conf.
+#   $XDG_CONFIG_HOME/oldnotifier.conf is the config location, this is likely a
+#   directory named ".config" in your home directory.
+#   If it doesn't exist, echo "$XDG_CONFIG_HOME"
+#
+# How to use:
+#   Put the script in a directory in your $PATH (for example ~/bin/ or /usr/local/bin/, or really just any directory)
+#   Make sure you have common.sh in the same folder, or set it's location
+#       (this is set in the varaibles below, but it's easier to just put it in
+#       the same folder as the script. Change $common_location if you want to.)
+#
+#   Set it to autostart when you log in (in GNOME/Unity this would be in
+#       Startup Applications, in KDE this is Startup and Shutdown -> Autostart)
+#
+#   Make sure you set the $email and $password in your configuration file.
+#
+#   Make sure the script is executable (chmod +x $script_location)
+#
+#   Run it (explained above) or just log out and log back in, and
+#       depending on your settings it will either notify you as soon as it
+#       starts, or at the top of the coming hour. The default is not to wait.
+#       (changed with $wait_until_top_of_hour)
+#
+#   Lastly, enjoy your addiction, thanks to The Old Reader and this program. :)
 
-## Don't change these variables, use $XDG_CONFIG_HOME/oldnotifier.conf for your own settings!
+
+## Don't change these variables, use oldnotifier.conf for your own settings!
+## These are used as the fallbacks for unset settings. They might change with
+## updates, so it's best to set them in your config so you don't rely on defaults
 email=
 password=
-notify_for="total"
-notify_every="30m"
-wait_until_top_of_hour="false"
-retrieve_preference="wget"
-protocol="https"
-icon='internet-feed-reader'
-user_agent="oldnotifier - https://github.com/Somasis/scripts"
+notify_every="30m" # Don't set this under 10m unless you want to get in trouble!
+wait_until_top_of_hour="false" # wait until the minute is 00 to notify?
+retrieve_preference="wget" # curl or wget for retrieval of data?
+protocol="https" # https usage, so it won't be read by someone that isn't you!
+icon='internet-feed-reader' # Icon used for notification. Location or system icon name
+common_location='$SCRIPT_DIR/common.sh'
+config_location='$XDG_CONFIG_HOME/oldnotifier.conf'
+# About $common_location and $config_location:
+# Yes, you need to use single quotes though this is a variable-using setting.
+# Normally in bash you use double quotes for variable-using strings, but
+# since we don't get $SCRIPT_DIR until /after/ this is declared, we need to
+# re-declare it, with `eval` to find the variables.
 
+## This is where the script begins;
+## don't edit this unless you know what you are doing! :)
 
 script_description="A notifier for The Old Reader."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
-
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-
-
+user_agent="oldnotifier - https://github.com/Somasis/scripts"
 error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
 
 error_bootstrap() {
     echo "$error_bootstrap"; exit 10
 }
 
-if [[ ! -f "$SCRIPT_DIR/common.sh" ]];then
-    wget -qO "$SCRIPT_DIR/common.sh" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+# okay, now that we know the dir, find out the variables in the $locations
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+eval "common_location=$common_location"
+eval "config_location='$config_location'"
+
+# Bootstrap common.sh script if it's not accessable
+if [[ ! -f "$common_location" ]];then
+    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
     echo "Bootstrapped common.sh functions, script will continue like normal."
-    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+    . "$common_location" 2>&1 >/dev/null || error_bootstrap
     
 else
-    . "$SCRIPT_DIR/common.sh" 2>&1 >/dev/null || error_bootstrap
+    . "$common_location" 2>&1 >/dev/null || error_bootstrap
 fi
 
-. "$XDG_CONFIG_HOME/oldnotifier.conf" 2>&1 >/dev/null
+. "$config_location" 2>&1 >/dev/null
 
+# Make sure notify-send is installed.
 if ! command -v notify-send 2>&1 >/dev/null;then
     show_help 6 "\`notify-send\` is not installed, it is needed for notifications.\nTry looking for a package named \"libnotify-bin\", \"libnotify\", or \"notify-osd\"."
-    exit 6
 fi
 
 if [[ "$email" != *@* ]];then
