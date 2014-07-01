@@ -2,23 +2,34 @@
 # rc - enable/disable/start/stop/etc daemons, Debian/Ubuntu systems only
 # (c) 2014 Somasis <https://github.com/somasis> - MIT License
 
-script_arguments="[--host=ssh-enabled-host.com] (start|stop|restart|enable|disable|list)"
-script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV systems only."
+script_arguments="[--host=ssh-enabled-host.com | -h ssh-enabled-host.com] (start|stop|restart|enable|disable|[list]|help)"
+script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV, and systemd systems only."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
+
+bootstrap_ssh() {
+    (cat "$SCRIPT_DIR/common.sh" 2>/dev/null; echo; cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null) | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
+    bootstrap_ssh_error="$?"
+    exit "$bootstrap_ssh_error"
+}
 
 if [[ "$1" == "--host="* ]];then
     host="$1"
     host=$(echo "$host" | cut -d'=' -f2-)
     shift
-    (cat "$SCRIPT_DIR/common.sh" 2>/dev/null; echo; cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null) | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
-    exit
+    bootstrap_ssh
+elif [[ "$1" == "-h" ]];then
+    host="$2"
+    shift;shift
+    bootstrap_ssh
 fi
 
 if [[ -z "$SSH_CONNECTION" ]];then
     . "$SCRIPT_DIR/common.sh" 2>/dev/null >/dev/null
 fi
+
+init_system=$(</proc/1/comm)
 
 action="$1"
 action=$(echo "$action" | tr '[A-Z]' '[a-z]')
@@ -29,8 +40,6 @@ if [[ $UID != 0 ]]; then
     exec sudo bash -$- "$SCRIPT_DIR/${0##*/}" "$action" "$@"
     exit_code="$?"
     exit "$exit_code"
-elif [[ "$action" != @(start|stop|restart|enable|disable|list) ]]; then
-    show_help 1
 fi
 
 if [[ -z "$daemon" && "$action" != "list" ]];then
@@ -42,20 +51,26 @@ if [[ "$action" == "enable" ]];then
 elif [[ "$action" == "disable" ]];then
     update-rc.d "$daemon" disable 2>/dev/null
 elif [[ "$action" == "list" ]];then
-    upstart=$(service --status-all 2>&1 | cut -c2-)
-    initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
-    initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
-    upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
-    daemon_list=$(printf "$upstart\n$initctl")
-    OLDIFS="$IFS"
-    IFS=$'\n'
-    for daemon_in_list in $(echo "$daemon_list" | cut -d']' -f2 | cut -d' ' -f2);do
-        if [[ $(echo "$daemon_list" | grep "RUNNING.*$daemon_in_list") && $(echo "$daemon_list" | grep "UNKNOWN.*$daemon_in_list") ]];then
-            daemon_list=$(echo "$daemon_list" | grep -v "UNKNOWN.*$daemon_in_list" | grep -v '^$')
-        fi
-    done
-    IFS="$OLDIFS"
-    OLDIFS=
+    if [[ "$init_system" == @(upstart|init) ]];then
+        upstart=$(service --status-all 2>&1 | cut -c2-)
+        initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
+        initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
+        upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
+        daemon_list=$(printf "$upstart\n$initctl")
+        OLDIFS="$IFS"
+        IFS=$'\n'
+        for daemon_in_list in $(echo "$daemon_list" | cut -d']' -f2 | cut -d' ' -f2);do
+            if [[ $(echo "$daemon_list" | grep "RUNNING.*$daemon_in_list") && $(echo "$daemon_list" | grep "UNKNOWN.*$daemon_in_list") ]];then
+                daemon_list=$(echo "$daemon_list" | grep -v "UNKNOWN.*$daemon_in_list" | grep -v '^$')
+            fi
+        done
+        IFS="$OLDIFS"
+        OLDIFS=
+    elif [[ "$init_system" == "systemd" ]];then
+        systemd=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service")
+        systemd=$(echo "$systemd" | sed -e 's/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/')
+        
+    fi
     if [[ -z "$daemon" ]];then
         echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
         echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
@@ -63,6 +78,8 @@ elif [[ "$action" == "list" ]];then
     else
         echo "$daemon_list" | grep --color=never " $daemon$" || exit "$?"
     fi
+elif [[ "$action" == "help" ]];then
+    show_help 0
 else
     service "$daemon" "$action" 2>/dev/null || "/etc/init.d/$daemon" "$action"
 fi
