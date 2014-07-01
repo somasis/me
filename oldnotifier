@@ -54,6 +54,7 @@ config_location='$XDG_CONFIG_HOME/oldnotifier.conf'
 ## This is where the script begins;
 ## don't edit this unless you know what you are doing! :)
 
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 script_description="A notifier for The Old Reader."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 user_agent="oldnotifier - https://github.com/Somasis/scripts"
@@ -66,19 +67,19 @@ error_bootstrap() {
 # okay, now that we know the dir, find out the variables in the $locations
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 eval "common_location=$common_location"
+eval "config_location=$config_location"
+. "$config_location" 2>&1 >/dev/null
+
 
 # Bootstrap common.sh script if it's not accessable
 if [[ ! -f "$common_location" ]];then
     wget -qO "$common_location" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
     echo "Bootstrapped common.sh functions, script will continue like normal."
     . "$common_location" 2>&1 >/dev/null || error_bootstrap
-    
 else
     . "$common_location" 2>&1 >/dev/null || error_bootstrap
 fi
 
-eval "config_location=$config_location"
-. "$config_location" 2>&1 >/dev/null
 
 # Make sure notify-send is installed.
 if ! command -v notify-send 2>&1 >/dev/null;then
