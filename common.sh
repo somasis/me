@@ -2,13 +2,8 @@
 # common.sh -- common functions used in my scripts
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 
-if [[ -z "$XDG_CONFIG_HOME" ]];then
-    XDG_CONFIG_HOME="$HOME/.config"
-fi
-
-if [[ -z "$use_color" ]];then
-    use_color="true"
-fi
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+use_color="${use_color:-true}"
 
 if [[ "$use_color" == "true" ]];then
     COLOR_BLACK=$'\033[0;30m'

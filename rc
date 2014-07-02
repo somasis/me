@@ -2,14 +2,34 @@
 # rc - enable/disable/start/stop/etc daemons, Debian/Ubuntu systems only
 # (c) 2014 Somasis <https://github.com/somasis> - MIT License
 
+## Settings
+if [[ "$UID" -ne 0 || -z "$SSH_CONNECTION" ]];then # don't delete this or you'll have issues with ssh mode
+    # these daemons don't show in the `list`
+    excluded_daemons=( "systemd-.*" "user@.*" "getty@.*" )
+fi # don't delete this either
+
+
+## Script begins here
 script_arguments="[--host=ssh-enabled-host.com | -h ssh-enabled-host.com] (start|stop|restart|enable|disable|[list]|help)"
 script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV, and systemd systems only."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
+if [[ "$UID" -ne 0 ]];then # read configs
+    
+    . "$XDG_CONFIG_HOME/rc.conf" 2>/dev/null >/dev/null
+fi
+
+# bootstrap_ssh(): bootstraps the script for usage on any ssh server
+#                  since we get the content of common.sh and the config
+#                  without needing it on the remote host
 bootstrap_ssh() {
-    (cat "$SCRIPT_DIR/common.sh" 2>/dev/null; echo; cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null) | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
+    (cat "$SCRIPT_DIR/common.sh" 2>/dev/null
+     echo
+     cat "$XDG_CONFIG_HOME/rc.conf" 2>/dev/null
+     cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null) | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
     bootstrap_ssh_error="$?"
     exit "$bootstrap_ssh_error"
 }
@@ -36,7 +56,7 @@ action=$(echo "$action" | tr '[A-Z]' '[a-z]')
 shift
 daemon="$1"
 
-if [[ $UID != 0 ]]; then
+if [[ "$UID" -ne 0 ]]; then
     exec sudo bash -$- "$SCRIPT_DIR/${0##*/}" "$action" "$@"
     exit_code="$?"
     exit "$exit_code"
@@ -67,16 +87,19 @@ elif [[ "$action" == "list" ]];then
         IFS="$OLDIFS"
         OLDIFS=
     elif [[ "$init_system" == "systemd" ]];then
-        systemd=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service")
-        systemd=$(echo "$systemd" | sed -e 's/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/')
-        
+        daemon_list=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service" | grep -v '@$')
+        daemon_list=$(echo "$daemon_list"; (systemctl --no-legend -t service 2>/dev/null | while read systemd_line;do echo -e "$(echo -e $systemd_line | cut -d' ' -f2) $(echo -e $systemd_line | cut -d' ' -f1)";done))
+        daemon_list=$(echo "$daemon_list" | sed -e "s/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET}  \]/" -e "s/^static/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET}  \]/" -e "s/^enabled/\[ ${COLOR_BOLD_BLUE}ENABLED${COLOR_RESET}  \]/" -e "s/^disabled/\[ ${COLOR_BOLD_YELLOW}DISABLED${COLOR_RESET} \]/" -e "s/^loaded/\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET}  \]/" -e "s/@$//" -e "s/\.service$//")
+        daemon_list=$(for exclude_daemon in $excluded_daemons[@];do echo "$daemon_list" | grep -v " $exclude_daemon$";done)
     fi
     if [[ -z "$daemon" ]];then
+        echo "$daemon_list" | grep --color=never "DISABLED" | sort -ud
         echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
         echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
+        echo "$daemon_list" | grep --color=never "ENABLED" | sort -ud
         echo "$daemon_list" | grep --color=never "RUNNING" | sort -ud
     else
-        echo "$daemon_list" | grep --color=never " $daemon$" || exit "$?"
+        echo "$daemon_list" | grep --color=never " $daemon" || exit "$?"
     fi
 elif [[ "$action" == "help" ]];then
     show_help 0
