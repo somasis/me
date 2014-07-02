@@ -66,10 +66,22 @@ if [[ -z "$daemon" && "$action" != "list" ]];then
     show_help 2
 fi
 
+if [[ "$init_system" == "systemd" ]];then
+    systemctl daemon-reload # make sure systemctl output is up-to-date
+fi
+
 if [[ "$action" == "enable" ]];then
-    update-rc.d "$daemon" enable 2>/dev/null
+    if [[ "$init_system" == @(upstart|init) ]];then
+        update-rc.d "$daemon" enable 2>/dev/null
+    elif [[ "$init_system" == "systemd" ]];then
+        systemctl enable "$daemon"
+    fi
 elif [[ "$action" == "disable" ]];then
-    update-rc.d "$daemon" disable 2>/dev/null
+    if [[ "$init_system" == @(upstart|init) ]];then
+        update-rc.d "$daemon" disable 2>/dev/null
+    elif [[ "$init_system" == "systemd" ]];then
+        systemctl disable "$daemon"
+    fi
 elif [[ "$action" == "list" ]];then
     if [[ "$init_system" == @(upstart|init) ]];then
         upstart=$(service --status-all 2>&1 | cut -c2-)
@@ -104,5 +116,13 @@ elif [[ "$action" == "list" ]];then
 elif [[ "$action" == "help" ]];then
     show_help 0
 else
-    service "$daemon" "$action" 2>/dev/null || "/etc/init.d/$daemon" "$action"
+    if [[ "$init_system" == @(upstart|init) ]];then
+        if [[ -f "/etc/init.d/$daemon" ]];then
+            "/etc/init.d/$daemon" "$action"
+        else
+            service "$daemon" "$action"
+        fi
+    elif [[ "$init_system" == "systemd" ]];then
+        systemctl "$action" "$daemon"
+    fi
 fi
