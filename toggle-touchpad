@@ -1,0 +1,12 @@
+#!/bin/bash
+
+touchpad=$(xinput list | grep -iEo 'touchpad\s*id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}')
+state=$(xinput list-props $touchpad | grep 'Device Enabled' | awk '{print $4}')
+
+if [[ "$state" -eq 1 ]];then
+    echo "Turning off touchpad..."
+    xinput disable $touchpad
+else
+    echo "Turning on touchpad..."
+    xinput enable $touchpad
+fi

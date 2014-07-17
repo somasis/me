@@ -18,7 +18,7 @@ SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
 if [[ "$UID" -ne 0 ]];then # read configs
-    
+
     . "$XDG_CONFIG_HOME/rc.conf" 2>/dev/null >/dev/null
 fi
 
@@ -32,6 +32,109 @@ bootstrap_ssh() {
      cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null) | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
     bootstrap_ssh_error="$?"
     exit "$bootstrap_ssh_error"
+}
+
+# list_init()
+list_init() {
+    if [[ ! -z "$1" ]];then
+        list_daemon="$1"
+    fi
+
+    if [[ "$init_system" == @(upstart|init) ]];then
+        upstart=$(service --status-all 2>&1 | cut -c2-)
+        initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
+        initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
+        upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
+        daemon_list=$(printf "$upstart\n$initctl")
+        OLDIFS="$IFS"
+        IFS=$'\n'
+        for daemon_in_list in $(echo "$daemon_list" | cut -d']' -f2 | cut -d' ' -f2);do
+            if [[ $(echo "$daemon_list" | grep "RUNNING.*$daemon_in_list") && $(echo "$daemon_list" | grep "UNKNOWN.*$daemon_in_list") ]];then
+                daemon_list=$(echo "$daemon_list" | grep -v "UNKNOWN.*$daemon_in_list" | grep -v '^$')
+            fi
+        done
+        IFS="$OLDIFS"
+        OLDIFS=
+    elif [[ "$init_system" == "systemd" ]];then
+        daemon_list=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service" | grep -v '@$')
+        daemon_list=$(echo "$daemon_list"; (systemctl --no-legend -t service 2>/dev/null | while read systemd_line;do echo -e "$(echo -e $systemd_line | cut -d' ' -f2) $(echo -e $systemd_line | cut -d' ' -f1)";done))
+        daemon_list=$(echo "$daemon_list" |
+            sed  -e     "s/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/" \
+                 -e      "s/^static/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/" \
+                 -e    "s/^enabled/\[ ${COLOR_BOLD_BLUE}ENABLED${COLOR_RESET} \]/" \
+                 -e "s/^disabled/\[ ${COLOR_BOLD_YELLOW}DISABLE${COLOR_RESET} \]/" \
+                 -e    "s/^loaded/\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/" \
+                 -e   "s/@$//" -e "s/\.service$//"
+        )
+        daemon_list=$(for exclude_daemon in $excluded_daemons[@];do echo "$daemon_list" | grep -v " $exclude_daemon$";done)
+    fi
+    if [[ -z "$list_daemon" ]];then
+        echo "$daemon_list" | grep --color=never "DISABLED" | sort -ud
+        echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
+        echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
+        echo "$daemon_list" | grep --color=never "ENABLED" | sort -ud
+        echo "$daemon_list" | grep --color=never "RUNNING" | sort -ud
+    else
+        echo "$daemon_list" | grep --color=never " $list_daemon$" | tail -n1 || exit "$?"
+    fi
+}
+
+do_action() {
+    if [[ ! -z "$1" ]];then
+        action="$do_action"
+        old_action="$action"
+    fi
+
+    if [[ "$action" == "enable" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            update-rc.d "$daemon" enable 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl enable "$daemon"
+        fi
+    elif [[ "$action" == "disable" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            update-rc.d "$daemon" disable 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl disable "$daemon"
+        fi
+    elif [[ "$action" == "start" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            "/etc/init.d/$daemon" "start" 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl start "$daemon"
+        fi
+    elif [[ "$action" == "stop" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            "/etc/init.d/$daemon" "stop" 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl stop "$daemon"
+        fi
+    elif [[ "$action" == "restart" ]];then
+        old_action="$action"
+        action="stop"
+        do_action
+        action="start"
+        do_action
+        action="$old_action"
+        old_action=
+    elif [[ "$action" == "list" || -z "$action" ]];then
+        list_init
+    elif [[ "$action" == "help" ]];then
+        show_help 0
+    else
+        if [[ "$init_system" == @(upstart|init) ]];then
+            if [[ -f "/etc/init.d/$daemon" ]];then
+                "/etc/init.d/$daemon" "$action"
+            else
+                service "$daemon" "$action"
+            fi
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl "$action" "$daemon"
+        fi
+
+    fi
+    action="${action:-$old_action}"
+    old_action=
 }
 
 if [[ "$1" == "--host="* ]];then
@@ -53,8 +156,6 @@ init_system=$(</proc/1/comm)
 
 action="$1"
 action=$(echo "$action" | tr '[A-Z]' '[a-z]')
-shift
-daemon="$1"
 
 if [[ "$UID" -ne 0 ]]; then
     exec sudo bash -$- "$SCRIPT_DIR/${0##*/}" "$action" "$@"
@@ -62,67 +163,18 @@ if [[ "$UID" -ne 0 ]]; then
     exit "$exit_code"
 fi
 
-if [[ -z "$daemon" && "$action" != "list" ]];then
-    show_help 2
-fi
-
 if [[ "$init_system" == "systemd" ]];then
     systemctl daemon-reload # make sure systemctl output is up-to-date
 fi
 
-if [[ "$action" == "enable" ]];then
-    if [[ "$init_system" == @(upstart|init) ]];then
-        update-rc.d "$daemon" enable 2>/dev/null
-    elif [[ "$init_system" == "systemd" ]];then
-        systemctl enable "$daemon"
-    fi
-elif [[ "$action" == "disable" ]];then
-    if [[ "$init_system" == @(upstart|init) ]];then
-        update-rc.d "$daemon" disable 2>/dev/null
-    elif [[ "$init_system" == "systemd" ]];then
-        systemctl disable "$daemon"
-    fi
-elif [[ "$action" == "list" ]];then
-    if [[ "$init_system" == @(upstart|init) ]];then
-        upstart=$(service --status-all 2>&1 | cut -c2-)
-        initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
-        initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
-        upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
-        daemon_list=$(printf "$upstart\n$initctl")
-        OLDIFS="$IFS"
-        IFS=$'\n'
-        for daemon_in_list in $(echo "$daemon_list" | cut -d']' -f2 | cut -d' ' -f2);do
-            if [[ $(echo "$daemon_list" | grep "RUNNING.*$daemon_in_list") && $(echo "$daemon_list" | grep "UNKNOWN.*$daemon_in_list") ]];then
-                daemon_list=$(echo "$daemon_list" | grep -v "UNKNOWN.*$daemon_in_list" | grep -v '^$')
-            fi
-        done
-        IFS="$OLDIFS"
-        OLDIFS=
-    elif [[ "$init_system" == "systemd" ]];then
-        daemon_list=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service" | grep -v '@$')
-        daemon_list=$(echo "$daemon_list"; (systemctl --no-legend -t service 2>/dev/null | while read systemd_line;do echo -e "$(echo -e $systemd_line | cut -d' ' -f2) $(echo -e $systemd_line | cut -d' ' -f1)";done))
-        daemon_list=$(echo "$daemon_list" | sed -e "s/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET}  \]/" -e "s/^static/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET}  \]/" -e "s/^enabled/\[ ${COLOR_BOLD_BLUE}ENABLED${COLOR_RESET}  \]/" -e "s/^disabled/\[ ${COLOR_BOLD_YELLOW}DISABLED${COLOR_RESET} \]/" -e "s/^loaded/\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET}  \]/" -e "s/@$//" -e "s/\.service$//")
-        daemon_list=$(for exclude_daemon in $excluded_daemons[@];do echo "$daemon_list" | grep -v " $exclude_daemon$";done)
-    fi
-    if [[ -z "$daemon" ]];then
-        echo "$daemon_list" | grep --color=never "DISABLED" | sort -ud
-        echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
-        echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
-        echo "$daemon_list" | grep --color=never "ENABLED" | sort -ud
-        echo "$daemon_list" | grep --color=never "RUNNING" | sort -ud
-    else
-        echo "$daemon_list" | grep --color=never " $daemon" || exit "$?"
-    fi
-elif [[ "$action" == "help" ]];then
-    show_help 0
+shift
+shift
+if [[ -z "$@" ]];then
+    do_action
 else
-    if [[ "$init_system" == @(upstart|init) ]];then
-        if [[ -f "/etc/init.d/$daemon" ]];then
-            "/etc/init.d/$daemon" "$action"
-        else
-            service "$daemon" "$action"
-        fi
-    elif [[ "$init_system" == "systemd" ]];then
-        systemctl "$action" "$daemon"
-    fi
+    for daemon in $@;do
+        do_action
+        list_init "$daemon"
+        shift
+    done
 fi
