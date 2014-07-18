@@ -23,7 +23,9 @@ alsa_channel="Master"
 oss_output="vmix0-outvol"
 
 common_location='$SCRIPT_DIR/common.sh'
-config_location='$XDG_CONFIG_HOME/mpd-alarm.conf'
+if [[ -z "$config_location" ]];then
+    config_location='$XDG_CONFIG_HOME/mpd-alarm.conf'
+fi
 
 ## Script begins here
 
@@ -108,4 +110,3 @@ echo "Playing..."
 mpc play
 echo
 echo "I hope you slept well :)"
-

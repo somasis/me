@@ -44,7 +44,9 @@ retrieve_preference="wget" # curl or wget for retrieval of data?
 protocol="https" # https usage, so it won't be read by someone that isn't you!
 icon='internet-feed-reader' # Icon used for notification. Location or system icon name
 common_location='$SCRIPT_DIR/common.sh'
-config_location='$XDG_CONFIG_HOME/oldnotifier.conf'
+if [[ -z "$config_location" ]];then
+    config_location='$XDG_CONFIG_HOME/oldnotifier.conf'
+fi
 # About $common_location and $config_location:
 # Yes, you need to use single quotes though this is a variable-using setting.
 # Normally in bash you use double quotes for variable-using strings, but
@@ -117,7 +119,7 @@ while true; do
     unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f2)
     unread_feeds=$(echo "$unread_raw" | grep '^feed/' | cut -d'/' -f2 | tr '\n' ',')
     unread_labels=$(echo "$unread_raw" | grep 'label/' | cut -d'/' -f4 | tr '\n' ',')
-    
+
     unread_other=$(OLDIFS="$IFS"
     IFS=","
     for unread_label in $unread_labels;do
@@ -137,7 +139,7 @@ while true; do
     IFS="$OLDIFS"
     OLDIFS=
     )
-    
+
     if [[ "$unread_total" -gt 0 ]];then
         if [[ "$unread_total" -gt 1 ]];then
             article_word="articles"
@@ -149,6 +151,6 @@ while true; do
 $unread_other"
     fi
 
-    
+
     sleep "$notify_every"
 done

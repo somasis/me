@@ -3,23 +3,25 @@
 # (c) 2014 Somasis <https://github.com/somasis> - MIT License
 
 ## Settings
-if [[ "$UID" -ne 0 || -z "$SSH_CONNECTION" ]];then # don't delete this or you'll have issues with ssh mode
-    # these daemons don't show in the `list`
-    excluded_daemons=( "systemd-.*" "user@.*" "getty@.*" )
-fi # don't delete this either
-
+excluded_daemons=( "systemd-.*" "user@.*" "getty@.*" )
+common_location='$SCRIPT_DIR/common.sh'
+if [[ -z "$config_location" ]];then
+    config_location='$XDG_CONFIG_HOME/rc.conf'
+fi
 
 ## Script begins here
 script_arguments="[--host=ssh-enabled-host.com | -h ssh-enabled-host.com] (start|stop|restart|enable|disable|[list]|help)"
 script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV, and systemd systems only."
 script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
 
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd -P)
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+eval "common_location=$common_location"
+eval "config_location=$config_location"
+. "$config_location" 2>&1 >/dev/null
 
 if [[ "$UID" -ne 0 ]];then # read configs
-
-    . "$XDG_CONFIG_HOME/rc.conf" 2>/dev/null >/dev/null
+    . "$config_location" 2>/dev/null >/dev/null
 fi
 
 # bootstrap_ssh(): bootstraps the script for usage on any ssh server
