@@ -72,7 +72,7 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
 
 ### Prerequisites
 - An internet connection
-- `[echoprint-codegen](https://github.com/echonest/echoprint-codegen)`
+- [`echoprint-codegen`](https://github.com/echonest/echoprint-codegen)
 - `lastfmsubmitd`
 - `parecord` (comes with PulseAudio)
 
