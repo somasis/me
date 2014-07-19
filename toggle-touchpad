@@ -1,4 +1,7 @@
 #!/bin/bash
+# toggle-touchpad - toggle the first detected touchpad with xinput
+# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# https://github.com/Somasis/scripts/
 
 touchpad=$(xinput list | grep -iEo 'touchpad\s*id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}')
 state=$(xinput list-props $touchpad | grep 'Device Enabled' | awk '{print $4}')

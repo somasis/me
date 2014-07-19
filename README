@@ -10,6 +10,11 @@ This is normally a folder named `.config` in your home directory. If `$XDG_CONFI
 ## OldNotifier
 OldNotifier is a shell script (requires bash) that uses [The Old Reader](theoldreader.com)'s API to show notifications every so often about how many unread articles you have, and how many articles in a label/folder you have unread.
 
+### Prerequisites
+- [The Old Reader](theoldreader.com) account
+- notify-send (from libnotify, libnotify-bin, or notify-osd)
+- curl or wget
+
 ### Configuration
 Configuration can be set in `$XDG_CONFIG_HOME/oldnotifier.conf`.
 
@@ -28,6 +33,12 @@ Configuration can be set in `$XDG_CONFIG_HOME/oldnotifier.conf`.
 ## rc
 `rc` is a script that just provides a command for easy interaction with your init system. Currently only SysV-style, systemd, and Upstart are supported.
 
+If you want to control a remote host, you can specify it with `rc -h` or `rc --host=ssh-enabled-host.com`.
+
+### Prerequisites
+- An `init` system
+- `ssh`, if you want to use the remote host feature
+
 ### Configuration
 Configuration can be set in `$XDG_CONFIG_HOME/rc.conf`.
 
@@ -36,6 +47,10 @@ Configuration can be set in `$XDG_CONFIG_HOME/rc.conf`.
 
 ## mpd-alarm
 `mpd-alarm` sets up [Music Player Daemon](http://musicpd.org) to be used as an alarm clock.
+
+### Prerequisites
+- [Music Player Daemon](http://musicpd.org)
+- A sound system; PulseAudio, ALSA, or OSS are current supported (you probably already have one)
 
 ### Configuration
 Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
@@ -55,6 +70,12 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
 ## cratefinder
 `cratefinder` is a work-in-progress (doesn't really even work yet, that is) script thats attempts to listen to what your turntable is playing, and then digs through the virtual record crates of the internet (I mean echoprint fingerprints) and sends them to Last.FM.
 
+### Prerequisites
+- An internet connection
+- `[echoprint-codegen](https://github.com/echonest/echoprint-codegen)`
+- `lastfmsubmitd`
+- `parecord` (comes with PulseAudio)
+
 ### Configuration
 Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`
 
@@ -68,6 +89,9 @@ Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`
 ## toggle-touchpad
 `toggle-touchpad` just attempts to toggle the first touchpad it finds on your system, using xinput. Xinput is used instead of, say, Synclient because synclient does not turn off the buttons on some touchpads. Xinput, does though.
 
+### Prerequisites
+- `xinput`
+
 ## xfce4-screenshooter-handler
 `xfce4-screenshooter-handler` is a wrapper for xfce4-screenshooter. It will simply run xfce4-screenshooter with arguments to open it with the `xfce4-screenshooter-handler` program, which can then operate on the screenshot taken with the `wrap_mode_action()` function.
 
@@ -75,7 +99,10 @@ Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`
 - Uploading image to a remote server, or sync folder
 - Uploading to imgur
 - Giving it a specific name
-- Uhhhhh
+- etc.
+
+### Prerequisites
+- `xfce4-screenshooter`
 
 ## common.sh
 Common functions used for scripts in this repository.

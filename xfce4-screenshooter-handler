@@ -2,9 +2,6 @@
 # xfce4-screenshooter-handler -- wrap xfce4-screenshooter
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/
-#
-# Prerequisites: xfce4-screenshooter
-#
 
 urlencode() {
     local string="${1}"

@@ -1,9 +1,11 @@
 #!/bin/bash
+# cratefinder -- scrobble to lastfm from vinyl
+# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# https://github.com/Somasis/scripts/
 
 turntable_input="alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo"
 record_time="30s"
 lastfmsubmit_path="/usr/lib/lastfmsubmitd/lastfmsubmit"
-config
 
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 eval "config_location=$config_location"
