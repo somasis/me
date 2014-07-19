@@ -1,5 +1,5 @@
 #!/bin/bash
-# rc - enable/disable/start/stop/etc daemons, Debian/Ubuntu systems only
+# rc - enable/disable/start/stop/etc daemons
 # (c) 2014 Somasis <https://github.com/somasis> - MIT License
 
 ## Settings
