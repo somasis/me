@@ -4,11 +4,12 @@
 # https://github.com/Somasis/scripts/
 
 release_number=5.5
-export_to_file=/etc/pro
+#export_to_file=/etc/
+export_to_file=
 
 non_rsync_gettime() {
     begin_time=$(date +"%s.%N")
-    wget -T 5 -t 1 -O /dev/null "$mirror" >/dev/stderr || begin_time=$(( $(date +%s) * 1000 ))
+    ftp -o - -r 5 "$mirror" >/dev/stderr || begin_time=$(( $(date +%s) * 1000 ))
     end_time=$(date +"%s.%N")
     total=$(echo "scale=2;$end_time-$begin_time" | bc)
     if [[ "$total" == -* ]];then
@@ -29,7 +30,7 @@ rsync_gettime() {
 }
 
 get_mirror_list() {
-    wget -T 5 -t 1 -qO - "http://www.openbsd.org/build/mirrors.dat" | sed '/:\/\//!d;s/^#..//;s/^[[:alpha:]][[:alpha:]]//;s/^[ \t]*//' | shuf | shuf | shuf | shuf | shuf
+    ftp -o - "http://www.openbsd.org/build/mirrors.dat" | sed '/:\/\//!d;s/^#..//;s/^[[:alpha:]][[:alpha:]]//;s/^[ \t]*//' | jot | jot | jot | jot
 }
 
 measure_mirrors() {
