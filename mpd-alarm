@@ -2,12 +2,6 @@
 # mpd-alarm -- A script to turn the Music Player Daemon into an alarm
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/
-#
-# Prerequisites: mpd, a sound system (alsa/pulseaudio/oss)
-#
-# How to run:
-#   Set this script to run at a certain time through whatever method you please
-#
 
 MPD_HOST="localhost" # host for mpc to use to connect
 MPD_PORT=6600 # port mpd server is on, 6600 is default

@@ -50,6 +50,7 @@ Configuration can be set in `$XDG_CONFIG_HOME/rc.conf`.
 
 ### Prerequisites
 - [Music Player Daemon](http://musicpd.org)
+- `mpc`
 - A sound system; PulseAudio, ALSA, or OSS are current supported (you probably already have one)
 
 ### Configuration
@@ -67,6 +68,29 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
 - `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
 - `config_location` - Location of `mpd-alarm.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/mpd-alarm.conf'` (note the single quotes)
 
+## mpd-on-same-album
+`mpd-on-same-album` sets the Replaygain value and crossfade value based on what track is next.
+
+If a track from the same album that the currently playing one is from is next, it will turn off crossfade, and set Replaygain to album mode. If it is not, crossfade will be turned on, and Replaygain set to track mode.
+
+This feature is emulated based on it's implementation in music players such as Clementine.
+
+### Prerequisites
+- [Music Player Daemon](http://musicpd.org)
+- `mpc`
+
+### Configuration
+Configuration is found in `$XDG_CONFIG_HOME/mpd-on-same-album.conf`.
+
+## Configuration variables
+- `MPD_HOST` - Host that MPD is running on; ex. `localhost`
+- `MPD_PORT` - Port that MPD is running on. Use a port number or a path to a Unix socket; ex. `6600`
+- `set_replaygain` - If you want Replaygain to be set based on the next track; ex. `true`
+- `preferred_crossfade` - Length that crossfade should be set to when next track is not from current album; ex. `2`, for two second crossfade.
+- `sleep_amount` - Amount to sleep in between checking currently playing track; ex. `2s` for two seconds.
+- `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
+- `config_location` - Location of `mpd-on-same-album.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/mpd-on-same-album.conf'` (note the single quotes)
+
 ## cratefinder
 `cratefinder` is a work-in-progress (doesn't really even work yet, that is) script thats attempts to listen to what your turntable is playing, and then digs through the virtual record crates of the internet (I mean echoprint fingerprints) and sends them to Last.FM.
 
@@ -77,7 +101,7 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
 - `parecord` (comes with PulseAudio)
 
 ### Configuration
-Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`
+Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`.
 
 #### Configuration variables
 - `turntable_input` - Where to listen to for the turntable input; ex. `alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo`
@@ -103,6 +127,9 @@ Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`
 
 ### Prerequisites
 - `xfce4-screenshooter`
+
+### Configuration
+Configuration is set within the script. You need to edit the `wrap_mode_action()` function to do what you want. This can be anything from uploading an image via wget to renaming it, whatever you can write in `bash` script, you can make it do.
 
 ## common.sh
 Common functions used for scripts in this repository.
