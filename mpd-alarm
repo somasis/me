@@ -71,7 +71,7 @@ fi
 mpc() {
     MPD_HOST="${MPD_HOST:-localhost}"
     MPD_PORT="${MPD_PORT:-6600}"
-    mpc -h "$MPD_HOST" -p "$MPD_PORT" "$@"
+    command mpc -h "$MPD_HOST" -p "$MPD_PORT" "$@"
 }
 
 if [[ -z "$(pgrep mpd)" ]];then

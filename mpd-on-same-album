@@ -1,0 +1,89 @@
+#!/bin/bash
+# mpd-on-same-album - set replaygain and crossfade depending on if next track is from same album
+# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# https://github.com/Somasis/scripts/
+
+MPD_HOST="localhost" # host for mpc to use to connect
+MPD_PORT=6600 # port mpd server is on, 6600 is default
+
+set_replaygain=true # if you want replaygain to be set
+preferred_crossfade=2 # what to set crossfade to if next song is not from same album
+sleep_amount="2s" # amount to sleep between checking/setting
+
+common_location='$SCRIPT_DIR/common.sh'
+if [[ -z "$config_location" ]];then
+    config_location='$XDG_CONFIG_HOME/mpd-on-same-album.conf'
+fi
+
+## Script begins here
+
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+script_description="A script to set replaygain and crossfade based on what track is next"
+script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
+error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
+
+error_bootstrap() {
+    echo "$error_bootstrap"; exit 10
+}
+
+# okay, now that we know the dir, find out the variables in the $locations
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+eval "common_location=$common_location"
+eval "config_location=$config_location"
+. "$config_location" 2>&1 >/dev/null
+
+# Bootstrap common.sh script if it's not accessable
+if [[ ! -f "$common_location" ]];then
+    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+    echo "Bootstrapped common.sh functions, script will continue like normal."
+    . "$common_location" 2>&1 >/dev/null || error_bootstrap
+else
+    . "$common_location" 2>&1 >/dev/null || error_bootstrap
+fi
+
+show_help
+
+echo "Host: $MPD_HOST"
+echo "Port: $MPD_PORT"
+echo "Crossfade length: $preferred_crossfade"
+echo "If replaygain should be set: $set_replaygain"
+echo "How often to check: $sleep_amount"
+
+show_help
+
+while true; do
+    sleep "$sleep_amount"
+    old_replaygain="$replaygain"
+    old_np="$np"
+    old_next="$next"
+    crossfade=$(mpc crossfade | cut -d' ' -f2)
+    np=$(mpc -f '[%albumartist%|%artist%] - %album% (%date%)' status | head -n1)
+    np_num=$(mpc -f "[%albumartist%|%artist%] - %album% (%date%)" status | head -n2 | tail -n1 | cut -d'#' -f2 | cut -d'/' -f1)
+    next=$(mpc -f "[%albumartist%|%artist%] - %album% (%date%)" playlist | tail -n $(( $(mpc playlist | wc -l) - $np_num )) | head -n1)
+    replaygain=$(mpc replaygain | cut -d' ' -f2)
+    if [[ "$old_np" != "$np" ]];then
+        echo "Now playing: $np"
+    fi
+    if [[ "$old_next" != "$next" ]];then
+        echo "Next song: $next"
+    fi
+    if [[ "$np" == "$next" ]];then
+        if [[ "$crossfade" -ne 0 ]];then
+            mpc crossfade 0
+            echo "Crossfade set to: 0"
+        fi
+        if [[ "$set_replaygain" == true && "$replaygain" != "$old_replaygain" ]];then
+            mpc replaygain "album"
+            echo "Replaygain set to: album mode"
+        fi
+    else
+        if [[ "$crossfade" -ne "$preferred_crossfade" ]];then
+            mpc crossfade "$preferred_crossfade"
+            echo "Crossfade set to: $prefered_crossfade"
+        fi
+        if [[ "$set_replaygain" == true && "$replaygain" != "$old_replaygain" ]];then
+            mpc replaygain track
+            echo "Replaygain set to: track mode"
+        fi
+    fi
+done
