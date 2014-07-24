@@ -19,11 +19,7 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 eval "common_location=$common_location"
 eval "config_location=$config_location"
-. "$config_location" 2>&1 >/dev/null
-
-if [[ "$UID" -ne 0 ]];then # read configs
-    . "$config_location" 2>/dev/null >/dev/null
-fi
+. "$config_location" 2>/dev/null >/dev/null
 
 # bootstrap_ssh(): bootstraps the script for usage on any ssh server
 #                  since we get the content of common.sh and the config
@@ -72,7 +68,7 @@ list_init() {
         daemon_list=$(for exclude_daemon in $excluded_daemons[@];do echo "$daemon_list" | grep -v " $exclude_daemon$";done)
     fi
     if [[ -z "$list_daemon" ]];then
-        echo "$daemon_list" | grep --color=never "DISABLED" | sort -ud
+        echo "$daemon_list" | grep --color=never "DISABLE" | sort -ud
         echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
         echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
         echo "$daemon_list" | grep --color=never "ENABLED" | sort -ud
