@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # oldnotifier -- notifier for The Old Reader
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/

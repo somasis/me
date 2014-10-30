@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # sort_mirrors - rank the list of openbsd mirrors
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/

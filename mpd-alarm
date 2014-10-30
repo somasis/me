@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # mpd-alarm -- A script to turn the Music Player Daemon into an alarm
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/

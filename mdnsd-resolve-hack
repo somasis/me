@@ -1,5 +1,7 @@
 #!/bin/ksh
 # mdnsd-resolve-hack -- resolve hosts discovered by openmdnsd in any program
+# note: if you run Bitrig, this is not useful. it is implemented in the system
+# resolver now. check the manpage resolv.conf(5).
 # written by Somasis <somasis@cryptolab.net> - 2014
 #
 hosts_file=/etc/hosts

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # common.sh -- common functions used in my scripts
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 

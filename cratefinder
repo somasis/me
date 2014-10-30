@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # cratefinder -- scrobble to lastfm from vinyl
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/

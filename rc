@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # rc - enable/disable/start/stop/etc daemons
 # (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
 # https://github.com/Somasis/scripts/
