@@ -21,6 +21,13 @@ get_sources() {
     echo "commit message for $future_rev:"
     echo "$commit_msg"
     echo
+    if [ "$current_rev" = "$future_rev" ];then
+        echo "you're running the same kernel revision as what is in /usr/src,"
+        echo "this means there's no need to update, or you only updated the kernel."
+        echo "if you just rebooted from updating the kernel, you need to exit out"
+        echo "and run \`$me -u\` to update the userland"
+        echo
+    fi
 }
 
 pull_sources() {
@@ -115,6 +122,7 @@ update_userland() {
 
 read_news() {
     printf "checking UPDATING for news..."
+    [ -f /var/tmp/update-from-src.sum ] && oldsum=$(cat /var/tmp/update-from-src.sum)
     if [ "$(sha1 /usr/src/UPDATING)" != "$oldsum" ];then
         echo " UPDATING has been revised, please read it now"
     else
@@ -175,7 +183,7 @@ if [ "$(id -u)" -ne 0 ];then
     exit "$?"
 fi
 
-for arg in $(getopt krsuh "$@");do
+for arg in $(getopt knsuh "$@");do
     [ "$#" -eq 0 ] && break
     case "$arg" in
         -k)
@@ -211,7 +219,6 @@ sleep 2
 echo "current version: $os $ver ($fullver)"
 echo "architecture: $arch"
 echo "kernel configuration: /usr/src/sys/arch/$arch/conf/GENERIC"
-[ -f /var/tmp/update-from-src.sum ] && oldsum=$(cat /var/tmp/update-from-src.sum)
 
 get_sources
 read_news
