@@ -143,6 +143,12 @@ show_help() {
     echo "update-from-src: created by Somasis <somasis@cryptolab.net>"
     echo "usage: $me -kusr"
     echo
+    echo "arguments:"
+    printf "\t-k\t- update kernel\n"
+    printf "\t-u\t- update userland\n"
+    printf "\t-s\t- retrieve latest sources\n"
+    printf "\t-r\t- read UPDATING\n"
+    echo
     echo "if ran with no arguments:"
     printf "\t- get latest revision\n"
     printf "\t- read UPDATING\n"
@@ -198,9 +204,10 @@ for arg in $(getopt krsuh "$@");do
     esac
 done
 
-show_help
-echo "update-from-src: created by Somasis <somasis@cryptolab.net>"
+echo "$me: created by Somasis <somasis@cryptolab.net>"
+echo "for a list of commands, execute \`$me -h\`"
 echo
+sleep 2
 echo "current version: $os $ver ($fullver)"
 echo "architecture: $arch"
 echo "kernel configuration: /usr/src/sys/arch/$arch/conf/GENERIC"
