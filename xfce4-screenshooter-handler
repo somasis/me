@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # xfce4-screenshooter-handler -- wrap xfce4-screenshooter
-# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# (c) 2014 Somasis <somasis@cryptolab.net> - MIT License
 # https://github.com/Somasis/scripts/
 
 urlencode() {

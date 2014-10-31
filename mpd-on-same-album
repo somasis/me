@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # mpd-on-same-album - set replaygain and crossfade depending on if next track is from same album
-# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# (c) 2014 Somasis <somasis@cryptolab.net> - MIT License
 # https://github.com/Somasis/scripts/
 
 MPD_HOST="localhost" # host for mpc to use to connect

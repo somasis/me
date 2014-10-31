@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # oldnotifier -- notifier for The Old Reader
-# (c) 2014 Somasis <somasissounds@gmail.com> - MIT License
+# (c) 2014 Somasis <somasis@cryptolab.net> - MIT License
 # https://github.com/Somasis/scripts/
 #
 # Prerequisites: notify-send, curl or wget, Old Reader account
