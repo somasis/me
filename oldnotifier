@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # oldnotifier -- notifier for The Old Reader
-# (c) 2014 Somasis <somasis@cryptolab.net> - MIT License
-# https://github.com/Somasis/scripts/
+# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# https://github.com/somasis/scripts/
 #
 # Prerequisites: notify-send, curl or wget, Old Reader account
 #   notify-send might be found in `libnotify-bin`, `libnotify`, or `notify-send`
@@ -58,8 +58,8 @@ fi
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 script_description="A notifier for The Old Reader."
-script_credit="Written by Somasis <https://github.com/somasis>, MIT license."
-user_agent="oldnotifier - https://github.com/Somasis/scripts"
+script_credit="Written by Kylie "Somasis" McClain <https://github.com/somasis>, MIT license."
+user_agent="oldnotifier - https://github.com/somasis/scripts"
 error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
 
 error_bootstrap() {
@@ -75,7 +75,7 @@ eval "config_location=$config_location"
 
 # Bootstrap common.sh script if it's not accessable
 if [[ ! -f "$common_location" ]];then
-    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/Somasis/scripts/master/common.sh" || error_bootstrap
+    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/somasis/scripts/master/common.sh" || error_bootstrap
     echo "Bootstrapped common.sh functions, script will continue like normal."
     . "$common_location" 2>&1 >/dev/null || error_bootstrap
 else
