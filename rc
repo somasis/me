@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rc - enable/disable/start/stop/etc daemons
-# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
 # https://github.com/somasis/scripts/
 
 ## Settings
@@ -13,7 +13,7 @@ fi
 ## Script begins here
 script_arguments="[--host=ssh-enabled-host.com | -h ssh-enabled-host.com] (start|stop|restart|enable|disable|[list]|help)"
 script_description="A script to make managing of daemons much easier.\nCurrently for Upstart/SysV, and systemd systems only."
-script_credit="Written by Kylie "Somasis" McClain <https://github.com/somasis>, MIT license."
+script_credit="Written by Kylie McClain <https://github.com/somasis>, MIT license."
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)

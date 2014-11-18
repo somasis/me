@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # sort_mirrors - rank the list of openbsd mirrors
-# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
 # https://github.com/somasis/scripts/
 
 release_number=5.5

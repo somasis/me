@@ -1,6 +1,6 @@
 #!/bin/ksh
 # update-from-src - update an OpenBSD-based system from source
-# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
 #
 # by default this script is configured for a Bitrig system
 # thus, it uses git. it can very easily be customized for a
@@ -148,7 +148,7 @@ read_news() {
 
 show_help() {
     # TODO: write man page and remove this option after doing so
-    echo "update-from-src: created by Kylie "Somasis" McClain <somasissounds@gmail.com>"
+    echo "update-from-src: created by Kylie McClain <somasissounds@gmail.com>"
     echo "usage: $me -kusr"
     echo
     echo "arguments:"
@@ -174,7 +174,7 @@ show_help() {
     echo "well and is suitable for my own usage. i can not guarantee"
     echo "that it works perfect for you; this is done at your own risk."
     echo
-    echo "(c) 2014 Kylie "Somasis" McClain, MIT license."
+    echo "(c) 2014 Kylie McClain, MIT license."
     echo "report issues/send patches to http://github.com/somasis/scripts"
 }
 
@@ -212,7 +212,7 @@ for arg in $(getopt knsuh "$@");do
     esac
 done
 
-echo "$me: created by Kylie "Somasis" McClain <somasissounds@gmail.com>"
+echo "$me: created by Kylie McClain <somasissounds@gmail.com>"
 echo "for a list of commands, execute \`$me -h\`"
 echo
 sleep 2

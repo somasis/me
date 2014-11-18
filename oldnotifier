@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # oldnotifier -- notifier for The Old Reader
-# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
 # https://github.com/somasis/scripts/
 #
 # Prerequisites: notify-send, curl or wget, Old Reader account
@@ -58,7 +58,7 @@ fi
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 script_description="A notifier for The Old Reader."
-script_credit="Written by Kylie "Somasis" McClain <https://github.com/somasis>, MIT license."
+script_credit="Written by Kylie McClain <https://github.com/somasis>, MIT license."
 user_agent="oldnotifier - https://github.com/somasis/scripts"
 error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
 

@@ -2,7 +2,7 @@
 # mdnsd-resolve-hack -- resolve hosts discovered by openmdnsd in any program
 # note: if you run Bitrig, this is not useful. it is implemented in the system
 # resolver now. check the manpage resolv.conf(5).
-# written by Kylie "Somasis" McClain <somasissounds@gmail.com> - 2014
+# written by Kylie McClain <somasissounds@gmail.com> - 2014
 #
 hosts_file=/etc/hosts
 tmp_file=/tmp/mdnsd-resolve-hack-$$

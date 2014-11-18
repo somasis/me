@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # mpd-on-same-album - set replaygain and crossfade depending on if next track is from same album
-# (c) 2014 Kylie "Somasis" McClain <somasissounds@gmail.com> - MIT License
+# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
 # https://github.com/somasis/scripts/
 
 MPD_HOST="localhost" # host for mpc to use to connect
@@ -19,7 +19,7 @@ fi
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 script_description="A script to set replaygain and crossfade based on what track is next"
-script_credit="Written by Kylie "Somasis" McClain <https://github.com/somasis>, MIT license."
+script_credit="Written by Kylie McClain <https://github.com/somasis>, MIT license."
 error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
 
 error_bootstrap() {
