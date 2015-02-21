@@ -1,0 +1,61 @@
+#!/bin/bash
+# clean-pbins   checks exheres contained in $repo against the pbins in $bins
+#               and if a bin is not being used by any exheres in $repo, it is
+#               deleted.
+#
+# arguments     -n
+#                    don't delete anything, just do a dry run and print
+#                    what would be deleted
+#
+#               <pbin exheres directory>
+#                    directory in which exheres used by a pbin directory
+#                    are contained
+#
+#               <pbin binary directory>
+#                    directory in which pbin archives used by a pbin
+#                    repository are contained
+#
+# Copyright 2015, Kylie McClain <somasissounds@gmail.com>
+# Distributed under the terms of the ISC License
+
+set -e -o pipefail
+
+help() {
+    echo "$0 [-n] <pbin exheres directory> <pbin binary directory>"
+}
+
+if [[ "$#" -lt 2 ]];then
+    help
+    exit 2
+fi
+
+while [[ "$#" -ne 0 ]];do
+    if [[ "$1" == "-n" ]];then
+        dry_run=true
+    elif [[ -d "$1" && -d "$2" ]];then
+        repo="$1"; shift
+        bins="$1"
+    else
+        help
+        exit 1
+    fi
+    shift
+done
+
+good_files=(
+    $(for pkg in "$repo"/packages/*/*/*;do . "$pkg"; basename "$BINARY_URI";done)
+)
+
+for file in "$bins"/*;do
+    file=${file##*/}
+    if echo "${good_files[@]}" | grep -q "$file";then
+        echo "\"${file}\" is being used, not deleting"
+    else
+        if [[ "$dry_run" ]];then
+            echo "rm -vf \"bins/${file}\""
+        else
+            rm -vf "bins/${file}"
+        fi
+    fi
+done
+
