@@ -43,18 +43,16 @@ while [[ "$#" -ne 0 ]];do
 done
 
 good_files=(
-    $(for pkg in "$repo"/packages/*/*/*;do . "$pkg"; basename "$BINARY_URI";done)
+    $(for pkg in "$repo"/packages/*/*/*.pbin-1+exheres-0;do . "$pkg"; basename "$BINARY_URI";done)
 )
 
 for file in "$bins"/*;do
     file=${file##*/}
-    if echo "${good_files[@]}" | grep -q "$file";then
-        echo "\"${file}\" is being used, not deleting"
-    else
+    if ! echo "${good_files[@]}" | grep -q "$file";then
         if [[ "$dry_run" ]];then
-            echo "rm -vf \"bins/${file}\""
+            echo "rm -vf \"$bins/${file}\""
         else
-            rm -vf "bins/${file}"
+            rm -vf "$bins/${file}"
         fi
     fi
 done
