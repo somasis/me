@@ -1,15 +1,47 @@
 #!/usr/bin/env bash
-# toggle-touchpad - toggle the first detected touchpad with xinput
-# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
-# https://github.com/somasis/scripts/
+# toggle-touchpad - toggle the first detected touchpad with xfconf/xinput
+# (c) 2014-2015 Kylie McClain <somasissounds@gmail.com> - MIT License
+# https://github.com/somasis/scripts
 
-touchpad=$(xinput list | grep -iEo 'touchpad\s*id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}')
-state=$(xinput list-props $touchpad | grep 'Device Enabled' | awk '{print $4}')
+if type -fPp xfconf-query >/dev/null 2>&1;then
+    method=${method:-xfconf}
+    touchpad=$(xfconf-query -c pointers -l | grep /Properties/Device_Enabled | grep '[Tt]ouchpad' | cut -d'/' -f2 | head -1)
+    name="${touchpad//_/ }"
+    state=$(xfconf-query -c pointers -p "/$touchpad/Properties/Device_Enabled")
+elif type -fPp xinput >/dev/null 2>&1;then
+    method=${method:-xinput}
+    touchpad=$(xinput list | egrep -io 'touchpad\s*id\=[0-9]{1,2}' | egrep -o '[0-9]{1,2}')
+    name=$(xinput list --name-only "$touchpad")
+    state=$(echo $(xinput list-props "$touchpad" | grep 'Device Enabled') | cut -d' ' -f4)
+fi
 
+enable_touchpad() {
+    case "$method" in
+        xinput)
+            xinput enable "$touchpad"
+        ;;
+        xfconf)
+            xfconf-query -c pointers -p "/$touchpad/Properties/Device_Enabled" -s 1
+        ;;
+    esac
+}    
+
+disable_touchpad() {
+    case "$method" in
+        xinput)
+            xinput disable "$touchpad"
+        ;;
+        xfconf)
+            xfconf-query -c pointers -p "/$touchpad/Properties/Device_Enabled" -s 0
+        ;;
+    esac
+}
+
+# state should be a boolean, with 0 being off and 1 being on
 if [[ "$state" -eq 1 ]];then
-    echo "Turning off touchpad..."
-    xinput disable $touchpad
+    echo "Turning off ${name:-$touchpad}..."
+    disable_touchpad
 else
-    echo "Turning on touchpad..."
-    xinput enable $touchpad
+    echo "Turning on ${name:-$touchpad}..."
+    enable_touchpad
 fi
