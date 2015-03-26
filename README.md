@@ -135,4 +135,4 @@ Configuration is set within the script. You need to edit the `wrap_mode_action()
 Common functions used for scripts in this repository.
 
 ## License
-These scripts are all licensed under the [MIT License](LICENSE).
+These scripts are all licensed under the [ISC License](LICENSE).

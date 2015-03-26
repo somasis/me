@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # cratefinder -- scrobble to lastfm from vinyl
-# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
+#
+# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Distributed under the terms of the ISC License
 # https://github.com/somasis/scripts/
 
 turntable_input="alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # common.sh -- common functions used in my scripts
-# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
+# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Distributed under the terms of the ISC License
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 use_color="${use_color:-true}"

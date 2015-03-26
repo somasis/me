@@ -1,6 +1,8 @@
 #!/bin/ksh
 # update-from-src - update an OpenBSD-based system from source
-# (c) 2014 Kylie McClain <somasissounds@gmail.com> - MIT License
+#
+# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Distributed under the terms of the ISC License
 #
 # by default this script is configured for a Bitrig system
 # thus, it uses git. it can very easily be customized for a
