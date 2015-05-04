@@ -1,0 +1,47 @@
+#!/bin/bash
+# cave-update-pbins-matching-remote <ssh host(s)>
+# update packages in a pbin repository if they are outdated
+# on given ssh-connectible hosts
+#
+# Copyright 2015, Kylie McClain <somasissounds@gmail.com>
+# Distributed under the terms of the ISC License
+
+SUDO=${SUDO:-sudo}
+CAVE=${CAVE:-cave}
+
+def_args=( "-z" "-1" )
+
+set -e -o pipefail
+
+help() {
+    echo "usage: ${0##*/} [-cave resolve arguments] <ssh host(s)>"
+}
+
+if [[ "$#" -lt 1 ]];then
+    help
+    exit 2
+fi
+
+args=()
+hosts=()
+
+while [[ "$#" -ne 0 ]];do
+    if [[ "$1" == "-"* ]];then
+        args+=( $1 )
+    else
+        hosts+=( $1 )
+    fi
+    shift
+done
+
+for host in ${hosts[@]};do
+    echo "${host}: getting packages in world..."
+    remote_packages=(
+        $(ssh "$host" -- "$CAVE"' print-set -x world | egrep -v "^(user|group|repository)/"')
+    )
+
+    echo "${host}: \`\"$SUDO\" \"$CAVE\" resolve -1 --make binaries ${def_args[@]} ${args[@]}\`..."
+    for pkg in ${remote_packages[@]};do
+        printf '%s\0' "${pkg}"
+    done | xargs -0 "$SUDO" "$CAVE" resolve -Ks --make binaries "${def_args[@]}" "${args[@]}"
+done
