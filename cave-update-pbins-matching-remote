@@ -39,11 +39,25 @@ for host in ${hosts[@]};do
     ssh -t "$host" -- "$SUDO" -- "$CAVE" sync
     echo "${host}: getting outdated packages..."
     remote_packages=(
-        $(ssh "$host" -- "$CAVE"' print-set -x world | egrep -v "^(user|group|repository)/"')
+        $(echo $(ssh "${host}" -- "$SUDO" "$CAVE" report | grep 'Has better version' | cut -d':' -f2-))
     )
 
+    remote_packages_new=(
+        $(for pkg in ${remote_packages[@]};do
+            eval "$(cave print-id-environment-variable =${pkg} --variable-name CATEGORY --variable-name PN --variable-name SLOT)"
+            echo "${CATEGORY}/${PN}:${SLOT}"
+        done)
+    )
+
+    remote_packages=( ${remote_packages_new[@]} )
+    remote_packages_new=
+
+    echo "${host}: packages needing updating:"
+    for pkg in ${remote_packages[@]};do
+        printf "${host}"': \t%s\n' "${pkg}"
+    done
     echo "${host}: \`\"$SUDO\" \"$CAVE\" resolve -1 --make binaries ${def_args[@]} ${args[@]}\`..."
     for pkg in ${remote_packages[@]};do
         printf '%s\0' "${pkg}"
-    done | xargs -0 "$SUDO" "$CAVE" resolve -Ks --make binaries "${def_args[@]}" "${args[@]}"
+    done | xargs -0 "$SUDO" "$CAVE" resolve -Ks -Si -si --make binaries "${def_args[@]}" "${args[@]}"
 done
