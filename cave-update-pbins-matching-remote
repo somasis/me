@@ -35,7 +35,9 @@ while [[ "$#" -ne 0 ]];do
 done
 
 for host in ${hosts[@]};do
-    echo "${host}: getting packages in world..."
+    echo "${host}: synchronizing repositories..."
+    ssh -t "$host" -- "$SUDO" -- "$CAVE" sync
+    echo "${host}: getting outdated packages..."
     remote_packages=(
         $(ssh "$host" -- "$CAVE"' print-set -x world | egrep -v "^(user|group|repository)/"')
     )
