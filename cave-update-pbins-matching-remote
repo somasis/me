@@ -10,8 +10,18 @@ SUDO=${SUDO:-sudo}
 CAVE=${CAVE:-cave}
 
 def_args=( "-z" "-1" )
+upgrade_args=( "-Cs" )
 
 set -e -o pipefail
+
+cave() {
+    eval "command ${SUDO} ${CAVE} $@ || die $?"
+}
+
+die() {
+    echo "${0##*/}: dying with error code $1"
+    exit $1
+}
 
 help() {
     echo "usage: ${0##*/} [-cave resolve arguments] <ssh host(s)>"
@@ -26,7 +36,10 @@ args=()
 hosts=()
 
 while [[ "$#" -ne 0 ]];do
-    if [[ "$1" == "-"* ]];then
+    if [[ "$1" == "-x" ]];then
+        args+=( $1 )
+        upgrade_host=true
+    elif [[ "$1" == "-"* ]];then
         args+=( $1 )
     else
         hosts+=( $1 )
@@ -34,12 +47,15 @@ while [[ "$#" -ne 0 ]];do
     shift
 done
 
+echo "synchronizing repositories on local..."
+cave sync
+
 for host in ${hosts[@]};do
-    echo "${host}: synchronizing repositories..."
-    ssh -t "$host" -- "$SUDO" -- "$CAVE" sync
+    echo "${host}: synchronizing repositories on remote..."
+    ssh -t "$host" "$SUDO" "$CAVE" sync || die $?
     echo "${host}: getting outdated packages..."
     remote_packages=(
-        $(echo $(ssh "${host}" -- "$SUDO" "$CAVE" report | grep 'Has better version' | cut -d':' -f2-))
+        $(echo $(ssh "${host}" "$SUDO" "$CAVE" report | grep 'Has better version' | cut -d':' -f2-))
     )
 
     remote_packages_new=(
@@ -52,12 +68,16 @@ for host in ${hosts[@]};do
     remote_packages=( ${remote_packages_new[@]} )
     remote_packages_new=
 
-    echo "${host}: packages needing updating:"
-    for pkg in ${remote_packages[@]};do
-        printf "${host}"': \t%s\n' "${pkg}"
-    done
-    echo "${host}: \`\"$SUDO\" \"$CAVE\" resolve -1 --make binaries ${def_args[@]} ${args[@]}\`..."
+    echo "${host}: \`\"$SUDO\" \"$CAVE\" resolve -1 --make binaries ${def_args[@]} ${args[@]} ${remote_packages[@]}\`..."
     for pkg in ${remote_packages[@]};do
         printf '%s\0' "${pkg}"
-    done | xargs -0 "$SUDO" "$CAVE" resolve -Ks -Si -si --make binaries "${def_args[@]}" "${args[@]}"
+    done | xargs -0 "$SUDO" "$CAVE" resolve -Ks --make binaries "${def_args[@]}" "${args[@]}" || die $?
+
+    if [[ "$upgrade_host" ]];then
+        echo "${host}: synchronizing repositories on remote..."
+        ssh -t "${host}" "$SUDO" "$CAVE" sync || die $?
+        echo "${host}: upgrading world on remote host..."
+        echo "${host}: \`\"$SUDO\" \"$CAVE\" resolve -cx world\`"
+        ssh -t "${host}" "$SUDO" "$CAVE" resolve "${upgrade_args[@]}" -cx world || die $?
+    fi
 done
