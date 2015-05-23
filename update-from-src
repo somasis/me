@@ -1,7 +1,7 @@
 #!/bin/ksh
 # update-from-src - update an OpenBSD-based system from source
 #
-# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the ISC License
 #
 # by default this script is configured for a Bitrig system
@@ -150,7 +150,7 @@ read_news() {
 
 show_help() {
     # TODO: write man page and remove this option after doing so
-    echo "update-from-src: created by Kylie McClain <somasissounds@gmail.com>"
+    echo "update-from-src: created by Kylie McClain <somasis@exherbo.org>"
     echo "usage: $me -kusr"
     echo
     echo "arguments:"
@@ -214,7 +214,7 @@ for arg in $(getopt knsuh "$@");do
     esac
 done
 
-echo "$me: created by Kylie McClain <somasissounds@gmail.com>"
+echo "$me: created by Kylie McClain <somasis@exherbo.org>"
 echo "for a list of commands, execute \`$me -h\`"
 echo
 sleep 2

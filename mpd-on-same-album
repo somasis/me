@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # mpd-on-same-album - set replaygain and crossfade depending on if next track is from same album
 #
-# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the ISC License
 # https://github.com/somasis/scripts/
 

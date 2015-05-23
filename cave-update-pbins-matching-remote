@@ -3,7 +3,7 @@
 # update packages in a pbin repository if they are outdated
 # on given ssh-connectible hosts
 #
-# Copyright 2015, Kylie McClain <somasissounds@gmail.com>
+# Copyright 2015 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the ISC License
 
 SUDO=${SUDO:-sudo}

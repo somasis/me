@@ -3,7 +3,7 @@
 # note: if you run Bitrig, this is not useful. it is implemented in the system
 # resolver now. check the manpage resolv.conf(5).
 #
-# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the ISC License
 #
 hosts_file=/etc/hosts

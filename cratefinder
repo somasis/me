@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # cratefinder -- scrobble to lastfm from vinyl
 #
-# Copyright 2014-2015, Kylie McClain <somasissounds@gmail.com>
+# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the ISC License
 # https://github.com/somasis/scripts/
 
