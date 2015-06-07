@@ -21,7 +21,7 @@ fi
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 script_description="A script to set replaygain and crossfade based on what track is next"
-script_credit="Written by Kylie McClain <https://github.com/somasis>, MIT license."
+script_credit="Written by Kylie McClain <https://github.com/somasis>, ISC license."
 error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
 
 error_bootstrap() {
