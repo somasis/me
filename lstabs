@@ -1,0 +1,21 @@
+#!/bin/bash
+# lstabs - list tabs currently open in firefox
+#
+# ported from http://chneukirchen.org/dotfiles/bin/lstab
+# it's faster, too! thanks, jshon <3
+#
+# Copyright 2015 Kylie McClain <somasis@exherbo.org>
+# Distributed under the terms of the ISC License
+
+parse() {
+    jshon   -QC \
+            -e windows -a \
+            -e tabs -a \
+            -e entries -a \
+            -e url -u -pe title -u \
+            | sed 's/^null//' | paste -s -d $'\t'$'\n' | column -t -s $'\t'
+}
+
+for file in "$HOME"/.mozilla/firefox/*.default/sessionstore-backups/recovery.js;do
+    parse < "$file"
+done
