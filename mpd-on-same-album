@@ -51,8 +51,6 @@ echo "Crossfade length: $preferred_crossfade"
 echo "If replaygain should be set: $set_replaygain"
 echo "How often to check: $sleep_amount"
 
-show_help
-
 while true; do
     sleep "$sleep_amount"
     old_replaygain="$replaygain"
@@ -70,7 +68,7 @@ while true; do
         echo "Next song: $next"
     fi
     if [[ "$np" == "$next" ]];then
-        if [[ "$crossfade" -ne 0 ]];then
+        if [[ "$crossfade" != 0 ]];then
             mpc crossfade 0
             echo "Crossfade set to: 0"
         fi
@@ -79,9 +77,9 @@ while true; do
             echo "Replaygain set to: album mode"
         fi
     else
-        if [[ "$crossfade" -ne "$preferred_crossfade" ]];then
+        if [[ "$crossfade" != "$preferred_crossfade" ]];then
             mpc crossfade "$preferred_crossfade"
-            echo "Crossfade set to: $prefered_crossfade"
+            echo "Crossfade set to: $preferred_crossfade"
         fi
         if [[ "$set_replaygain" == true && "$replaygain" != "$old_replaygain" ]];then
             mpc replaygain track
