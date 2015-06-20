@@ -6,7 +6,6 @@ If a script has configuration, it is probably read from `$XDG_CONFIG_HOME`.
 
 This is normally a folder named `.config` in your home directory. If `$XDG_CONFIG_HOME` is not defined, it will default to `$HOME/.config`.
 
-
 ## OldNotifier
 OldNotifier is a shell script (requires bash) that uses [The Old Reader](theoldreader.com)'s API to show notifications every so often about how many unread articles you have, and how many articles in a label/folder you have unread.
 
@@ -26,8 +25,6 @@ Configuration can be set in `$XDG_CONFIG_HOME/oldnotifier.conf`.
 - `retrieve_preference` - What program you'd like to use for retrieving the data; ex. `wget` (curl and wget are the only valid options)
 - `protocol` - What protocol to use for getting it; ex. `https` (http and https are the only valid options. Please use https.)
 - `icon` - What icon to use for the notifications. You can use a file location or a system icon name here; ex. `internet-feed-reader`
-- `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
-- `config_location` - Location of `oldnotifier.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/oldnotifier.conf'` (note the single quotes)
 
 
 ## rc
@@ -65,8 +62,6 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-alarm.conf`.
 - `previous_playlist` - Where to save the MPD playlist before the alarm went off to; ex. `Previous`
 - `sound_system` - Sound system that you use. This can be alsa, oss, or pulseaudio. When in doubt, choose alsa; ex. `pulseaudio`
 - `pulse_output`, `alsa_channel`, `oss_output` - Name of output that will have the volume changed when the alarm goes off
-- `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
-- `config_location` - Location of `mpd-alarm.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/mpd-alarm.conf'` (note the single quotes)
 
 ## mpd-on-same-album
 `mpd-on-same-album` sets the Replaygain value and crossfade value based on what track is next.
@@ -88,8 +83,6 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-on-same-album.conf`.
 - `set_replaygain` - If you want Replaygain to be set based on the next track; ex. `true`
 - `preferred_crossfade` - Length that crossfade should be set to when next track is not from current album; ex. `2`, for two second crossfade.
 - `sleep_amount` - Amount to sleep in between checking currently playing track; ex. `2s` for two seconds.
-- `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
-- `config_location` - Location of `mpd-on-same-album.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/mpd-on-same-album.conf'` (note the single quotes)
 
 ## cratefinder
 `cratefinder` is a work-in-progress (doesn't really even work yet, that is) script thats attempts to listen to what your turntable is playing, and then digs through the virtual record crates of the internet (I mean echoprint fingerprints) and sends them to Last.FM.
@@ -107,8 +100,6 @@ Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`.
 - `turntable_input` - Where to listen to for the turntable input; ex. `alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo`
 - `record_time` - How long to listen for. Times longer than a minute are not really useful. Echoprint recommends 30-40s; ex. `30s`
 - `lastfmsubmit_path` - Path to the `lastfmsubmit` program that comes with `lastfmsubmitd`; ex `/usr/lib/lastfmsubmitd/lastfmsubmit`
-- `common_location` - Location of `common.sh`. If you don't have it in the script directory, it will be downloaded to the directory; ex. `'$SCRIPT_DIR/common.sh'` (note the single quotes)
-- `config_location` - Location of `mpd-alarm.conf`. To change this, you need to change it in the script, or export `$config_location` before running; ex. `'$XDG_CONFIG_HOME/cratefinder.conf'` (note the single quotes)
 
 ## toggle-touchpad
 `toggle-touchpad` just attempts to toggle the first touchpad it finds on your system, using xinput. Xinput is used instead of, say, Synclient because synclient does not turn off the buttons on some touchpads. Xinput, does though.
@@ -130,9 +121,6 @@ Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`.
 
 ### Configuration
 Configuration is set within the script. You need to edit the `wrap_mode_action()` function to do what you want. This can be anything from uploading an image via wget to renaming it, whatever you can write in `bash` script, you can make it do.
-
-## common.sh
-Common functions used for scripts in this repository.
 
 ## License
 These scripts are all licensed under the [ISC License](LICENSE).
