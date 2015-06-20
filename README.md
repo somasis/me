@@ -84,23 +84,6 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-on-same-album.conf`.
 - `preferred_crossfade` - Length that crossfade should be set to when next track is not from current album; ex. `2`, for two second crossfade.
 - `sleep_amount` - Amount to sleep in between checking currently playing track; ex. `2s` for two seconds.
 
-## cratefinder
-`cratefinder` is a work-in-progress (doesn't really even work yet, that is) script thats attempts to listen to what your turntable is playing, and then digs through the virtual record crates of the internet (I mean echoprint fingerprints) and sends them to Last.FM.
-
-### Prerequisites
-- An internet connection
-- [`echoprint-codegen`](https://github.com/echonest/echoprint-codegen)
-- `lastfmsubmitd`
-- `parecord` (comes with PulseAudio)
-
-### Configuration
-Configuration is found in `$XDG_CONFIG_HOME/cratefinder.conf`.
-
-#### Configuration variables
-- `turntable_input` - Where to listen to for the turntable input; ex. `alsa_input.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00-CODEC.analog-stereo`
-- `record_time` - How long to listen for. Times longer than a minute are not really useful. Echoprint recommends 30-40s; ex. `30s`
-- `lastfmsubmit_path` - Path to the `lastfmsubmit` program that comes with `lastfmsubmitd`; ex `/usr/lib/lastfmsubmitd/lastfmsubmit`
-
 ## toggle-touchpad
 `toggle-touchpad` just attempts to toggle the first touchpad it finds on your system, using xinput. Xinput is used instead of, say, Synclient because synclient does not turn off the buttons on some touchpads. Xinput, does though.
 
