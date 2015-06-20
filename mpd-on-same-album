@@ -17,8 +17,7 @@ sleep_amount="2s" # amount to sleep between checking/setting
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 config_location="$XDG_CONFIG_HOME/mpd-on-same-album.conf"
 
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-. "$config_location"
+[[ -f "$config_location" ]] && . "$config_location"
 
 [[ -n "$MPD_HOST" ]] && echo "Host: $MPD_HOST"
 [[ -n "$MPD_PORT" ]] && echo "Port: $MPD_PORT"
