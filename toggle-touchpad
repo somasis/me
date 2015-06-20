@@ -26,7 +26,7 @@ enable_touchpad() {
             xfconf-query -c pointers -p "/$touchpad/Properties/Device_Enabled" -s 1
         ;;
     esac
-}    
+}
 
 disable_touchpad() {
     case "$method" in
