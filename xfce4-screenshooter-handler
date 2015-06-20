@@ -26,7 +26,7 @@ wrap_mode_action() {
     filename=$(basename "$file")
     url_encoded_filename=$(urlencode "$filename")
     copy_to="$HOME/Sync/Public"
-    final_url="https://etc.somasis.com/sync/$url_encoded_filename"
+    final_url="https://somasis.com/sync/$url_encoded_filename"
     echo "\"$filename\" -> \"$copy_to/$filename\"..."
     cp "$file" "$HOME/Pictures/Screenshots"
     mv "$file" "$copy_to/$filename"
