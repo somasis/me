@@ -83,8 +83,6 @@ sleepuntil() { # sleepuntil - borrowed with some modifications from http://stack
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 config_location="$XDG_CONFIG_HOME/oldnotifier.conf"
 
-# okay, now that we know the dir, find out the variables in the $locations
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 [[ -f "$config_location" ]] && . "$config_location"
 
 user_agent="oldnotifier - https://github.com/somasis/scripts"
