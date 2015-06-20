@@ -5,7 +5,7 @@
 # Distributed under the terms of the ISC License
 # https://github.com/somasis/scripts/
 #
-# Prerequisites: notify-send, curl or wget, Old Reader account
+# Prerequisites: notify-send, curl, Old Reader account
 #   notify-send might be found in `libnotify-bin`, `libnotify`, or `notify-send`
 #
 # How to run: Just run `oldnotifier` without any arguments.
@@ -34,7 +34,6 @@
 #
 #   Lastly, enjoy your addiction, thanks to The Old Reader and this program. :)
 
-
 ## Don't change these variables, use oldnotifier.conf for your own settings!
 ## These are used as the fallbacks for unset settings. They might change with
 ## updates, so it's best to set them in your config so you don't rely on defaults
@@ -42,13 +41,8 @@ email=
 password=
 notify_every="30m" # Don't set this under 10m unless you want to get in trouble!
 wait_until_top_of_hour="false" # wait until the minute is 00 to notify?
-retrieve_preference="wget" # curl or wget for retrieval of data?
-protocol="https" # https usage, so it won't be read by someone that isn't you!
 icon='internet-feed-reader' # Icon used for notification. Location or system icon name
-common_location='$SCRIPT_DIR/common.sh'
-if [[ -z "$config_location" ]];then
-    config_location='$XDG_CONFIG_HOME/oldnotifier.conf'
-fi
+
 # About $common_location and $config_location:
 # Yes, you need to use single quotes though this is a variable-using setting.
 # Normally in bash you use double quotes for variable-using strings, but
@@ -58,43 +52,51 @@ fi
 ## This is where the script begins;
 ## don't edit this unless you know what you are doing! :)
 
-XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-script_description="A notifier for The Old Reader."
-script_credit="Written by Kylie McClain <https://github.com/somasis>, ISC license."
-user_agent="oldnotifier - https://github.com/somasis/scripts"
-error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
+me=oldnotifier
 
-error_bootstrap() {
-    echo "$error_bootstrap"; exit 10
+stderr() { # stderr <msg>
+    echo "$@" >&2
 }
+
+die() { # die <err msg> <err code> or die <err code>
+    if [[ "$#" -gt 1 ]];then
+        local err_msg="$1"
+        local err_code="$2"
+        stderr "$me: $err_msg; dying"
+    else
+        local err_code="$1"
+    fi
+    exit $err_code
+}
+
+sleepuntil() { # sleepuntil - borrowed with some modifications from http://stackoverflow.com/a/19067658
+    local slp tzoff now
+    local hms=(${1//:/ })
+    printf -v now '%(%s)T' -1
+    printf -v tzoff '%(%z)T\n' $now
+    tzoff=$((0${tzoff:0:1}(3600*${tzoff:1:2}+60*${tzoff:3:2})))
+    slp=$(((86400+(now-now%86400)+10#$hms*3600+10#${hms[1]}*60+${hms[2]}-tzoff-now)%86400))
+    sleep $slp
+}
+
+
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+config_location="$XDG_CONFIG_HOME/oldnotifier.conf"
 
 # okay, now that we know the dir, find out the variables in the $locations
 SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-eval "common_location=$common_location"
-eval "config_location=$config_location"
-. "$config_location" 2>&1 >/dev/null
+[[ -f "$config_location" ]] && . "$config_location"
 
-
-# Bootstrap common.sh script if it's not accessable
-if [[ ! -f "$common_location" ]];then
-    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/somasis/scripts/master/common.sh" || error_bootstrap
-    echo "Bootstrapped common.sh functions, script will continue like normal."
-    . "$common_location" 2>&1 >/dev/null || error_bootstrap
-else
-    . "$common_location" 2>&1 >/dev/null || error_bootstrap
-fi
-
+user_agent="oldnotifier - https://github.com/somasis/scripts"
 
 # Make sure notify-send is installed.
 if ! command -v notify-send 2>&1 >/dev/null;then
-    show_help 6 "\`notify-send\` is not installed, it is needed for notifications.\nTry looking for a package named \"libnotify-bin\", \"libnotify\", or \"notify-osd\"."
+    die "\`notify-send\` is not installed, it is needed for notifications" 6
 fi
 
 if [[ "$email" != *@* ]];then
-    show_help 1 "You must supply an email.\nYou can change the configuration by adding your own settings to \"$XDG_CONFIG_HOME/oldnotifier.conf\"."
+    die "You must supply an email. You can change the configuration by adding your own settings to \"$XDG_CONFIG_HOME/oldnotifier.conf\"" 1
 fi
-
-show_help
 
 if [[ "$wait_until_top_of_hour" == "true" ]];then
     if [[ "$(( $(date +%H) + 1 ))" -lt 24 ]];then
@@ -106,16 +108,16 @@ if [[ "$wait_until_top_of_hour" == "true" ]];then
     fi
 fi
 
-key=$(retrieve --post-data="client=oldnotifier&Email=$email&Passwd=$password" "$protocol://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
+key=$(curl -sd "client=oldnotifier&Email=$email&Passwd=$password" "https://theoldreader.com/accounts/ClientLogin" | grep "^Auth=" | cut -d'=' -f2)
 
 if [[ -z "$key" ]];then
-    show_help 2 "Key is invalid, check your password or email configuration"
+    die "Key is invalid, check your password or email configuration" 2
 fi
 
 while true; do
-    unread_raw=$(retrieve --header-data="Authorization: GoogleLogin auth=$key" "$protocol://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
+    unread_raw=$(curl -sH "Authorization: GoogleLogin auth=$key" "https://theoldreader.com/reader/api/0/unread-count?output=json" | sed 's/[0-9],/&,\n/g' | sed 's/","count":/:/g;s/.*id":"//g;s/,,//g;s/.*}]}//;s/{"//g;s/":/:/g' | grep -v '^$')
     if [[ -z "$unread_raw" ]];then
-        show_help 3 "Failed to get unread count, run this script with bash -x to get debug output"
+        die "Failed to get unread count, run this script with bash -x to get debug output" 3
     fi
 
     unread_total=$(echo "$unread_raw" | grep "^max:" | cut -d':' -f2)
