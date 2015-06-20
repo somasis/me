@@ -18,42 +18,29 @@ pulse_output=$(echo $(pactl list sinks short | head -n1) | cut -d' ' -f1)
 alsa_channel="Master"
 oss_output="vmix0-outvol"
 
-common_location='$SCRIPT_DIR/common.sh'
-if [[ -z "$config_location" ]];then
-    config_location='$XDG_CONFIG_HOME/mpd-alarm.conf'
-fi
-
-## Script begins here
-
-XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-script_description="A script to turn the Music Player Daemon into an alarm"
-script_credit="Written by Kylie McClain <https://github.com/somasis>, ISC license."
-error_bootstrap="Error: Failed to bootstrap the script with the common.sh functions, please make sure it is in the script directory ($SCRIPT_DIR)"
-
-error_bootstrap() {
-    echo "$error_bootstrap"; exit 10
+stderr() { # stderr <msg>
+    echo "$@" >&2
 }
 
-# okay, now that we know the dir, find out the variables in the $locations
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-eval "common_location=$common_location"
-eval "config_location=$config_location"
-. "$config_location" 2>&1 >/dev/null
+die() { # die <err msg> <err code> or die <err code>
+    if [[ "$#" -gt 1 ]];then
+        local err_msg="$1"
+        local err_code="$2"
+        stderr "$me: $err_msg; dying"
+    else
+        local err_code="$1"
+    fi
+    exit $err_code
+}
 
-# Bootstrap common.sh script if it's not accessable
-if [[ ! -f "$common_location" ]];then
-    wget -qO "$common_location" "$protocol://raw.githubusercontent.com/somasis/scripts/master/common.sh" || error_bootstrap
-    echo "Bootstrapped common.sh functions, script will continue like normal."
-    . "$common_location" 2>&1 >/dev/null || error_bootstrap
-else
-    . "$common_location" 2>&1 >/dev/null || error_bootstrap
-fi
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+config_location="$XDG_CONFIG_HOME/mpd-alarm.conf"
 
-show_help
+[[ -f "$config_location" ]] && . "$config_location"
 
-echo "Host: $MPD_HOST"
-echo "Alarm playlist: $alarm_playlist"
-echo "Previous: $previous_playlist"
+[[ "$MPD_HOST" ]] && echo "Host: $MPD_HOST"
+[[ "$alarm_playlist" ]] && echo "Alarm playlist: $alarm_playlist"
+[[ "$previous_playlist" ]] && echo "Previous: $previous_playlist"
 if [[ "$sound_system" == "pulseaudio" ]];then
     echo "PulseAudio output: $pulse_output"
 elif [[ "$sound_system" == "alsa" ]];then
@@ -61,7 +48,7 @@ elif [[ "$sound_system" == "alsa" ]];then
 elif [[ "$sound_system" == "oss" ]];then
     echo "OSS output: $oss_output"
 else
-    show_help 2 "Unknown sound system."
+    die "Unknown sound system." 2
 fi
 
 mpc() {
