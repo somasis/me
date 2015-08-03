@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ -z "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
+    echo "switching to running instance"
+    wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
+else
+    exec germinal "$@"
+fi
