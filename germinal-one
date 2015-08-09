@@ -1,6 +1,9 @@
 #!/bin/bash
 
-if [[ -z "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
+if [[ -z "$@" ]] && grep -q exo-helper /proc/$PPID/comm;then
+    tmux new-window "cd '${PWD}' && exec $SHELL"
+    wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
+elif [[ -z "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
     echo "switching to running instance"
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
 elif [[ -n "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
