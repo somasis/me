@@ -1,0 +1,7 @@
+#!/bin/sh
+
+for id in ${@};do
+    for url in $(${CAVE:-cave} print-id-metadata -b "$id" --raw-name HOMEPAGE --format '%v\n');do
+        ${BROWSER:-firefox} "${url}"
+    done
+done
