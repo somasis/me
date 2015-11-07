@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
+home=$(chroot "${dir}" grep "${USER}" /etc/passwd | cut -d':' -f6)
+
+mount -o bind       /proc       "${dir}"/proc
+mount -o bind       /sys        "${dir}"/sys
+mount -o rbind      /dev        "${dir}"/dev
+#mount -o bind       /dev/pts    "${dir}"/dev/pts
+
+env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-${SHELL}}"
+
+umount "${dir}"/{proc,sys,dev/pts,dev}
