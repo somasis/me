@@ -1,14 +1,23 @@
 #!/bin/bash
 
-if [[ -z "$@" ]] && grep -q exo-helper /proc/$PPID/comm;then
+if [[ "$1" == '--' ]];then
+    shift
+fi
+
+arg=$(echo "$@" | sed 's/^-e //')
+if [[ -z "$arg" ]] && grep -q exo-helper /proc/$PPID/comm;then
     tmux new-window "cd '${PWD}' && exec $SHELL"
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
-elif [[ -z "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
-    echo "switching to running instance"
+elif [[ -z "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
+    echo "switching to running instance" >&2
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
-elif [[ -n "${@}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
-    tmux new-window "$@"
+elif [[ -n "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
+    tmux new-window "$arg"
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
 else
-    exec germinal "$@"
+    if [[ -z "${arg}" ]];then
+        exec germinal
+    else
+        exec germinal "$arg"
+    fi
 fi
