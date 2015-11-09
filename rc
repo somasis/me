@@ -1,0 +1,258 @@
+#!/usr/bin/env bash
+# rc - enable/disable/start/stop/etc daemons - version 0.1
+# usage: rc [-h ssh-enabled-host.com] (start|stop|restart|enable|disable|[list]|help)
+# Control the currently running daemons. Works with systemd and upstart.
+#
+# Arguments:
+#      -h [ssh-enabled-host.com]
+#           Connect to a host using SSH and control it's init daemon.
+#           (requires sudo and bash on remote host)
+#
+# Actions:
+#      start <daemon>
+#           Start the <daemon> given.
+#
+#      stop <daemon>
+#           Stop the <daemon> given.
+#
+#      restart <daemon>
+#           Restart the <daemon> given.
+#
+#      enable <daemon>
+#           Enable the <daemon> given to run at startup.
+#
+#      disable <daemon>
+#           Disable the <daemon> given from running at startup.
+#
+#      list
+#           List the status of all daemons.
+#
+# Distributed under the terms of the ISC License
+# https://github.com/somasis/scripts/
+# End of help.
+# Copyright (c) 2014-2015 Kylie McClain <somasis@exherbo.org>
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+# End of copyright.
+
+if [[ -x /usr/bin/rc ]];then
+    exec /usr/bin/rc
+fi
+
+COLOR_RESET=$'\033[1;0m'
+COLOR_BOLD_RED=$'\033[1;31m'
+COLOR_BOLD_GREEN=$'\033[1;32m'
+COLOR_BOLD_YELLOW=$'\033[1;33m'
+COLOR_BOLD_BLUE=$'\033[1;34m'
+
+## Settings
+excluded_daemons=( "systemd-.*" "user@.*" "getty@.*" )
+
+help() {
+    sed -n '/^#/!d;s/^# //;s/^#//;3,${p;}' "$0" | \
+        while IFS= read help_line;do
+            if [[ "$help_line" == "End of help." ]];then
+                exit 0
+            else
+                printf "%s\n" "$help_line"
+            fi
+        done
+    exit 0
+}
+
+version() {
+    sed 's/^# //;s/.* - version/'"${0##*/}"'/;2q;$!d' "$0"
+    copyright
+    exit 0
+}
+
+copyright() {
+    sed -n '/^#/!d;s/^# //;s/^#//;/End of help./,${p;}' "$0" | \
+    while IFS= read copyright_line;do
+        if [[ "$copyright_line" == "End of help." ]];then
+            true
+        elif [[ "$copyright_line" == "End of copyright." ]];then
+            break
+        else
+            printf "%s\n" "$copyright_line"
+        fi
+    done
+}
+
+stderr() { # stderr <msg>
+    echo "$@" >&2
+}
+
+die() { # die <err msg> <err code> or die <err code>
+    if [[ "$#" -gt 1 ]];then
+        local err_msg="$1"
+        local err_code="$2"
+        stderr "$me: $err_msg; dying"
+    else
+        local err_code="$1"
+    fi
+    exit $err_code
+}
+
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+
+# bootstrap_ssh(): bootstraps the script for usage on any ssh server
+#                  since we get the content of common.sh and the config
+#                  without needing it on the remote host
+bootstrap_ssh() {
+    cat "$SCRIPT_DIR/${0##*/}" 2>/dev/null | ssh "$host" -- sudo bash -$- /dev/stdin "$@" 2>&1
+    bootstrap_ssh_error="$?"
+    exit "$bootstrap_ssh_error"
+}
+
+# list_init()
+list_init() {
+    if [[ ! -z "$1" ]];then
+        list_daemon="$1"
+    fi
+
+    if [[ "$init_system" == @(upstart|init) ]];then
+        upstart=$(service --status-all 2>&1 | cut -c2-)
+        initctl=$(initctl list 2>/dev/null | sed 's/(.*)//' | cut -d'/' -f1 | while read initctl_line;do echo -e "$(echo -e $initctl_line | cut -d' ' -f2) $(echo -e $initctl_line | cut -d' ' -f1)";done)
+        initctl=$(echo "$initctl" | sed -e 's/.*/ & /' -e :1 -e "s/ stop /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /g;t1" -e "s/ start /\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \] /g;t1" -e 's/^ //;s/ $//')
+        upstart=$(echo "$upstart" | sed -e "s/^..-... /\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \] /;s/^..+.../\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/;s/^..?..../\[ ${COLOR_BOLD_YELLOW}UNKNOWN${COLOR_RESET} \] /g" | grep -v '^$')
+        daemon_list=$(printf "$upstart\n$initctl")
+        OLDIFS="$IFS"
+        IFS=$'\n'
+        for daemon_in_list in $(echo "$daemon_list" | cut -d']' -f2 | cut -d' ' -f2);do
+            if [[ $(echo "$daemon_list" | grep "RUNNING.*$daemon_in_list") && $(echo "$daemon_list" | grep "UNKNOWN.*$daemon_in_list") ]];then
+                daemon_list=$(echo "$daemon_list" | grep -v "UNKNOWN.*$daemon_in_list" | grep -v '^$')
+            fi
+        done
+        IFS="$OLDIFS"
+        OLDIFS=
+    elif [[ "$init_system" == "systemd" ]];then
+        daemon_list=$(systemctl list-unit-files --type=service 2>/dev/null | while read initctl_line;do echo -e "$(echo -e $initctl_line | sed 's/.* //') $(echo -e $initctl_line | cut -d' ' -f1)";done | grep "\.service" | grep -v '@$')
+        daemon_list=$(echo "$daemon_list"; (systemctl --no-legend -t service 2>/dev/null | while read systemd_line;do echo -e "$(echo -e $systemd_line | cut -d' ' -f2) $(echo -e $systemd_line | cut -d' ' -f1)";done))
+        daemon_list=$(echo "$daemon_list" |
+            sed  -e     "s/^stopped/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/" \
+                 -e      "s/^static/\[ ${COLOR_BOLD_RED}STOPPED${COLOR_RESET} \]/" \
+                 -e    "s/^enabled/\[ ${COLOR_BOLD_BLUE}ENABLED${COLOR_RESET} \]/" \
+                 -e "s/^disabled/\[ ${COLOR_BOLD_YELLOW}DISABLE${COLOR_RESET} \]/" \
+                 -e    "s/^loaded/\[ ${COLOR_BOLD_GREEN}RUNNING${COLOR_RESET} \]/" \
+                 -e   "s/@$//" -e "s/\.service$//"
+        )
+        daemon_list=$(for exclude_daemon in $excluded_daemons[@];do echo "$daemon_list" | grep -v " $exclude_daemon$";done)
+    fi
+    if [[ -z "$list_daemon" ]];then
+        echo "$daemon_list" | grep --color=never "DISABLE" | sort -ud
+        echo "$daemon_list" | grep --color=never "STOPPED" | sort -ud
+        echo "$daemon_list" | grep --color=never "UNKNOWN" | sort -ud
+        echo "$daemon_list" | grep --color=never "ENABLED" | sort -ud
+        echo "$daemon_list" | grep --color=never "RUNNING" | sort -ud
+    else
+        echo "$daemon_list" | grep --color=never " $list_daemon$" | tail -n1 || exit "$?"
+    fi
+}
+
+do_action() {
+    if [[ ! -z "$1" ]];then
+        action="$do_action"
+        old_action="$action"
+    fi
+
+    if [[ "$action" == "enable" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            update-rc.d "$daemon" enable 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl enable "$daemon"
+        fi
+    elif [[ "$action" == "disable" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            update-rc.d "$daemon" disable 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl disable "$daemon"
+        fi
+    elif [[ "$action" == "start" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            "/etc/init.d/$daemon" "start" 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl start "$daemon"
+        fi
+    elif [[ "$action" == "stop" ]];then
+        if [[ "$init_system" == @(upstart|init) ]];then
+            "/etc/init.d/$daemon" "stop" 2>/dev/null
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl stop "$daemon"
+        fi
+    elif [[ "$action" == "restart" ]];then
+        old_action="$action"
+        action="stop"
+        do_action
+        action="start"
+        do_action
+        action="$old_action"
+        old_action=
+    elif [[ "$action" == "list" || -z "$action" ]];then
+        list_init
+    elif [[ "$action" == "help" || "$action" == "--help" ]];then
+        help
+    else
+        if [[ "$init_system" == @(upstart|init) ]];then
+            if [[ -f "/etc/init.d/$daemon" ]];then
+                "/etc/init.d/$daemon" "$action"
+            else
+                service "$daemon" "$action"
+            fi
+        elif [[ "$init_system" == "systemd" ]];then
+            systemctl "$action" "$daemon"
+        fi
+
+    fi
+    action="${action:-$old_action}"
+    old_action=
+}
+
+if [[ "$1" == "-h" ]];then
+    shift
+    host="$2"
+    shift || die "You need to provide a host."
+    bootstrap_ssh
+fi
+
+if [[ -r /proc/1/comm ]];then
+    init_system=$(</proc/1/comm)
+elif type -fPp systemctl >/dev/null 2>&1;then
+    init_system=systemd
+else
+    init_system=init
+fi
+
+action="$1"
+action=$(echo "$action" | tr '[A-Z]' '[a-z]')
+
+if [[ "$UID" -ne 0 ]]; then
+    exec sudo bash -$- "$SCRIPT_DIR/${0##*/}" "$action" "$@"
+    die "sudo failed" "$err_sudo_failed"
+fi
+
+if [[ "$init_system" == "systemd" ]];then
+    systemctl daemon-reload # make sure systemctl output is up-to-date
+fi
+
+shift
+shift
+if [[ -z "$@" ]];then
+    do_action
+else
+    for daemon in $@;do
+        do_action
+        list_init "$daemon"
+        shift
+    done
+fi
