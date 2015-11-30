@@ -5,7 +5,7 @@ if [[ "$1" == '--' ]];then
 fi
 
 arg=$(echo "$@" | sed 's/^-e //')
-if [[ -z "$arg" ]] && grep -q exo-helper /proc/$PPID/comm;then
+if [[ -z "$arg" ]] && grep -q exo-helper /proc/$PPID/comm && [[ "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
     tmux new-window "cd '${PWD}' && exec $SHELL"
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
 elif [[ -z "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
