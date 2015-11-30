@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Start mosh-server, but first create a port redirection in the NAT
+# router (with UPnP) and delete that redirection again just before
+# mosh-server exits.
+#
+# Created: 20 Sep 2012
+# Author: Bert Bos <bert@w3.org>
+
+
+# die -- print error on stderr and exit
+function die
+{
+  echo "$@" >&2
+  exit 1
+}
+
+
+declare -i port=0 n
+
+# Check if we have been given a port via the -p option.
+#
+for (( n = 1; n <= $#; n++ )); do
+  if [ ${!n} = "-p" ]; then n=n+1; port=${!n}; fi
+done
+
+# If we don't have a valid port yet, find one that is not in
+# use. Check that there is no server on this machine listening on the
+# port and that it is not already redirected on the NAT box.
+#
+if [ $port -ne 0 ]; then
+  fixed_port=true
+else
+  for (( port = 61000; port > 0; port-- )); do
+    if ! netstat -l -n -u | fgrep -q 0.0.0.0:$port; then
+      if ! upnpc -l | fgrep -q " UDP $port-"; then
+	break;			# Found one!
+      fi
+    fi
+  done
+fi
+
+# If we still don't have a port, we're in trouble
+#
+[[ $port -ne 0 ]] || die "Error: Could not find a free port!?"
+
+# Redirect the port in the NAT router
+#
+upnpc -r $port udp >/dev/null ||\
+ echo "Failed to redirect port $port. Continuing anyway..." >&2
+
+# Make a program that executes a shell, removes the port direction
+# when the shell exits, and finally removes itself.
+#
+UPNP_SHELL=`mktemp` || die "Error: Cannot create temporary file."
+cat >$UPNP_SHELL <<-EOF
+	#!$SHELL
+	trap "rm $UPNP_SHELL" 0
+	$SHELL
+	upnpc -d $port udp >/dev/null
+	EOF
+chmod +x $UPNP_SHELL
+
+# Start mosh-server
+#
+if [ "$fixed_port" ]; then
+  mosh-server "$@" -- $UPNP_SHELL
+else
+  mosh-server "$@" -p $port -- $UPNP_SHELL
+fi
