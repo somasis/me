@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for FILE in $@;do
+    git checkout $(git rev-list -2 HEAD -- "${FILE}" | tail -1) -- "${FILE}"
+done
+
