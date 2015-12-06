@@ -2,6 +2,13 @@
 
 branch=$(git rev-parse --abbrev-ref HEAD)
 remote=$(git config "branch.${branch}.remote")
-since=$(git log --oneline "${remote}/${branch}".."${branch}" | wc -l)
 
-git log --reverse "$@" HEAD~${since}..HEAD
+if [[ $# -lt 1 ]];then
+    timeframe=HEAD~$(git log --oneline "${remote}/${branch}".."${branch}" | wc -l)..HEAD
+else
+    timeframe="${1}"
+    shift
+fi
+
+
+git log --reverse "${timeframe}" "${@}"
