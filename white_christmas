@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while true;do
+    sleep 5s
+    if pgrep xfwm4;then
+        break
+    fi
+done
+
+if LC_ALL=C date +%b | egrep -q '(Dec)';then
+	xsnow -snowflakes 500 -ssnowdepth 50 -notrees
+fi
