@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cave print-id-metadata --raw-name EXHERES --format '%v' "$@"
+[[ -t 0 ]] && printf '\n'
+
