@@ -65,7 +65,7 @@ done
 
 MIRROR_CAT=${MIRROR_CAT#*://}
 
-for MIRROR_REMOTE in $(echo $(grep "^::${MIRROR_CAT##*/}\s" /etc/paludis/mirrors.conf | sed 's/\t/ /g') | cut -d' ' -f2-);do
+for MIRROR_REMOTE in $(echo $(grep "^::${MIRROR_CAT##*/}\s" /etc/paludis/mirrors.conf | sed 's/\t/ /g') | cut -d' ' -f2- | tr ' ' '\n' | shuf);do
     MIRROR_SYNCER=do${MIRROR_REMOTE%://*}
     echo ${MIRROR_SYNCER} ${ARGS} "${LOCAL}" "${MIRROR_REMOTE}" >&2
     ${MIRROR_WRAPPER} ${MIRROR_SYNCER} ${ARGS} "${LOCAL}" "${MIRROR_REMOTE}" && exit $?

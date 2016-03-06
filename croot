@@ -1,17 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 
 set -euo pipefail
 IFS=$'\n\t'
 
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
-home=$(chroot "${dir}" grep "${USER}" /etc/passwd | cut -d':' -f6)
+home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6)
 
-mount -o bind       /proc       "${dir}"/proc
-mount -o bind       /sys        "${dir}"/sys
+mount -t proc       /proc       "${dir}"/proc
+mount -o rbind      /sys        "${dir}"/sys
 mount -o rbind      /dev        "${dir}"/dev
 [[ -d "${dir}"/dev/pts ]] || mount -o bind       /dev/pts    "${dir}"/dev/pts
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-unshare -muipf env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-${SHELL}}"
+unshare -muipf env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-/bin/sh}"
 
-umount "${dir}"/{proc,sys,dev/pts,dev}
+umount -v "${dir}"/{proc,sys,dev/pts,dev}
