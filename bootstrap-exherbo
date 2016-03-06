@@ -1,0 +1,672 @@
+#!/bin/sh
+
+PKGS="
+    skeleton
+    eclectic:2.0.18
+    paludis:scm
+    eclectic:2.0.18
+"
+
+set -e
+ME=bootstrap-exherbo
+
+info() {
+    echo "$ME: $@" >&2
+}
+
+edo() {
+    info "\`$@\`"
+    "$@"
+}
+
+error() {
+    echo "$ME: error: $1" >&2
+    exit "${2:-1}"
+}
+
+if [ -z "$1" ];then
+    echo "usage: ${ME} <CHOST>" >&2
+    exit 1
+fi
+
+required_commands="
+    m4 autoconf automake make libtoolize pcre-config tidy xmlto file xz bash
+    rsync git wget patch bison hostname perl
+"
+
+for cmd in $required_commands;do
+    if command -v "$cmd" >/dev/null 2>&1;then
+        info "$cmd found: $(command -v "$cmd")"
+    else
+        error "$cmd is required. consider installing your distribution's devel packages."
+    fi
+done
+
+for module in Locale::gettext Locale::Messages Unicode::EastAsianWidth Text::Unidecode;do
+    if ! perl -e "use $module" >/dev/null 2>&1;then
+        error "the $module perl module was not found"
+    fi
+done
+
+if ! wget --help 2>&1 | grep -q 'GNU';then
+    error "GNU wget is required, busybox wget won't work with paludis yet"
+fi
+
+if command -v asciidoc >/dev/null 2>&1;then
+    info "asciidoc found: $(command -v asciidoc)"
+elif command -v asciidoc.py >/dev/null 2>&1;then
+    info "asciidoc.py found: $(command -v asciidoc.py)"
+else
+    error "asciidoc is required."
+fi
+
+export CHOST="${1}"
+export WORK="${2:-${PWD}/exherbo-${CHOST}}"
+export ARCHIVES="${WORK}/archives"
+export ROOT="${WORK}/root"
+export TOOLS="${WORK}/tools"
+export CONFIG_SITE="${WORK}/config.cache"
+
+for d in "$WORK" "$ROOT" "$ARCHIVES" "$TOOLS";do
+    [ -d "$d" ] || mkdir -p "$d"
+done
+
+info "working in $WORK"
+cd "$WORK"
+
+info "making toolchain links"
+for t in cc c++ cpp addr2line ar as c++filt dwp elfedit gprof ld nm objcopy objdump ranlib readelf size strings strip pkg-config;do
+    if [ -e "$TOOLS"/"$CHOST-$t" ] && [ -e "$TOOLS"/"$t" ];then
+        continue
+    elif command -v "$CHOST-$t" >/dev/null 2>&1;then
+        ln -fs $(command -v "$CHOST-$t") "$TOOLS"/"$CHOST-$t"
+        ln -fs $(command -v "$CHOST-$t") "$TOOLS"/"$t"
+    elif command -v "$t" >/dev/null 2>&1;then
+        ln -fs $(command -v "$t") "$TOOLS"/"$CHOST-$t"
+        ln -fs $(command -v "$t") "$TOOLS"/"$t"
+    else
+        error "cannot find $t"
+    fi
+    info "    $t, $CHOST-$t"
+done
+
+export PATH="/usr/${CHOST}/bin:/usr/host/bin:${ROOT}/usr/host/bin:${TOOLS}:${PATH}"
+
+[ -d /usr/include/linux ] || error "can't find linux-headers"
+
+export  CC=${CHOST}-cc
+export  HOSTCC=${CC} CC_FOR_BUILD=${CC}  \
+        CXX=${CHOST}-c++ CPP=${CHOST}-cpp ADDR2LINE=${CHOST}-addr2line              \
+        AR=${CHOST}-ar AS=${CHOST}-as CXXFILT=${CHOST}-c++filt DWP=${CHOST}-dwp     \
+        ELFEDIT=${CHOST}-elfedit GPROF=${CHOST}-gprof LD=${CHOST}-ld NM=${CHOST}-nm \
+        OBJCOPY=${CHOST}-objcopy OBJDUMP=${CHOST}-objdump RANLIB=${CHOST}-ranlib    \
+        READELF=${CHOST}-readelf SIZE=${CHOST}-size STRINGS=${CHOST}-strings        \
+        STRIP=${CHOST}-strip
+
+econf() {
+    [ -f config.cache ] && rm config.cache
+    econf_default_params="-C --prefix=/usr/${CHOST} --bindir=/usr/${CHOST}/bin --sbindir=/usr/${CHOST}/bin --libdir=/usr/${CHOST}/lib --datadir=/usr/share --datarootdir=/usr/share --docdir=/usr/share/doc/${PKG}-${VER} --infodir=/usr/share/info --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var/lib --enable-fast-install"
+    econf_default_params=$(echo "$econf_default_params" | tr ' ' '\n')
+    for p in "$@";do
+        case "$p" in
+            --hates=*)
+                econf_hates=$(echo "$p" | cut -d'=' -f2)
+                econf_default_params=$(echo "$econf_default_params" | grep -v -- "^--$econf_hates")
+            ;;
+            *)
+                econf_args="$econf_args $p"
+            ;;
+        esac
+    done
+    econf_default_params=$(echo "$econf_default_params" | tr '\n' ' ')
+    edo ${econf_configure:-./configure} $econf_default_params $econf_args
+    econf_args=
+    if [ -f config.cache ];then
+        [ -f "$CONFIG_SITE" ] || touch "$CONFIG_SITE"
+        edo cat config.cache >> "$CONFIG_SITE"
+        edo sed -e '/cv_prog/d' -e '/cv_path_/d' -e "/$CHOST/d" -e '/FLAGS/d' -i "$CONFIG_SITE"
+        edo sort -ud "$CONFIG_SITE" > "$CONFIG_SITE".tmp
+        edo rm "$CONFIG_SITE"
+        edo mv "$CONFIG_SITE".tmp "$CONFIG_SITE"
+    fi
+    echo
+}
+
+emake() {
+    [ -n "$JOBS" ] && nproc="$JOBS"
+    [ -z "$nproc" ] && nproc=$(grep -c ^processor /proc/cpuinfo)
+    edo make DESTDIR="/" -j$nproc $MAKEOPTS "$@"
+}
+
+get() {
+    get_url="$1"; shift
+    info "fetching $get_url"
+    [ -f "$ARCHIVES/$(basename "$get_url")" ] || command wget -O "$ARCHIVES/$(basename "$get_url")" "$get_url" "$@"
+}
+
+extract() {
+    extract_old_pwd="$PWD"
+    extract_archive="$ARCHIVES"/"$1"
+    shift
+    info "extracting $extract_archive"
+    extract_base=$(basename "$extract_archive")
+    [ -e "$ARCHIVES"/.extract-"$extract_base" ] && return 0
+    cd "$ARCHIVES"
+    case "$extract_archive" in
+        *.tar.gz)
+            tar xzf "$extract_archive" "$@"
+        ;;
+        *.tar.bz2)
+            tar xjf "$extract_archive" "$@"
+        ;;
+        *.tar.xz)
+            tar xJf "$extract_archive" "$@"
+        ;;
+        *)
+            error "not sure how to extract $extract_archive"
+        ;;
+    esac
+    touch "$ARCHIVES/.extract-$extract_base"
+    cd "$extract_old_pwd"
+}
+
+work() {
+    work_old_pwd="$PWD"
+    if [ -z "$1" ];then
+        cd "$ARCHIVES/$PKG-$VER"
+    else
+        cd "$ARCHIVES/$1"
+    fi
+    info "working in $PWD"
+}
+
+restore_work() {
+    [ -z "$work_old_pwd" ] || cd "$work_old_pwd"
+    work_old_pwd=
+}
+
+build_skeleton() {
+    for d in \
+        $(for d in cache/paludis/distfiles cache/paludis/metadata cache/paludis/names db/paludis/repositories/installed lib/exherbo/news;do
+            echo "/var/$d"
+        done);do
+        edo mkdir -p /"$d"
+        edo chown root:root /"$d"
+        edo chmod 0755 /"$d"
+    done
+    if ! grep -q ^paludisbuild /etc/group;then
+        if command -v groupadd >/dev/null 2>&1;then
+            edo groupadd paludisbuild
+        elif command -v addgroup >/dev/null 2>&1;then
+            edo addgroup paludisbuild
+        else
+            error "can't make paludisbuild group"
+        fi
+    fi
+    if ! grep -q ^paludisbuild /etc/passwd;then
+        if command -v useradd >/dev/null 2>&1;then
+            edo useradd -d /var/tmp/paludis -G tty -g paludisbuild paludisbuild
+        elif command -v adduser >/dev/null 2>&1;then
+            edo adduser -D -h /var/tmp/paludis paludisbuild -G paludisbuild
+            edo adduser paludisbuild tty
+        else
+            error "can't make paludisbuild user"
+        fi
+    fi
+    if ! grep -q ^paludisbuild /etc/group;then
+        if command -v groupadd >/dev/null 2>&1;then
+            edo groupadd paludisbuild
+        elif command -v addgroup >/dev/null 2>&1;then
+            edo addgroup paludisbuild
+        else
+            error "can't make paludisbuild group"
+        fi
+    fi
+    edo mkdir -p /var/cache/paludis/distfiles /var/tmp/paludis/build
+    edo chown paludisbuild:paludisbuild /var/cache/paludis/distfiles /var/tmp/paludis/build
+    edo chmod 770 /var/cache/paludis/distfiles /var/tmp/paludis/build
+
+    [ -d /usr/$CHOST ] || edo mkdir /usr/$CHOST
+    if [ ! -d /usr/$CHOST/include ];then
+        edo mkdir /usr/$CHOST/include
+        edo cp -ra /usr/include/*   /usr/$CHOST/include/
+    fi
+    if [ ! -d /usr/$CHOST/lib ];then
+        edo mkdir /usr/$CHOST/lib
+        edo cp -ra /usr/lib/*       /usr/$CHOST/lib/
+    fi
+    if [ ! -d /etc/etc.old ];then
+        edo cp -ra /etc             /etc.old
+        edo rm -rf /etc/*
+        edo mv /etc.old /etc/etc.old
+        edo cp /etc/etc.old/resolv.conf /etc/resolv.conf
+        edo cp -r /etc/etc.old/shadow /etc/etc.old/gshadow /etc/etc.old/passwd /etc/etc.old/group /etc
+        edo cp -r /etc/etc.old/asciidoc /etc/
+        edo cp -r /etc/etc.old/xml      /etc/
+    fi
+}
+
+build_eclectic() {
+    get "http://dev.exherbo.org/distfiles/$PKG/$PKG-$VER.tar.xz"
+    extract "$PKG-$VER.tar.xz"
+    work
+    econf
+    emake
+    emake install
+
+    if commmand -v cave >/dev/null 2>&1;then
+        no_touch=true
+    fi
+}
+
+build_paludis() {
+    get "http://git.exherbo.org/paludis/paludis.git/snapshot/paludis-cross.tar.xz"
+    extract "paludis-cross.tar.xz"
+    work "paludis-cross"
+    if [ ! -f configure ];then
+        edo ./autogen.bash
+    fi
+    [ -f Makefile ] || econf   \
+        $(for i in doxygen gtest pbins python ruby search-index stripper vim xml;do
+            echo --disable-$i
+        done
+        for i in default-distribution=exherbo config-framework=eclectic repositories=e,accounts,repository,unavailable,fake,unpackaged,unwritten;do
+            echo --with-$i
+        done) --enable-static
+    emake
+    emake install
+}
+
+build() {
+    cd "$WORK"
+    PKG="$1"
+    build_VER=$(echo "$PKG" | cut -d':' -f2)
+    PKG=$(echo "$PKG" | cut -d':' -f1)
+    clean_PKG=$(echo "$PKG" | tr '[+-]' '_')
+    if type ver_"$clean_PKG" >/dev/null 2>&1;then
+        VER=$(ver_"$clean_PKG")
+    else
+        VER="$build_VER"
+    fi
+    if [ "$VER" = "$PKG" ];then
+        info "building $PKG"
+    else
+        info "building $PKG-$VER"
+    fi
+    [ -f "$WORK/.built-$PKG" ] || build_"$clean_PKG"
+    if [ -z "$no_touch" ];then
+        touch "$WORK/.built-$PKG"
+    fi
+    no_touch=
+    econf_configure=
+    restore_work
+    PKG=; VER=;
+}
+
+for PKG in ${PKGS};do
+    build "$PKG"
+done
+
+
+info "writing paludis configuration files"
+
+clean_CHOST=$(echo "$CHOST" | tr '-' '_')
+platform=$(echo "$CHOST" | cut -d'-' -f1)
+case "$platform" in
+    i*86)
+        platform=x86
+    ;;
+    x86_64)
+        platform=amd64
+    ;;
+esac
+type=$(echo "$CHOST" | sed 's/.*-//g')
+case "$platform-$type" in
+    arm*)
+        profile=$platform/linux/$type
+    ;;
+    *-musl)
+        profile=$platform/musl
+    ;;
+    *-gnu)
+        profile=$platform
+    ;;
+    *)
+        error "not sure what profile to use for $platform-$type"
+    ;;
+esac
+
+case "$type" in
+    musl*)
+        libc_pkg="sys-libs/musl"
+    ;;
+    gnu*)
+        libc_pkg="sys-libs/glibc"
+    ;;
+    *)
+        error "not sure what libc to use for $type"
+    ;;
+esac
+
+[ -d /etc/paludis ] || edo mkdir /etc/paludis
+[ -d /etc/paludis/repositories ] || edo mkdir /etc/paludis/repositories
+
+paludis_conf() {
+    paludis_conf_basename=$(echo "$1" | tr '/' '-')
+    paludis_conf_tmp=$(mktemp)
+    cat > "$paludis_conf_tmp"
+    if ! cmp "$1" "$paludis_conf_tmp" >/dev/null 2>&1;then
+        info "writing $1"
+        cat "$paludis_conf_tmp" > "$1"
+        rm "$paludis_conf_tmp"
+    fi
+}
+
+# make host configs for paludis
+paludis_conf /etc/paludis/bashrc <<EOF
+CHOST="$CHOST"
+${clean_CHOST}_CFLAGS="-pipe -Os -g -march=native -mtune=native"
+${clean_CHOST}_CXXFLAGS="-pipe -Os -g -march=native -mtune=native"
+
+EOF
+
+paludis_conf /etc/paludis/general.conf <<'EOF'
+world = ${root}/var/db/paludis/repositories/installed/world
+EOF
+
+paludis_conf /etc/paludis/licences.conf <<'EOF'
+*/* *
+EOF
+
+paludis_conf /etc/paludis/options.conf <<EOF
+*/* targets: $CHOST
+*/* build_options: jobs=$JOBS -recommended_tests symbols=preserve
+*/* providers: -systemd eudev -gnu busybox -pkg-config pkgconf
+*/* -python -ruby -perl -systemd -dbus -udev
+
+EOF
+
+paludis_conf /etc/paludis/platforms.conf <<EOF
+*/* *
+EOF
+
+paludis_conf /etc/paludis/repository.template <<'EOF'
+format = %{repository_template_format}
+location = /var/db/paludis/repositories/%{repository_template_name}
+sync = %{repository_template_sync}
+EOF
+
+paludis_conf /etc/paludis/repositories/accounts.conf <<'EOF'
+format = accounts
+EOF
+
+paludis_conf /etc/paludis/repositories/arbor.conf <<EOF
+location = \${root}/var/db/paludis/repositories/arbor
+sync = git+http://git.exherbo.org/arbor.git
+profiles = \${location}/profiles/$profile
+format = e
+names_cache = \${root}/var/cache/paludis/names
+write_cache = \${root}/var/cache/paludis/metadata
+EOF
+
+paludis_conf /etc/paludis/repositories/graveyard.conf <<EOF
+format = unwritten
+location = \${root}/var/db/paludis/repositories/graveyard
+sync = git+http://git.exherbo.org/graveyard.git
+importance = -90
+EOF
+
+paludis_conf /etc/paludis/repositories/installed.conf <<EOF
+location = \${root}/var/db/paludis/repositories/installed
+format = exndbam
+names_cache = \${root}/var/cache/paludis/names
+split_debug_location = /usr/$CHOST/lib/debug
+tool_prefix = $CHOST-
+EOF
+
+paludis_conf /etc/paludis/repositories/installed_accounts.conf <<EOF
+format = installed-accounts
+handler = passwd
+EOF
+
+paludis_conf /etc/paludis/repositories/repository.conf <<EOF
+format = repository
+config_filename = /etc/paludis/repositories/%{repository_template_name}.conf
+config_template = /etc/paludis/repository.template
+EOF
+
+paludis_conf /etc/paludis/repositories/unavailable-unofficial.conf <<EOF
+format = unavailable
+name = unavailable-unofficial
+sync = tar+http://git.exherbo.org/exherbo_unofficial_repositories.tar.bz2
+location = \${root}/var/db/paludis/repositories/unavailable-unofficial
+importance = -100
+EOF
+
+paludis_conf /etc/paludis/repositories/unavailable.conf <<EOF
+format = unavailable
+name = unavailable
+sync = tar+http://git.exherbo.org/exherbo_repositories.tar.bz2
+location = \${root}/var/db/paludis/repositories/unavailable
+importance = -100
+EOF
+
+paludis_conf /etc/paludis/repositories/unwritten.conf <<EOF
+format = unwritten
+location = \${root}/var/db/paludis/repositories/unwritten
+sync = git+http://git.exherbo.org/unwritten.git
+importance = -100
+EOF
+
+paludis_conf /etc/paludis/package_mask.conf <<EOF
+sys-kernel/linux-headers[>$(uname -r | cut -d'-' -f1 | tr -d '+')]
+sys-apps/iproute2[>$(uname -r | cut -d'-' -f1 | tr -d '+')]
+sys-devel/binutils[<$(${LD} --version | head -1 | sed 's/.* //' | cut -d'.' -f1-2)]
+EOF
+
+paludis_conf /etc/paludis/package_unmask.conf <<EOF
+sys-devel/binutils[~>$(${LD} --version | head -1 | sed 's/.* //' | cut -d'.' -f1-2)]
+EOF
+
+# XXX: causes hangs for no apparent reason
+cat > /usr/$CHOST/libexec/eclectic/modules/news.eclectic <<EOF
+#!/bin/sh
+do_count() {
+    return 0
+}
+EOF
+
+cave_no_resolve_deps() {
+    edo cave resolve -1z -0 '*/*' -x "$@"
+}
+
+unset CONFIG_SITE
+unset ROOT
+
+export PALUDIS_DO_NOTHING_SANDBOXY=1
+
+[ -f "$WORK"/.synced ] || edo cave sync
+touch "$WORK"/.synced
+
+
+system_PKGS_1="
+    sys-devel/binutils
+    dev-libs/mpfr
+    dev-libs/gmp
+    dev-libs/mpc
+    sys-kernel/linux-headers
+    sys-devel/gcc
+    $libc_pkg
+    sys-apps/busybox
+    dev-util/pkgconf
+    virtual/pkg-config
+"
+
+for pkg in ${system_PKGS_1};do
+    pkg_name=$(echo "$pkg" | tr '[/:]' '-')
+    [ -f "$WORK"/.installed-$pkg_name-1 ] || cave_no_resolve_deps "$pkg"
+    touch "$WORK"/.installed-$pkg_name-1
+done
+
+if [ ! -f "$WORK"/.did-symlink-fixes-libstdc++ ];then
+    for f in /usr/$CHOST/lib/libstdc++* /usr/$CHOST/lib/libsupc++*;do
+        if [ ! -h "$f" ];then
+            edo mv "$f" "$f.old"
+            edo ln -fs "$f.old" "$f"
+        fi
+    done
+    touch "$WORK"/.did-symlink-fixes-libstdc++
+fi
+
+
+if [ ! -f "$WORK"/.installed-sys-libs-libstdc++-1 ];then
+    cave_no_resolve_deps sys-libs/libstdc++
+    edo rm -f /usr/$CHOST/lib/libstdc++*.old
+    edo rm -f /usr/$CHOST/lib/libsupc++*.old
+    touch "$WORK"/.installed-sys-libs-libstdc++-1
+fi
+
+edo eclectic pkg-config set --force pkgconf
+for busybox_provides in /etc/env.d/alternatives/*/busybox;do
+    busybox_provides=$(echo "$busybox_provides" | sed 's|/etc/env.d/alternatives/||;s|/busybox$||')
+    # if busybox provides and there's a virtual for it
+    if [ $(eclectic show $busybox_provides) != 'busybox' ] && [ -n $(cave print-ids -m virtual/$busybox_provides) ];then
+        edo eclectic $busybox_provides set --force busybox
+        pkg_name=$(echo "$pkg" | tr '[/:]' '-')
+        [ -f "$WORK"/.installed-$pkg_name-virt ] || cave_no_resolve_deps "$pkg"
+        touch "$WORK"/.installed-$pkg_name-virt
+    fi
+done
+
+system_PKGS_2="
+    sys-devel/binutils
+    dev-libs/mpfr
+    dev-libs/mpc
+    dev-libs/gmp
+    sys-devel/autoconf-wrapper
+    sys-devel/automake-wrapper
+    sys-devel/autoconf:2.5
+    sys-devel/automake:1.15
+    sys-libs/zlib
+    sys-devel/gcc
+    app-admin/eclectic-gcc
+    sys-libs/ncurses
+    app-shells/bash
+    app-arch/bzip2
+    sys-apps/busybox
+"
+
+for pkg in ${system_PKGS_2};do
+    pkg_name=$(echo "$pkg" | tr '[/:]' '-')
+    [ -f "$WORK"/.installed-$pkg_name-2 ] || cave_no_resolve_deps "$pkg"
+    touch "$WORK"/.installed-$pkg_name-2
+done
+
+system_PKGS_3="
+    sys-apps/diffutils
+    sys-apps/file
+    sys-apps/findutils
+    sys-devel/gettext
+    sys-devel/m4
+    sys-devel/make
+    sys-devel/patch
+    app-admin/eclectic
+    sys-libs/ncurses
+    sys-libs/readline
+    dev-libs/check
+    dev-libs/expat
+    dev-libs/libffi
+    dev-libs/openssl
+    dev-libs/pcre
+    sys-libs/libcap-ng
+    dev-lang/perl
+    dev-perl/Locale-gettext
+    sys-apps/help2man
+    sys-devel/libtool"
+
+for pkg in ${system_PKGS_3};do
+    pkg_name=$(echo "$pkg" | tr '[/:]' '-')
+    [ -f "$WORK"/.installed-$pkg_name-3 ] || cave_no_resolve_deps "$pkg"
+    touch "$WORK"/.installed-$pkg_name-3
+done
+
+[ -h /usr/host ] || edo ln -fs $CHOST /usr/host
+if [ ! -h /usr/include ];then
+    edo rm -rf /usr/include
+    edo ln -fs host/include /usr/include
+fi
+if [ ! -h /usr/lib ];then
+    edo rm -rf /usr/lib
+    edo ln -fs host/lib /usr/lib
+fi
+
+system_PKGS_4="
+    sys-apps/util-linux
+    sys-devel/patch
+    net-misc/wget
+    app-arch/xz
+    dev-perl/libintl-perl
+    dev-perl/Unicode-EastAsianWidth
+    dev-perl/Text-Unidecode
+    sys-apps/texinfo
+    sys-devel/bison
+    sys-devel/libtool
+    sys-devel/flex
+    sys-apps/bc
+    sys-apps/groff
+    sys-apps/man-pages
+    sys-fs/sysfsutils
+    sys-apps/hdparm
+    sys-libs/cracklib
+    sys-libs/pam
+    sys-apps/shadow
+    sys-devel/gettext
+"
+
+for pkg in ${system_PKGS_4};do
+    pkg_name=$(echo "$pkg" | tr '[/:]' '-')
+    [ -f "$WORK"/.installed-$pkg_name-4 ] || cave_no_resolve_deps "$pkg"
+    touch "$WORK"/.installed-$pkg_name-4
+done
+
+if [ -d /usr/bin ];then
+    edo mv /usr/bin /usr/bin.old
+    edo ln -fs host/bin /usr/bin
+fi
+if [ -d /usr/sbin ] || [ "$(readlink /usr/sbin)" != host/sbin ];then
+    edo mv /usr/sbin /usr/sbin.old
+    edo ln -fs host/sbin /usr/sbin
+fi
+cave_no_resolve_deps skeleton-filesystem-layout
+edo cave resolve -cx1 sys-apps/paludis
+
+edo rm /etc/paludis/package_unmask.conf /etc/paludis/package_mask.conf
+
+paludis_conf /etc/paludis/options.conf <<EOF
+*/* targets: $CHOST
+*/* build_options: jobs=$JOBS
+
+EOF
+
+paludis_conf /etc/paludis/platforms.conf <<EOF
+*/* ~$platform $platform
+
+EOF
+
+for f in /etc/paludis/repositories/*.conf;do
+    edo sed -e 's|http://git.exherbo.org|https://git.exherbo.org|g' -i "$f"
+done
+
+info "collecting unmanaged files..."
+edo cave print-unmanaged-files > "$WORK"/unmanaged
+
+for dir in /boot /dev /home /proc /root /sys /tmp /run /var/db/paludis/repositories /var/tmp/paludis/build "$WORK";do
+    edo sed -e "s|^$dir||" -i "$WORK"/unmanaged
+done
+
+edo cave resolve -cx world
+edo cave resolve -cx system
+
+echo
+info "congratulations, your system is bootstrapped. :)"
+info "$CHOST, $platform, $type ($libc_pkg), $profile"
