@@ -6,9 +6,11 @@ IFS=$'\n\t'
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
 home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6)
 
-mountpoint -q "${dir}"/proc || mount -t proc       /proc       "${dir}"/proc
-mountpoint -q "${dir}"/sys  || mount -o rbind      /sys        "${dir}"/sys
-mountpoint -q "${dir}"/dev  || mount -o rbind      /dev        "${dir}"/dev
+mountpoint -q "${dir}"/proc     || mount -t proc       /proc       "${dir}"/proc
+mountpoint -q "${dir}"/sys      || mount -o rbind      /sys        "${dir}"/sys
+mountpoint -q "${dir}"/dev      || mount -o rbind      /dev        "${dir}"/dev
+mountpoint -q "${dir}"/dev/shm  || mount -t tmpfs      /dev/shm    "${dir}"/dev/shm
+mountpoint -q "${dir}"/run      || mount -t tmpfs      /run        "${dir}"/run
 if [[ -d "${dir}"/dev/pts ]];then
     mountpoint -q "${dir}"/dev/pts || mount -o bind       /dev/pts    "${dir}"/dev/pts
 fi
@@ -16,4 +18,6 @@ fi
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
 unshare -muipf env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-/bin/sh}"
 
-umount -v "${dir}"/{proc,sys,dev/pts,dev}
+for d in "${dir}"/{proc,sys,dev,run};do
+    umount -vR "$d"
+done
