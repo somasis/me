@@ -6,10 +6,12 @@ IFS=$'\n\t'
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
 home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6)
 
-mount -t proc       /proc       "${dir}"/proc
-mount -o rbind      /sys        "${dir}"/sys
-mount -o rbind      /dev        "${dir}"/dev
-[[ -d "${dir}"/dev/pts ]] || mount -o bind       /dev/pts    "${dir}"/dev/pts
+mountpoint -q "${dir}"/proc || mount -t proc       /proc       "${dir}"/proc
+mountpoint -q "${dir}"/sys  || mount -o rbind      /sys        "${dir}"/sys
+mountpoint -q "${dir}"/dev  || mount -o rbind      /dev        "${dir}"/dev
+if [[ -d "${dir}"/dev/pts ]];then
+    mountpoint -q "${dir}"/dev/pts || mount -o bind       /dev/pts    "${dir}"/dev/pts
+fi
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
 unshare -muipf env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-/bin/sh}"
