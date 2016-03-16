@@ -251,6 +251,7 @@ build_eclectic() {
     get "http://git.exherbo.org/eclectic.git/snapshot/eclectic-master.tar.xz"
     extract "eclectic-master.tar.xz"
     work "eclectic-master"
+    edo ./autogen.bash
     econf
     emake
     emake install
