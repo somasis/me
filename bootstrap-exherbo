@@ -384,7 +384,7 @@ paludis_conf /etc/paludis/options.conf <<EOF
 */* build_options: jobs=$JOBS -recommended_tests symbols=preserve
 */* providers: -systemd eudev -gnu busybox -pkg-config pkgconf
 */* bootstrap
-*/* -python -ruby -perl -systemd -dbus -udev
+*/* -systemd -udev
 
 EOF
 
