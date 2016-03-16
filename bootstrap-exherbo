@@ -2,9 +2,9 @@
 
 PKGS="
     skeleton
-    eclectic:2.0.18
+    eclectic:scm
     paludis:scm
-    eclectic:2.0.18
+    eclectic:scm
 "
 
 set -e
@@ -247,9 +247,9 @@ build_skeleton() {
 }
 
 build_eclectic() {
-    get "http://dev.exherbo.org/distfiles/$PKG/$PKG-$VER.tar.xz"
-    extract "$PKG-$VER.tar.xz"
-    work
+    get "http://git.exherbo.org/eclectic.git/snapshot/eclectic-master.tar.xz"
+    extract "eclectic-master.tar.xz"
+    work "eclectic-master"
     econf
     emake
     emake install
@@ -487,7 +487,6 @@ export PALUDIS_DO_NOTHING_SANDBOXY=1
 
 [ -f "$WORK"/.synced ] || edo cave sync
 touch "$WORK"/.synced
-
 
 system_PKGS_1="
     sys-devel/binutils
