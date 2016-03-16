@@ -90,7 +90,8 @@ for t in cc c++ cpp addr2line ar as c++filt dwp elfedit gprof ld nm objcopy objd
     info "    $t, $CHOST-$t"
 done
 
-export PATH="/usr/${CHOST}/bin:/usr/host/bin:${ROOT}/usr/host/bin:${TOOLS}:${PATH}"
+edo export PATH="/usr/${CHOST}/bin:/usr/host/bin:${ROOT}/usr/host/bin:${TOOLS}:${PATH}"
+edo export LD_LIBRARY_PATH="/usr/${CHOST}/lib:/lib"
 
 [ -d /usr/include/linux ] || error "can't find linux-headers"
 
