@@ -6,18 +6,31 @@ IFS=$'\n\t'
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
 home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6)
 
-mountpoint -q "${dir}"/proc     || mount -t proc       /proc       "${dir}"/proc
-mountpoint -q "${dir}"/sys      || mount -o rbind      /sys        "${dir}"/sys
-mountpoint -q "${dir}"/dev      || mount -o rbind      /dev        "${dir}"/dev
-mountpoint -q "${dir}"/dev/shm  || mount -t tmpfs      /dev/shm    "${dir}"/dev/shm
-mountpoint -q "${dir}"/run      || mount -t tmpfs      /run        "${dir}"/run
+edo() {
+    echo "croot: $@" >&2
+    "$@"; return $?
+}
+
+cbind() {
+    local bind="$1" to="$2";shift;shift
+    local args="$@"
+    echo "croot: binding \"$bind\" to \"$to\"" >&2
+    mount -o rbind "$bind" "$to" $args
+}
+
+mountpoint -q "${dir}"/proc     || cbind    /proc       "${dir}"/proc
+mountpoint -q "${dir}"/sys      || cbind    /sys        "${dir}"/sys
+mountpoint -q "${dir}"/dev      || cbind    /dev        "${dir}"/dev
+mountpoint -q "${dir}"/dev/shm  || cbind    /dev/shm    "${dir}"/dev/shm
 if [[ -d "${dir}"/dev/pts ]];then
-    mountpoint -q "${dir}"/dev/pts || mount -o bind       /dev/pts    "${dir}"/dev/pts
+    mountpoint -q "${dir}"/dev/pts || cbind /dev/pts    "${dir}"/dev/pts
 fi
 
-cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-unshare -muipf env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" "${@:-/bin/sh}"
 
-for d in "${dir}"/{proc,sys,dev,run};do
+
+cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
+unshare -muif env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" ${SHELL} -c ". /etc/profile; exec ${SHELL}"
+
+for d in "${dir}"/{proc,sys,dev,run,tmp};do
     umount -vR "$d"
 done
