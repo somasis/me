@@ -1,0 +1,14 @@
+#!/bin/bash
+
+sync_hook() {
+    export PATH="$(${PALUDIS_EBUILD_DIR}/utils/canonicalise ${PALUDIS_EBUILD_DIR}/utils/ ):${PATH}"
+    source ${PALUDIS_ECHO_FUNCTIONS_DIR:-${PALUDIS_EBUILD_DIR}}/echo_functions.bash
+    einfo_unhooked "Synchronizing changes to disk..."
+    sync
+}
+
+hook_run_sync_all_post() { sync_hook; }
+hook_run_install_all_post() { sync_hook; }
+hook_after_sync_all_post() { echo sync_hook; }
+hook_after_install_all_post() { echo sync_hook; }
+hook_auto_names() { echo {sync,install}_all_post; }
