@@ -29,7 +29,7 @@ fi
 
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-unshare -muif env -i HOME="${HOME}" TERM="${TERM}" SHELL="${SHELL}" chroot "${dir}" ${SHELL} -c ". /etc/profile; exec ${SHELL}"
+unshare -p -muif env -i HOME="${HOME}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh}"
 
 for d in "${dir}"/{proc,sys,dev,run,tmp};do
     umount -vR "$d"
