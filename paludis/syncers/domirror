@@ -26,10 +26,6 @@
 #
 # domirror then figures out what list of urls is needed. Anything after "mirror://"
 # is taken as the "category".
-#
-# Does this mean you could theoretically make a repository sync from both git,
-# and tarballs? Yes, probably. Should you? Uh, no.
-#
 
 source "${PALUDIS_EBUILD_DIR}/echo_functions.bash"
 
