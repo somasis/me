@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
-home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6)
+home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6 || echo "/")
 
 edo() {
     echo "croot: $@" >&2
@@ -29,7 +29,7 @@ fi
 
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-unshare -p -muif env -i HOME="${HOME}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh}"
+unshare -p -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh}"
 
 for d in "${dir}"/{proc,sys,dev,run,tmp};do
     umount -vR "$d"
