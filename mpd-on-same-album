@@ -5,66 +5,55 @@
 # Distributed under the terms of the ISC License
 # https://github.com/somasis/scripts/
 
-MPD_HOST="localhost" # host for mpc to use to connect
-MPD_PORT=6600 # port mpd server is on, 6600 is default
-
 set_replaygain=true # if you want replaygain to be set
 preferred_crossfade=2 # what to set crossfade to if next song is not from same album
-sleep_amount="2s" # amount to sleep between checking/setting
 
 ## Script begins here
 
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-config_location="$XDG_CONFIG_HOME/mpd-on-same-album.conf"
+config_location="${XDG_CONFIG_HOME}/mpd-on-same-album.conf"
 
 [[ -f "$config_location" ]] && . "$config_location"
 
-[[ -n "$MPD_HOST" ]] && echo "Host: $MPD_HOST"
-[[ -n "$MPD_PORT" ]] && echo "Port: $MPD_PORT"
-[[ -n "$preferred_crossfade" ]] && echo "Crossfade length: $preferred_crossfade"
-[[ -n "$set_replaygain" ]] && echo "If replaygain should be set: $set_replaygain"
-[[ -n "$sleep_amount" ]] && echo "How often to check: $sleep_amount"
+[[ -n "$preferred_crossfade" ]] && echo "Crossfade length: $preferred_crossfade" >&2
+[[ -n "$set_replaygain" ]] && echo "Set replaygain: $set_replaygain" >&2
 
 while true; do
-    old_replaygain="$replaygain"
-    old_np="$np"
-    old_next="$next"
-    crossfade=$(mpc crossfade | cut -d' ' -f2)
-    np=$(mpc -f '[%albumartist%|%artist%] - %album% (%date%)' status | head -1)
-    #np_num=$(mpc -f "[%albumartist%|%artist%] - %album% (%date%)" status | head -n2 | tail -n1 | cut -d'#' -f2 | cut -d'/' -f1)
-    np_num=$(mpc -f "%position%" status | head -1)
-    if [[ $(mpc playlist | wc -l) != 0 ]];then
-        # playlist is not empty
-        next=$(mpc -f "[%albumartist%|%artist%] - %album% (%date%)" playlist | tail -n $(( $(mpc playlist 2>&1 | wc -l) - $np_num )) | head -n1)
+    if [[ $(mpc playlist | wc -l) != 0 ]];then # playlist is not empty
+        old_np="$np"
+        old_next="$next"
+        np=$(mpc -f '%position% [%albumartist%|%artist%] - %album% (%date%)' current --wait)
+        np_num=${np/ *}
+        np=${np#* }
+        crossfade=$(mpc crossfade | cut -d' ' -f2)
+        next=$(mpc -f "[%albumartist%|%artist%] - %album% (%date%)" playlist | tail -n $(( $(mpc playlist 2>/dev/null | wc -l) - $np_num )) | head -n 1)
         replaygain=$(mpc replaygain | cut -d' ' -f2)
         if [[ "$old_np" != "$np" ]];then
-            echo "Now playing: $np"
+            echo "Now playing: $np" >&2
         fi
         if [[ "$old_next" != "$next" ]];then
-            echo "Next song: $next"
+            echo "Next song: $next" >&2
         fi
-        if [[ "$np" == "$next" ]];then
+        if mpc status | tail -n 1 | grep -q 'random: off' && [[ "$np" == "$next" ]];then
             if [[ "$crossfade" != 0 ]];then
                 mpc crossfade 0
-                echo "Crossfade set to: 0"
+                echo "Crossfade set to: 0" >&2
             fi
             if [[ "$set_replaygain" == true && "$replaygain" != "$old_replaygain" ]];then
                 mpc replaygain "album"
-                echo "Replaygain set to: album mode"
+                echo "Replaygain set to: album mode" >&2
             fi
         else
             if [[ "$crossfade" != "$preferred_crossfade" ]];then
                 mpc crossfade "$preferred_crossfade"
-                echo "Crossfade set to: $preferred_crossfade"
+                echo "Crossfade set to: $preferred_crossfade" >&2
             fi
             if [[ "$set_replaygain" == true && "$replaygain" != "$old_replaygain" ]];then
                 mpc replaygain track
-                echo "Replaygain set to: track mode"
+                echo "Replaygain set to: track mode" >&2
             fi
         fi
-        sleep "$sleep_amount"
     else
-        # playlist is empty so just wait
-        sleep "$sleep_amount"
+        sleep 2
     fi
 done
