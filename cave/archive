@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+
+CAVE=${CAVE:-cave}
+
+spec="$1"; shift
+spec=$(${CAVE} print-ids -m "${spec}" -s uninstall --format '=%F\n')
+cat=$(${CAVE} print-id-environment-variable "${spec}" --variable-name CATEGORY --format %v)
+pn=$(${CAVE} print-id-environment-variable "${spec}" --variable-name PN --format %v)
+pvr=$(${CAVE} print-id-environment-variable "${spec}" --variable-name PVR --format %v)
+pnvr="${pn}-${pvr}"
+
+files=(
+    $(${CAVE} print-id-contents --format '%n\n' -t f "$spec")
+    $(${CAVE} print-id-contents --format '%n\n' -t s "$spec")
+    $(${CAVE} print-id-contents --format '%n\n' -t o "$spec")
+)
+
+for f in "${files[@]}"; do
+    echo "./$f"
+done | tar -C / -T - --numeric-owner -cpf "${cat}---${pnvr}.tar"
+xz -T 0 "${cat}---${pnvr}.tar" && echo "created an archive of ${cat}/${pnvr}: ${cat}---${pnvr}.tar.xz"
