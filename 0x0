@@ -16,44 +16,47 @@ Client for interacting with 0x0.st.
 
 If no file is given, upload stdin.
 
-    -f <file(s)>    - upload <file(s)>
-    -s <url>        - shorten <url(s)>
+    -f <file>       - upload <file>
+    -s <url>        - shorten <url>
     -u <url>        - upload content of <url>
 
 EOF
 }
 
+clip() {
+    if command -v xsel >/dev/null 2>&1;then
+        printf '%s' "$@" | xsel -b
+    fi
+}
+
 file_upload() {
-    local curl_opts="-s" file url type
+    local curl_opts="-s" file="$1" type
     [[ "${quiet}" ]] || curl_opts="-#"
-    for file in $@;do
-        [[ "${quiet}" ]] || echo "uploading \"${file}\"..." >&2
-        [[ "$#" -gt 1 ]] && echo -n "${file} ... "
-        url=$(curl ${curl_opts} -F "file=@${file}" "${host}")
-        echo "${url}"
-    done
+    [[ "${quiet}" ]] || echo "uploading \"${file}\"..." >&2
+    [[ "$#" -gt 1 ]] && echo -n "${file} ... "
+    url=$(curl ${curl_opts} -F "file=@${file}" "${host}")
+    echo "${url}"
+    clip "${url}"
 }
 
 shorten_url() {
-    local curl_opts="-s" url shortened
+    local curl_opts="-s" url="$1" shortened
     [[ "${quiet}" ]] || curl_opts="-#"
-    for file in $@;do
-        [[ "${quiet}" ]] || echo "shortening \"${url}\"..." >&2
-        [[ "$#" -gt 1 ]] && echo -n "${url} ... "
-        shortened=$(curl ${curl_opts} -F "shorten=${url}" "${host}")
-        echo "${shortened}"
-    done
+    [[ "${quiet}" ]] || echo "shortening \"${url}\"..." >&2
+    [[ "$#" -gt 1 ]] && echo -n "${url} ... "
+    shortened=$(curl ${curl_opts} -F "shorten=${url}" "${host}")
+    echo "${shortened}"
+    clip "${shortened}"
 }
 
 upload_url() {
-    local curl_opts="-s" url uploaded
+    local curl_opts="-s" url="$1" uploaded
     [[ "${quiet}" ]] || curl_opts="-#"
-    for file in $@;do
-        [[ "${quiet}" ]] || echo "uploading \"${url}\"..." >&2
-        [[ "$#" -gt 1 ]] && echo -n "${url} ... "
-        uploaded=$(curl ${curl_opts} -F "url=${url}" "${host}")
-        echo "${uploaded}"
-    done
+    [[ "${quiet}" ]] || echo "uploading \"${url}\"..." >&2
+    [[ "$#" -gt 1 ]] && echo -n "${url} ... "
+    uploaded=$(curl ${curl_opts} -F "url=${url}" "${host}")
+    echo "${uploaded}"
+    clip "${uploaded}"
 }
 
 # 1KiB = 1024 bytes
