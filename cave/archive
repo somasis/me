@@ -12,12 +12,16 @@ pvr=$(${CAVE} print-id-environment-variable "${spec}" --variable-name PVR --form
 pnvr="${pn}-${pvr}"
 
 files=(
-    $(${CAVE} print-id-contents --format '%n\n' -t f "$spec")
-    $(${CAVE} print-id-contents --format '%n\n' -t s "$spec")
-    $(${CAVE} print-id-contents --format '%n\n' -t o "$spec")
+    $(${CAVE} print-id-contents --format '%n\n' -t f "$spec" | cut -d'/' -f2-)
+    $(${CAVE} print-id-contents --format '%n\n' -t s "$spec" | cut -d'/' -f2-)
+    $(${CAVE} print-id-contents --format '%n\n' -t o "$spec" | cut -d'/' -f2-)
 )
 
-for f in "${files[@]}"; do
-    echo "./$f"
-done | tar -C / -T - --numeric-owner -cpf "${cat}---${pnvr}.tar"
-xz -T 0 "${cat}---${pnvr}.tar" && echo "created an archive of ${cat}/${pnvr}: ${cat}---${pnvr}.tar.xz"
+archive=${1:-${PWD}/${cat}---${pnvr}.tar}
+
+[[ -f "${archive}" ]] && printf '%s already exists.\n' "${archive}" >&2 && exit 17
+
+printf "creating an archive of %s/%s... " "${cat}" "${pnvr}" >&2
+
+printf "%s\n" "${files[@]}" | tar -C / -T - --numeric-owner -cpf "${archive}"
+xz -T 0 "${archive}" && printf '%s\n' "${archive}".xz
