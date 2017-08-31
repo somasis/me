@@ -14,10 +14,11 @@ elif [[ -z "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; t
 elif [[ -n "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
     tmux new-window "$arg"
     wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
+elif [[ -z "${arg}" ]];then
+    exec germinal
+elif [[ -n "${arg}" ]];then
+    exec germinal -- tmux new -As0 "${arg}"
 else
-    if [[ -z "${arg}" ]];then
-        exec germinal
-    else
-        exec germinal "$arg"
-    fi
+    echo "whoops lol"
+    exit 2
 fi
