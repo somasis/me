@@ -16,6 +16,6 @@ parse() {
             | sed 's/^null//' | paste -s -d $'\t'$'\n' | column -t -s $'\t'
 }
 
-for file in "$HOME"/.mozilla/firefox/*.default/sessionstore-backups/recovery.js;do
+for file in "$HOME"/.mozilla/firefox/*.*/sessionstore-backups/recovery.js;do
     parse < "$file"
 done
