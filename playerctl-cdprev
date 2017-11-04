@@ -1,10 +1,10 @@
 #!/bin/sh
 
-if [ -f ~/.playerctl-cdprev ] || [ $(playerctl position) -lt 4 ];then
-    playerctl previous
+if [ -f ~/.playerctl-cdprev ] || [ $(playerctl "${@}" position) -lt 4 ];then
+    playerctl "${@}" previous
 else
     touch ~/.playerctl-cdprev
-    playerctl position 0
+    playerctl "${@}" position 0
     sleep 3
     rm -f ~/.playerctl-cdprev
 fi
