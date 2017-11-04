@@ -31,7 +31,7 @@ clip() {
 
 file_upload() {
     local curl_opts="-s" file="$1" type
-    [[ "${quiet}" ]] || curl_opts="-#"
+    [[ "${progress_quiet}" ]] || curl_opts="-#"
     [[ "${quiet}" ]] || echo "uploading \"${file}\"..." >&2
     [[ "$#" -gt 1 ]] && echo -n "${file} ... "
     url=$(curl ${curl_opts} -F "file=@${file}" "${host}")
@@ -41,7 +41,7 @@ file_upload() {
 
 shorten_url() {
     local curl_opts="-s" url="$1" shortened
-    [[ "${quiet}" ]] || curl_opts="-#"
+    [[ "${progress_quiet}" ]] || curl_opts="-#"
     [[ "${quiet}" ]] || echo "shortening \"${url}\"..." >&2
     [[ "$#" -gt 1 ]] && echo -n "${url} ... "
     shortened=$(curl ${curl_opts} -F "shorten=${url}" "${host}")
@@ -51,7 +51,7 @@ shorten_url() {
 
 upload_url() {
     local curl_opts="-s" url="$1" uploaded
-    [[ "${quiet}" ]] || curl_opts="-#"
+    [[ "${progress_quiet}" ]] || curl_opts="-#"
     [[ "${quiet}" ]] || echo "uploading \"${url}\"..." >&2
     [[ "$#" -gt 1 ]] && echo -n "${url} ... "
     uploaded=$(curl ${curl_opts} -F "url=${url}" "${host}")
@@ -77,7 +77,7 @@ case "$mode" in
         if [[ "$#" -gt 0 ]];then
             file_upload "${@}"
         else
-            quiet=true file_upload "-"
+            cat | quiet=true file_upload "/dev/stdin"
         fi
     ;;
     -f)
