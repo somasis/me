@@ -1,0 +1,68 @@
+#!/bin/sh
+
+me=${0##*/}
+
+
+dosed() {
+    if [ ! -t 1 ];then
+        cat && return $?
+    fi
+    case "${1:-none}" in
+        unified)
+            sed "$(printf "s/^diff .*$/\e[1;34m&\e[0m/;s/^--- .*/\e[0;31m&\e[0m/;s/^+++ .*/\e[0;32m&\e[0m/;s/^@@ .* @@/\e[0;36m&\e[0m/;s/^-.*/\e[0;31m&\e[0m/;s/^+.*/\e[0;32m&\e[0m/")"
+        ;;
+#        ed)
+#            sed "$(printf "s/^[0-9]*[acd]/\e[0;33m&\e[0m/")"
+#        ;;
+        normal)
+            sed "$(printf "s/^< .*$/\e[0;31m&\e[0m/;s/^> .*$/\e[0;32m&\e[0m/;s/^[0-9]*[acd,].*/\e[0;33m&\e[0m/")"
+        ;;
+        rcs)
+            sed "$(printf "s/^d[0-9].*/\e[0;31m&\e[0m/;s/^a[0-9].*/\e[0;32m&\e[0m/")"
+        ;;
+        none)
+            cat
+        ;;
+    esac
+}
+
+while getopts :eun opt;do
+    case "${opt}" in
+        u)
+            mode=unified
+        ;;
+        e)
+            mode=ed
+        ;;
+        n)
+            mode=rcs
+        ;;
+        *)
+            mode=none
+        ;;
+    esac
+done
+
+for arg in "$@";do
+    case "${arg}" in
+        --unified|--unified=*)
+            mode=unified
+        ;;
+        --ed)
+            mode=ed
+        ;;
+        --rcs)
+            mode=rcs
+        ;;
+        --normal)
+            mode=normal
+        ;;
+        --)
+            break
+        ;;
+    esac
+done
+
+[ -n "${mode}" ] || mode=normal
+
+{ diff "$@" || exit $?; } | dosed "${mode}"
