@@ -13,12 +13,11 @@ preferred_crossfade=2 # what to set crossfade to if next song is not from same a
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 config_location="${XDG_CONFIG_HOME}/mpd-on-same-album.conf"
 
-[[ -f "$config_location" ]] && . "$config_location"
-
-[[ -n "$preferred_crossfade" ]] && echo "Crossfade length: $preferred_crossfade" >&2
-[[ -n "$set_replaygain" ]] && echo "Set replaygain: $set_replaygain" >&2
-
 while true; do
+    [[ -f "$config_location" ]] && . "$config_location"
+    [[ "${preferred_crossfade:-$old_preferred_crossfade}" == "${old_preferred_crossfade}" ]] || echo "Crossfade length: $preferred_crossfade" >&2; old_preferred_crossfade="${preferred_crossfade}"
+    [[ "${set_replaygain:-$old_set_replaygain}" == "${old_set_replaygain}" ]] || echo "Set replaygain: $set_replaygain" >&2; old_set_replaygain="${set_replaygain}"
+
     if [[ $(mpc playlist | wc -l) != 0 ]];then # playlist is not empty
         old_np="$np"
         old_next="$next"
