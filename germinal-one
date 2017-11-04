@@ -1,24 +1,136 @@
 #!/bin/bash
+# germinal-one - allow for using Germinal as a single terminal and provide better tmux integratio
 
-if [[ "$1" == '--' ]];then
-    shift
-fi
+# start
+#  |- ran without arguments
+#  |   |- germinal is running
+#  |   |   `- tmux is running
+#  |   |       |- germinal has active focus
+#  |   |       |   `- create a new tmux window on the session
+#  |   |       `- germinal does not have active focus
+#  |   |           `- just focus it
+#  |   `- germinal is not running
+#  |       |- tmux is running
+#  |       |   `- create germinal window with the 'germinal-one' tmux session attached
+#  |       `- tmux is not running
+#  |           `- create a new germinal window with a new tmux session named 'germinal-one'
+#  `- ran with arguments
+#      |- germinal is running
+#      |   `- tmux is running
+#      |       |- germinal has active focus
+#      |       |   `- create a new tmux window on the session with the command given
+#      |       `- germinal does not have active focus
+#      |           `- same thing
+#      `- germinal is not running
+#          |- tmux is running
+#          |   `- create germinal window with the 'germinal-one' tmux session attached,
+#          |      with the given command running
+#          `- tmux is not running
+#              `- create germinal window with a new 'germinal-one' tmux session started
+#                 with the given command running
 
-arg=$(echo "$@" | sed 's/^-e //')
-if [[ -z "$arg" ]] && grep -q exo-helper /proc/$PPID/comm && [[ "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
-    tmux new-window "cd '${PWD}' && exec $SHELL"
-    wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
-elif [[ -z "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]]; then
-    echo "switching to running instance" >&2
-    wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
-elif [[ -n "${arg}" && "$(pgrep -l ^germinal 2>&1 | grep -v germinal-one)" ]];then
-    tmux new-window "$arg"
-    wmctrl -i -a $(wmctrl -l | grep germinal | cut -d' ' -f1)
-elif [[ -z "${arg}" ]];then
-    exec germinal
-elif [[ -n "${arg}" ]];then
-    exec germinal -- tmux new -As0 "${arg}"
-else
-    echo "whoops lol"
-    exit 2
-fi
+exec >~/germinal-one.log 2>&1
+
+debug() {
+    printf '%s: %s\n' "${0##*/}" "$*" >&2
+}
+
+edo() {
+    debug "$ $*"
+    "$@"
+}
+
+tmux_running() {
+    if tmux has-session -t germinal-one >/dev/null 2>&1;then
+        debug "tmux_running: true; tmux has a 'germinal-one' session"
+        return 0
+    else
+        debug "tmux_running: false; tmux doesn't have a 'germinal-one' session"
+        return 1
+    fi
+}
+
+germinal_running() {
+    germinal_pid=$(pgrep -u $(id -u) '^germinal$' | head -n1)
+
+    if [ -n "${germinal_pid}" ];then
+        debug "germinal_running: true; germinal[${germinal_pid}] is running"
+        return 0
+    else
+        debug "germinal_running: false; germinal is not running"
+        return 1
+    fi
+}
+
+germinal_has_focus() {
+    if [ $(xdotool getactivewindow getwindowpid) = "${germinal_pid}" ];then
+        debug "germinal_has_focus: true; germinal[${germinal_pid}] has focus"
+        return 0
+    else
+        debug "germinal_has_focus: false; germinal[${germinal_pid}] does not have focus"
+        return 1
+    fi
+}
+
+focus_germinal() {
+    edo xdotool search --desktop 0 --pid "${germinal_pid}" --class germinal windowactivate
+}
+
+notify_running() {
+    edo notify-send -a Germinal -u low -t 10 -i terminal 'Germinal' "Running \`$*\`"
+}
+
+tmux_pwd() {
+    pwdx $(tmux list-windows -t germinal-one -F '#{pid}') | cut -d' ' -f2
+}
+
+give_focus=true
+[ "$1" = '--no-focus' ] && give_focus=false && shift
+[ "$1" = '-e' ] && shift
+[ "$1" = '--' ] && shift
+
+tmux_running=false
+tmux_running && tmux_running=true
+germinal_running=false
+germinal_focused=false
+germinal_running && germinal_running=true && germinal_has_focus && germinal_focused=true
+
+arguments=false
+[ $# -eq 0 ] || arguments=true
+
+case "${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}" in
+    false-false-false-false)
+        edo exec germinal -- tmux -u2 new-session -A -s germinal-one -c "${PWD}"
+    ;;
+    false-false-true-false)
+        edo exec germinal -- tmux attach-session -t germinal-one -c "${PWD}"
+    ;;
+    false-true-true-true)
+        edo exec tmux new-window -c "${PWD}" -t germinal-one
+    ;;
+    false-true-true-false)
+        "${give_focus}" && focus_germinal
+        "${give_focus}" || notify_running "$@"
+        [ "${PWD}" = "$(tmux_pwd)" ] || edo tmux new-window -c "${PWD}" -t germinal-one
+    ;;
+    true-false-false-false)
+        edo exec germinal -- tmux -u2 new-session -A -s germinal-one -c "${PWD}" "$@"
+    ;;
+    true-false-true-false)
+        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+        edo exec germinal -- tmux attach-session -t germinal-one -c "${PWD}"
+    ;;
+    true-true-true-true)
+        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+    ;;
+    true-true-true-false)
+        "${give_focus}" && focus_germinal
+        "${give_focus}" || notify_running "$*"
+        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+    ;;
+    *)
+        debug "can't handle ${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}"
+        exit 255
+    ;;
+esac
+
