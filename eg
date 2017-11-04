@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# eg - a tool to show examples and only examples from manpages
+#
+# that tool that has custom content written just to show examples is stupid
+# and it would be better if people instead just contributed good examples
+# to manpages instead.
+#
+
+export PAGER=cat
+
+if [ $# -lt 1 ];then
+    printf '%s\n' \
+        "usage: eg name ..."
+    exit 5
+fi
+
+show_section() {
+    local line
+    sed -rn "/^${1}$/{ p; :loop n; p; { /^[A-Z]+/d; }; b loop }" "${man}" | sed '$d'
+}
+
+pages="$@"
+
+set --
+for page in ${pages};do
+    man=$(mktemp); list=$(mktemp)
+    man "$page" > "${man}" || exit 127
+    sed -i 's/.\x08//g' "${man}"
+
+    sed -r '1d;/^[A-Z]/!d;s/^([A-Z ]*).*/\1/;$d' "${man}" > "${list}"
+
+    while IFS= read -r section;do
+        case "${section}" in
+            EXAMPLES|USAGE)
+                set -- "$@" "${section}"
+            ;;
+            *'EXAMPLE'*|*'USAGE'*)
+                section=${section# }
+                section=${section% }
+                set -- "$@" "${section}"
+            ;;
+        esac
+    done < "${list}"
+
+    if [ $# -lt 1 ];then
+        printf '%s\n' "eg: no examples found in manual for \"$page\""
+        exit 1
+    fi
+
+    section=
+    for section in "${@}";do
+        show_section "${section}"
+    done
+    set --
+
+    rm -f "${list}" "${man}"
+done
