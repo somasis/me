@@ -1,36 +1,36 @@
 #!/bin/sh
 
-set -euo pipefail
-IFS=$'\n\t'
+set -eu
+#IFS=$'\n\t'
 
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
-home=$(grep -- "$USER" "${dir}"/etc/passwd | cut -d':' -f6 || echo "/")
+home=$(grep -- "^$(id -un):" "${dir}"/etc/passwd | cut -d':' -f6 || printf '/')
 
 edo() {
-    echo "croot: $@" >&2
+    echo "${0##*/}: $@" >&2
     "$@"; return $?
 }
 
-cbind() {
-    local bind="$1" to="$2";shift;shift
-    local args="$@"
-    echo "croot: binding \"$bind\" to \"$to\"" >&2
-    mount -o rbind "$bind" "$to" $args
-}
-
-mountpoint -q "${dir}"/proc     || cbind    /proc       "${dir}"/proc
-mountpoint -q "${dir}"/sys      || cbind    /sys        "${dir}"/sys
-mountpoint -q "${dir}"/dev      || cbind    /dev        "${dir}"/dev
-mountpoint -q "${dir}"/dev/shm  || cbind    /dev/shm    "${dir}"/dev/shm
-if [[ -d "${dir}"/dev/pts ]];then
-    mountpoint -q "${dir}"/dev/pts || cbind /dev/pts    "${dir}"/dev/pts
+if [ $(id -u) -ne 0 ];then
+    printf '%s: %s\n' "${0##*/}" "need root"
+    exit 13
 fi
 
-
+mountpoint -q "${dir}"/proc     || edo mount -t proc /proc      "${dir}"/proc
+mountpoint -q "${dir}"/sys      || edo mount -t sysfs /sys      "${dir}"/sys
+mountpoint -q "${dir}"/dev      || edo mount -t devtmpfs /dev   "${dir}"/dev
+if ! mountpoint -q "${dir}"/dev/shm;then
+    [ -d "${dir}"/dev/shm ] || edo mkdir "${dir}"/dev/shm
+    edo mount -t tmpfs /dev/shm  "${dir}"/dev/shm
+fi
+mountpoint -q "${dir}"/tmp      || edo mount -t tmpfs /tmp      "${dir}"/tmp
+if [ -d "${dir}"/dev/pts ];then
+    mountpoint -q "${dir}"/dev/pts || edo mount -t devpts /dev/pts "${dir}"/dev/pts
+fi
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-unshare -p -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh}"
+edo unshare -p -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh -l}"
 
-for d in "${dir}"/{proc,sys,dev,run,tmp};do
-    umount -vR "$d"
+for d in "${dir}"/{proc,sys,dev/shm,dev/pts,dev,tmp};do
+    mountpoint -q "${d}" && edo umount "${d}"
 done
