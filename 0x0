@@ -32,30 +32,33 @@ clip() {
 file_upload() {
     local curl_opts="-s" file="$1" type
     [[ "${progress_quiet}" ]] || curl_opts="-#"
-    [[ "${quiet}" ]] || echo "uploading \"${file}\"..." >&2
-    [[ "$#" -gt 1 ]] && echo -n "${file} ... "
+    [[ "${quiet}" ]] || printf "uploading \"%s\"...\n" "${file}" >&2
+    [[ "$#" -gt 1 ]] && printf "%s ... " "${url}"
     url=$(curl ${curl_opts} -F "file=@${file}" "${host}")
-    echo "${url}"
+    printf '%s' "${url}"
+    [ -t 1 ] && printf '\n'
     clip "${url}"
 }
 
 shorten_url() {
     local curl_opts="-s" url="$1" shortened
     [[ "${progress_quiet}" ]] || curl_opts="-#"
-    [[ "${quiet}" ]] || echo "shortening \"${url}\"..." >&2
-    [[ "$#" -gt 1 ]] && echo -n "${url} ... "
+    [[ "${quiet}" ]] || printf "shortening \"${url}\"...\n" >&2
+    [[ "$#" -gt 1 ]] && printf "%s ... " "${url}"
     shortened=$(curl ${curl_opts} -F "shorten=${url}" "${host}")
-    echo "${shortened}"
+    printf '%s' "${shortened}"
+    [ -t 1 ] && printf '\n'
     clip "${shortened}"
 }
 
 upload_url() {
     local curl_opts="-s" url="$1" uploaded
     [[ "${progress_quiet}" ]] || curl_opts="-#"
-    [[ "${quiet}" ]] || echo "uploading \"${url}\"..." >&2
-    [[ "$#" -gt 1 ]] && echo -n "${url} ... "
+    [[ "${quiet}" ]] || printf "uploading \"%s\"...\n" "${url}" >&2
+    [[ "$#" -gt 1 ]] && printf "%s ... " "${url}"
     uploaded=$(curl ${curl_opts} -F "url=${url}" "${host}")
-    echo "${uploaded}"
+    printf '%s' "${uploaded}"
+    [ -t 1 ] && printf '\n'
     clip "${uploaded}"
 }
 
