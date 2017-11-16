@@ -1,9 +1,0 @@
-#!/bin/bash
-
-hashes=( $@ )
-hashes=( $(echo "${hashes[@]}" | tr ' ' '\n' | tac) )
-
-for hash in ${hashes[@]};do
-    git log --pretty=email --patch-with-stat --reverse "${hash}"
-done
-
