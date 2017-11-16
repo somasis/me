@@ -109,7 +109,7 @@ case "${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}" in
     false-true-true-false)
         "${give_focus}" && focus_germinal
         "${give_focus}" || notify_running "$@"
-        [ "${PWD}" = "$(tmux_pwd)" ] || edo tmux new-window -c "${PWD}" -t germinal-one
+        [ "${PWD}" = "$(tmux_pwd)" ] || edo exec tmux new-window -c "${PWD}" -t germinal-one
     ;;
     true-false-false-false)
         edo exec germinal -- tmux -u2 new-session -A -s germinal-one -c "${PWD}" "$@"
@@ -119,12 +119,12 @@ case "${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}" in
         edo exec germinal -- tmux attach-session -t germinal-one -c "${PWD}"
     ;;
     true-true-true-true)
-        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+        edo exec tmux new-window -c "${PWD}" -t germinal-one "$@"
     ;;
     true-true-true-false)
         "${give_focus}" && focus_germinal
         "${give_focus}" || notify_running "$*"
-        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+        edo exec tmux new-window -c "${PWD}" -t germinal-one "$@"
     ;;
     *)
         debug "can't handle ${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}"
