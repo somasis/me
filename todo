@@ -1,0 +1,70 @@
+#!/bin/sh
+# todo.md
+
+todo=~/.todo.md
+
+info() {
+    printf '%s: %s\n' "${0##*/}" "$*" >&2
+}
+
+isnum() {
+    if [ -z "$(printf '%s' $@ | tr -d '[0-9]')" ];then
+        return 0
+    fi
+    return 1
+}
+
+if [ $# -eq 0 ];then
+    set -- list
+fi
+cmd="${1}"
+shift
+
+set -e
+
+if ! [ -e "${todo}" ];then
+    touch "${todo}"
+    info "created list at \"${todo}\""
+fi
+
+case "${cmd}" in
+    list)
+        cat "${todo}"
+    ;;
+    add)
+        while [ $# -ne 0 ];do
+            info "added item \"$1\" to list"
+            printf '- %s\n' "$1" >> "${todo}"
+            shift
+        done
+        cat "${todo}"
+    ;;
+    remove|done)
+        if isnum "${1}";then
+            item_amount=$(wc -l "${todo}" | cut -d' ' -f1)
+            if [ "${1}" -lt 1 ] || [ ${item_amount} -lt "${1}" ];then
+                info "given number is out of range of the amount of items on the list"
+                exit 2
+            fi
+            item_contents=$(sed "${1}!d;s/^- //" "${todo}")
+            sed "${1}d" -i "${todo}"
+        else
+            todo_tmp=$(mktemp)
+            cat "${todo}" > "${todo_tmp}"
+            item_contents=$(grep "${1}" "${todo_tmp}" | sed '1!d;s/^- //')
+            grep -vF -- "- ${item_contents}" "${todo_tmp}" > "${todo}"
+            rm -f "${todo_tmp}"
+        fi
+        if [ "${cmd}" = remove ];then
+            info "removed \"${item_contents}\" from list"
+        elif [ "${cmd}" = done ];then
+            info "done with \"${item_contents}\""
+        fi
+        cat "${todo}"
+    ;;
+    *)
+        error "unknown command \"${cmd}\""
+        exit 127
+    ;;
+esac
+
