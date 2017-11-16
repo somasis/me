@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# mpd-on-same-album - set replaygain and crossfade based on what track is next - version 0.1
+# mpd-on-same-album - set replaygain and crossfade based on what track is next
 #
 # Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
-# https://github.com/somasis/scripts/
+# Distributed under the terms of the 0BSD License
 
 set_replaygain=true # if you want replaygain to be set
 preferred_crossfade=2 # what to set crossfade to if next song is not from same album

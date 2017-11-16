@@ -106,4 +106,4 @@ Configuration is found in `$XDG_CONFIG_HOME/mpd-on-same-album.conf`.
 Configuration is set within the script. You need to edit the `wrap_mode_action()` function to do what you want. This can be anything from uploading an image via wget to renaming it, whatever you can write in `bash` script, you can make it do.
 
 ## License
-These scripts are all licensed under the [ISC License](LICENSE).
+These scripts are all licensed under the [0BSD License](LICENSE).

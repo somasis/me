@@ -16,7 +16,7 @@
 #                    repository are contained
 #
 # Copyright 2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
+# Distributed under the terms of the 0BSD License
 
 set -e -o pipefail
 

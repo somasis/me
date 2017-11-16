@@ -2,7 +2,7 @@
 # oldnotifier -- notifier for The Old Reader
 #
 # Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
+# Distributed under the terms of the 0BSD License
 # https://github.com/somasis/scripts/
 #
 # Prerequisites: notify-send, curl, Old Reader account

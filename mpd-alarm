@@ -2,8 +2,7 @@
 # mpd-alarm -- A script to turn the Music Player Daemon into an alarm
 #
 # Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
-# https://github.com/somasis/scripts/
+# Distributed under the terms of the 0BSD License
 
 MPD_HOST="localhost" # host for mpc to use to connect
 MPD_PORT=6600 # port mpd server is on, 6600 is default

@@ -2,7 +2,7 @@
 # domirror - rudimentry syncing from mirrors with repositories of any type
 #
 # Copyright 2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
+# Distributed under the terms of the 0BSD License
 #
 # Basically, this just cycles through possible `sync` URLs and tries until
 # it syncs successfully, failing if none of them work.

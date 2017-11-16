@@ -4,7 +4,7 @@
 # on given ssh-connectible hosts
 #
 # Copyright 2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
+# Distributed under the terms of the 0BSD License
 
 SUDO=${SUDO:-sudo}
 CAVE=${CAVE:-cave}

@@ -5,7 +5,7 @@
 # it's faster, too! thanks, jshon <3
 #
 # Copyright 2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
+# Distributed under the terms of the 0BSD License
 
 parse() {
     jshon   -QC \

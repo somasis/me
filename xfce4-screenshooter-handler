@@ -2,8 +2,7 @@
 # xfce4-screenshooter-handler -- wrap xfce4-screenshooter
 #
 # Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the ISC License
-# https://github.com/somasis/scripts/
+# Distributed under the terms of the 0BSD License
 
 urlencode() {
     local string="${1}"
