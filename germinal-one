@@ -29,8 +29,6 @@
 #              `- create germinal window with a new 'germinal-one' tmux session started
 #                 with the given command running
 
-exec >~/germinal-one.log 2>&1
-
 debug() {
     printf '%s: %s\n' "${0##*/}" "$*" >&2
 }
