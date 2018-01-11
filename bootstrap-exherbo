@@ -1,4 +1,8 @@
 #!/bin/sh
+# bootstrap-exherbo - bootstrap an exherbo system
+#
+# Copyright 2016 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 PKGS="
     skeleton

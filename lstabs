@@ -2,9 +2,8 @@
 # lstabs - list tabs currently open in firefox
 #
 # ported from http://chneukirchen.org/dotfiles/bin/lstab
-# it's faster, too! thanks, jshon <3
 #
-# Copyright 2015 Kylie McClain <somasis@exherbo.org>
+# Copyright 2015-2018 Kylie McClain <somasis@exherbo.org>
 # Distributed under the terms of the 0BSD License
 
 parse() {

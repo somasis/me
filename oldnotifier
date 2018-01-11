@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # oldnotifier -- notifier for The Old Reader
 #
-# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the 0BSD License
+# Copyright 2014-2015 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 # https://github.com/somasis/scripts/
 #
 # Prerequisites: notify-send, curl, Old Reader account

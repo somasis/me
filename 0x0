@@ -1,5 +1,8 @@
 #!/bin/bash
 # 0x0 - client for 0x0.st
+#
+# Copyright 2016-2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 me=${0##*/}
 host=https://0x0.st

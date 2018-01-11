@@ -1,7 +1,10 @@
 #!/bin/sh
+# croot - chroot with linux-related filesystems
+#
+# Copyright 2015-2017 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 set -eu
-#IFS=$'\n\t'
 
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
 home=$(grep -- "^$(id -un):" "${dir}"/etc/passwd | cut -d':' -f6 || printf '/')

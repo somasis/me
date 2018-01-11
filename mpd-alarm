@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
-# mpd-alarm -- A script to turn the Music Player Daemon into an alarm
+#!/bin/bash
+# mpd-alarm - A script to turn the Music Player Daemon into an alarm
 #
-# Copyright 2014-2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the 0BSD License
+# Copyright 2014-2015 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 MPD_HOST="localhost" # host for mpc to use to connect
 MPD_PORT=6600 # port mpd server is on, 6600 is default

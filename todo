@@ -1,5 +1,8 @@
 #!/bin/sh
-# todo.md
+# todo - maintain a todo list
+#
+# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 todo=~/.todo.md
 

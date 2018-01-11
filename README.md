@@ -37,4 +37,5 @@ options. Please use https.)
 name here; ex. `internet-feed-reader`
 
 ## License
+
 These scripts are all licensed under the [0BSD License](LICENSE).

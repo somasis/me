@@ -1,5 +1,8 @@
 #!/bin/sh
 # gitp.sh - a git prompt generator
+#
+# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 __gitp() {
     if ! git rev-parse >/dev/null 2>&1;then

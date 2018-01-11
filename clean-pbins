@@ -15,8 +15,8 @@
 #                    directory in which pbin archives used by a pbin
 #                    repository are contained
 #
-# Copyright 2015 Kylie McClain <somasis@exherbo.org>
-# Distributed under the terms of the 0BSD License
+# Copyright 2015-2017 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 set -e -o pipefail
 
