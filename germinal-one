@@ -90,6 +90,10 @@ while [ "${1:0:1}" = - ];do
             give_focus=false
             shift
         ;;
+        --no-exit)
+            tmux_no_exit=true
+            shift
+        ;;
         -e|--)
             shift
             break
@@ -114,27 +118,38 @@ case "${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}" in
         edo exec germinal -- tmux attach-session -t germinal-one -c "${PWD}"
     ;;
     false-true-true-true)
-        edo exec tmux new-window -c "${PWD}" -t germinal-one
+        window=$(edo tmux new-window -P -F '#{window_index}' -c "${PWD}" -t germinal-one)
+        "${tmux_no_exit}" && edo tmux set-window-option -t "${window}" remain-on-exit on
     ;;
     false-true-true-false)
         "${give_focus}" && focus_germinal
         "${give_focus}" || notify_running "$@"
-        [ "${PWD}" = "$(tmux_pwd)" ] || edo exec tmux new-window -c "${PWD}" -t germinal-one
+        if [ "${PWD}" != "$(tmux_pwd)" ];then
+            window=$(edo tmux new-window -P -F '#{window_index}' -c "${PWD}" -t germinal-one)
+            "${tmux_no_exit}" && edo tmux set-window-option -t "${window}" remain-on-exit on
+        fi
     ;;
     true-false-false-false)
+        "${give_focus}" && focus_germinal
+        "${give_focus}" || notify_running "$*"
         edo exec germinal -- tmux -u2 new-session -A -s germinal-one -c "${PWD}" "$@"
     ;;
     true-false-true-false)
-        edo tmux new-window -c "${PWD}" -t germinal-one "$@"
+        "${give_focus}" && focus_germinal
+        "${give_focus}" || notify_running "$*"
+        window=$(edo tmux new-window -P -F '#{window_index}' -c "${PWD}" -t germinal-one "$@")
+        "${tmux_no_exit}" && edo tmux set-window-option -t "${window}" remain-on-exit on
         edo exec germinal -- tmux attach-session -t germinal-one -c "${PWD}"
     ;;
     true-true-true-true)
-        edo exec tmux new-window -c "${PWD}" -t germinal-one "$@"
+        window=$(edo tmux new-window -P -F '#{window_index}' -c "${PWD}" -t germinal-one "$@")
+        "${tmux_no_exit}" && edo tmux set-window-option -t "${window}" remain-on-exit on
     ;;
     true-true-true-false)
         "${give_focus}" && focus_germinal
         "${give_focus}" || notify_running "$*"
-        edo exec tmux new-window -c "${PWD}" -t germinal-one "$@"
+        window=$(edo tmux new-window -P -F '#{window_index}' -c "${PWD}" -t germinal-one "$@")
+        "${tmux_no_exit}" && edo tmux set-window-option -t "${window}" remain-on-exit on
     ;;
     *)
         debug "can't handle ${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}"
@@ -142,3 +157,4 @@ case "${arguments}-${germinal_running}-${tmux_running}-${germinal_focused}" in
     ;;
 esac
 
+exit 0
