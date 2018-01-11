@@ -1,0 +1,26 @@
+#!/bin/sh
+# tmux-shell - command to give status-bar information
+#
+# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+output=""
+
+command -v np >/dev/null && np=$(command -v np >/dev/null && np --restrict=73)
+
+if [ -z "${DISPLAY}" ];then
+    clock_local=$(date '+%I:%M:%S%p')
+    command -v acpi >/dev/null && battery=$(acpi -bf | sed '1!d; s/.*: //;s/Discharging, //;s/,.*//')
+fi
+
+for item in "${np}" "${battery}" "${clock_local}";do
+    [ -z "${item}" ] && continue
+    if [ -z "${output}" ];then
+        output="${item}"
+    else
+        output="${output} - ${item}"
+    fi
+done
+
+printf '%s' "${output}"
+
