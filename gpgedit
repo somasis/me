@@ -1,0 +1,52 @@
+#!/bin/sh
+# gpgedit - edit a gpg-encrypted file
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+default_key=$(sed -E '/^default-key /!d; s/^default-key[ \t]+//' $(gpgconf --list-dirs homedir)/gpg.conf)
+
+edit() {
+    if ! ${EDITOR} "${file_to_edit}";then
+        err=$?
+        printf 'Editor exited with error code %s, removing decrypted copies and exiting\n' "${err}"
+        rm -f "${file_to_compare}" "${file_to_edit}"
+        exit ${err}
+    fi
+}
+
+
+until [ $# -eq 0 ];do
+    if [ -f "${1}" ];then
+        if ! gpg -q -d "${1}" >/dev/null 2>&1;then
+            printf "File '%s' either isn't an encrypted file, or we don't have the key to decrypt it.\n" "${1}"
+            exit 13
+        fi
+
+        key=0x$(gpg --batch --list-packets "${1}" | sed -E '/^:pubkey/!d; s/.* keyid //')
+        file_to_edit=$(mktemp)
+        file_to_compare=$(mktemp)
+        chmod 600 "${file_to_edit}" "${file_to_compare}"
+        gpg -q -u "${key}" --decrypt "${1}" > "${file_to_edit}"
+
+        edit
+
+        if ! cmp "${file_to_edit}" "${file_to_compare}" >/dev/null 2>&1;then
+            if gpg --batch --yes -r "${key}" -o "${1}" --encrypt "${file_to_edit}";then
+                rm -f "${file_to_compare}" "${file_to_edit}"
+                printf "File '%s' modified\n" "${1}" >&2
+            fi
+        else
+            rm -f "${file_to_compare}" "${file_to_edit}"
+            printf "File '%s' unchanged\n" "${1}" >&2
+        fi
+    else
+        edit
+
+        gpg --batch --yes -r "${default_key}" -o "${1}".gpg --encrypt "${file_to_edit}"
+        rm -f "${file_to_compare}" "${file_to_edit}"
+        printf "File '%s' created\n" "${1}.gpg" >&2
+    fi
+
+    shift
+done
