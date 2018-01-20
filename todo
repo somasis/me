@@ -30,6 +30,10 @@ case "${1}" in
     ;;
     --done)
         shift
+        if [ $# -lt 1 ];then
+            msg '%s: --done requires an item number or a grep query\n' "${0##*/}" >&2
+            exit 127
+        fi
         if isnum "${1}";then
             item_amount=$(wc -l "${todo}" | cut -d' ' -f1)
             if [ "${1}" -lt 1 ] || [ ${item_amount} -lt "${1}" ];then
