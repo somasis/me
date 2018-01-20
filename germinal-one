@@ -78,7 +78,7 @@ focus_germinal() {
 }
 
 notify_running() {
-    edo notify-send -a Germinal -u low -t 10 -i terminal 'Germinal' "Running \`$*\`"
+    edo notify-send -a germinal -u low -i terminal 'Germinal' "Running \`$*\`"
 }
 
 tmux_pwd() {
