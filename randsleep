@@ -1,0 +1,14 @@
+#!/bin/sh
+# randsleep - sleep for a random amount of time
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+time=$(tr -dc '0-5' < /dev/urandom | dd bs=1 count=2 2>/dev/null)
+
+case "${1}" in
+    m) time=$(( ${time} * 60 )) ;;
+    h) time=$(( $(( ${time} * 60 )) * 60 )) ;;
+esac
+
+exec sleep "${time}"
