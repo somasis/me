@@ -1,4 +1,8 @@
 #!/bin/bash
+# cave/archive - create a tar.xz of a given package's files
+#
+# Copyright 2016 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 set -euo pipefail
 

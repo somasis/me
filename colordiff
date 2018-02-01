@@ -1,4 +1,9 @@
 #!/bin/sh
+# colordiff - show `diff` output with color
+#
+# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
 
 me=${0##*/}
 

@@ -1,4 +1,8 @@
 #!/bin/sh
+# cave/browse - open a package's HOMEPAGE in your $BROWSER
+#
+# Copyright 2015 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
 
 BROWSER="${BROWSER:-xdg-open}"
 
