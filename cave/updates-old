@@ -1,0 +1,405 @@
+#!/bin/bash
+# cave/updates - print packages that have newer versions available, according to REMOTE_IDS
+#
+# Copyright 2016 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+github_client_id=cave-updates
+github_client_secret="f49a2b37a469accf2f1c259447ad1b8b86b46d5e"
+gitlab_client_id=cave-updates
+gitlab_client_secret="C3snXfkkyFX1YYMtYT3U"
+
+if [[ -t 0 ]];then
+    color_update='\e[37m\e[42m\e[1m'
+    color_updated='\e[37m\e[44m\e[1m'
+    color_error='\e[37m\e[41m\e[1m'
+    color_reset='\e[0m'
+fi
+
+CAVE=${CAVE:-cave}
+curl=${curl:-curl}
+
+set -o pipefail
+
+vercmp() {
+    local vercmp_arg='-q'
+    if [[ "${verbose}" == true ]];then
+        vercmp_arg='-d'
+    fi
+    command vercmp "${vercmp_arg}" "$@"; return $?
+}
+
+check_cpan() {
+    local id="${1}"; local fixed_id="${1/-/::}"
+    local current_version="${2}"
+
+    urls=(
+        "https://api.metacpan.org/v0/module/${id}"
+        "https://api.metacpan.org/v0/module/${fixed_id}"
+        "https://api.metacpan.org/v0/release/${id}"
+        "https://api.metacpan.org/v0/release/${fixed_id}"
+    )
+
+    local tmp=$(mktemp)
+    for url in "${urls[@]}";do
+        if ${curl} -sL "${urls}" -o "${tmp}" && grep -q "version" "${tmp}";then
+            err=0
+            break # got one
+        else
+            err=1
+        fi
+    done
+    [[ "${err}" -eq 0 ]] || return 2 # connection error/couldn't talk to remote
+    grep -q "version" "${tmp}" || return 100 # still no ver? fail with err msg
+    local upstream_latest=$(cat "$tmp" | jshon -e version -u)
+    if vercmp "${current_version}" "${upstream_latest}";then
+        echo "${upstream_latest}"
+        rm -f "${tmp}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_freecode() {
+    credibility=0
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+    if ${curl} -sL "http://freecode.com/projects/${id}/releases" -o "$tmp";then
+        local upstream_latest=$(grep 'class=\"release\"' "$tmp" | cut -d'>' -f3 | cut -d'<' -f1 | head -n 1)
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_github() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local pn="${id#*/}"
+    local author="${id%/*}"
+
+    local tmp=$(mktemp); local tmp2=$(mktemp)
+    if ${curl} -i -sL "https://api.github.com/repos/${id}/tags?client_id=${github_client_id}&client_secret=${github_client_secret}" -o "$tmp";then
+        tr -d $'\r' < "${tmp}" > "${tmp2}"
+        cat "${tmp2}" > "${tmp}"
+        rm -f "${tmp2}"
+        if [[ "${wait_limit}" == true ]];then
+            if grep -q 'API rate limit exceeded' "${tmp}";then
+                local epoch=$(sed '/^X-RateLimit-Reset: /!d; s/.*: //' "${tmp}")
+                local s=$(( ${epoch} - $(date +%s) ))
+                $quiet || echo "github rate limit hit; waiting until ${epoch} (${s} seconds from now) to continue." >&2
+                sleep $s
+                ${curl} -sL "https://api.github.com/repos/${id}/tags?client_id=${github_client_id}&client_secret=${github_client_secret}" -o "$tmp"
+            else
+                sed -e '/^[A-Za-z-]*:/d;/^HTTP\/1\.1 .*/d;/^$/d' -i "${tmp}"
+            fi
+        else
+            return 3
+        fi
+
+        local upstream_latest=$(cat "${tmp}" | jshon -e 0 -e name -u)
+        [[ "${upstream_latest}" == "${pn}-"* ]] && local upstream_latest=${upstream_latest/${pn}-/}
+        local upstream_latest=$(echo "${upstream_latest}" | sed 's/^[a-z]*//;s/([0-9]*)[a-z].*//')
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_gitlab() {
+    local id="${1}"
+    local url_id="${id/\//%2F}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+
+    if ${curl} -sL "https://gitlab.com/api/v3/projects/${url_id}?private_token=${gitlab_client_secret}" -o "${tmp}";then
+        local project_id=$(cat "${tmp}" | jshon -e id)
+    else
+        return 2
+    fi
+
+    if ${curl} -sL "https://gitlab.com/api/v3/projects/${project_id}/repository/tags?private_token=${gitlab_client_secret}" -o "${tmp}";then
+        local tags=$(cat "${tmp}"  | jshon -a -e name -u)
+        local tags=$(echo "${tags}" | sed "s/${id#*/}-?//;s/^v//")
+        local max_fields=$(echo "${tags}" | tr -cd '.' | wc -L)
+        for f in $(seq 1 ${max_fields});do
+            local tags=$(echo "${tags}" | sort -t . -k ${f}n)
+        done
+        local upstream_latest=$(echo "${tags}" | tail -n 1)
+    else
+        return 2
+    fi
+
+    if vercmp --older-than "${current_version}" "${upstream_latest}";then
+        echo "${upstream_latest}"
+        rm -f "${tmp}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_gnome() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+
+    local urls=(
+        "https://git.gnome.org/browse/${id}"
+        "https://github.com/GNOME/${id}"
+    )
+
+    for url in $(printf '%s\n' "${urls[@]}" | shuf); do
+        if git ls-remote --tags "${url}" 2>/dev/null | grep -v -e '-rc' | cut -d $'\t' -f2 | cut -d'/' -f3 | cut -d'^' -f1 > "${tmp}";then
+            local upstream_latest=$(tail -n 1 "${tmp}")
+            [[ "${upstream_latest:0:1}" == 'v' ]] && local upstream_latest=${upstream_latest:1}
+            if vercmp --older-than "${current_version}" "${upstream_latest}";then
+                echo "${upstream_latest}"
+                rm -f "${tmp}"
+                return 0
+            else
+                return 1
+            fi
+        else
+            continue
+        fi
+    done
+    return 2
+}
+
+check_kernel.org() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+
+    local urls=(
+        "https://git.kernel.org/pub/scm/${id}.git"
+        "https://kernel.googlesource.com/pub/scm/${id}.git"
+    )
+
+    for url in $(printf '%s\n' "${urls[@]}" | shuf); do
+        if git ls-remote --tags "${url}" 2>/dev/null | grep -v -e '-rc' | cut -d $'\t' -f2 | cut -d'/' -f3 | cut -d'^' -f1 > "${tmp}";then
+            local upstream_latest=$(tail -n 1 "${tmp}")
+            [[ "${upstream_latest:0:1}" == 'v' ]] && local upstream_latest=${upstream_latest:1}
+            if vercmp --older-than "${current_version}" "${upstream_latest}";then
+                echo "${upstream_latest}"
+                rm -f "${tmp}"
+                return 0
+            else
+                return 1
+            fi
+        fi
+    done
+    return 2
+}
+
+check_launchpad() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+    if ${curl} -sL https://api.launchpad.net/1.0/${id}/releases -o "${tmp}";then
+        local upstream_latest=$(cat "${tmp}" | jshon -e entries -e 0 -e version -u)
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_pypi() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+    if ${curl} -sL https://pypi.python.org/pypi/${id}/json -o "${tmp}";then
+        local upstream_latest=$(cat "${tmp}" | jshon -e info -e version -u)
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_rubygems() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+    if ${curl} -sL https://rubygems.org/api/v1/versions/${id}/latest.json -o "${tmp}";then
+        local upstream_latest=$(cat "${tmp}" | jshon -e version -u)
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_sourceforge() {
+    local id="${1}"
+    local current_version="${2}"
+
+    local tmp=$(mktemp)
+    if ${curl} -sL "https://sourceforge.net/p/${id}/" -o "${tmp}";then
+        local upstream_latest=$(cat "${tmp}" | sed -r '/latest\/download/!d; s/.*\"Download //;s/ from SourceForge.*//;s|.*/||g;s|.*[-_]([.0-9]*)\.?.*|\1|;s/\.$//')
+
+        if vercmp --older-than "${current_version}" "${upstream_latest}";then
+            echo "${upstream_latest}"
+            rm -f "${tmp}"
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 2
+    fi
+}
+
+check_xfce() {
+    local id="${1,,}"
+    local current_version="${2}"
+
+    local pn="${id#*/}"
+
+    local tmp=$(mktemp)
+
+    local urls=(
+        "git://git.xfce.org/${id}"
+        "https://github.com/xfce-mirror/${pn}"
+    )
+
+    for url in $(printf '%s\n' "${urls[@]}" | shuf); do
+        if git ls-remote --tags "${url}" 2>/dev/null | grep -E -v -e 'xfce-4' -e '[-0-9](alpha|beta|rc)' | cut -d $'\t' -f2 | cut -d'/' -f3 | cut -d'^' -f1 > "${tmp}";then
+            local upstream_latest=$(tail -n 1 "${tmp}")
+            [[ "${upstream_latest}" == "${pn}-"* ]] && local upstream_latest=${upstream_latest/${pn}-/}
+            [[ "${upstream_latest}" == "xfce-"* ]] && local upstream_latest=${upstream_latest/xfce-/}
+            [[ "${upstream_latest:0:1}" == 'v' ]] && local upstream_latest=${upstream_latest:1}
+            if vercmp --older-than "${current_version}" "${upstream_latest}";then
+                echo "${upstream_latest}"
+                rm -f "${tmp}"
+                return 0
+            else
+                return 1
+            fi
+        else
+            continue
+        fi
+    done
+    return 2
+}
+
+permute_version() {
+    local ver="${1}"
+
+    echo "${ver}" | sed \
+        -e 's/-beta[0-9]*/-beta/'   \
+        -e 's/-beta/b/'             \
+        -e 's/-r[0-9]*//'
+}
+
+if [[ "$1" == -f ]];then
+    wait_limit=false
+    shift
+else
+    wait_limit=true
+fi
+
+if [[ "$1" == -q ]];then
+    quiet=true
+    shift
+else
+    quiet=false
+fi
+
+if [[ "$1" == -v ]];then
+    verbose=true
+    shift
+else
+    verbose=false
+fi
+
+if [[ "$1" == -x ]];then
+    set -x
+    shift
+fi
+
+if [[ -z "${@}" ]];then
+    packages=( $(${CAVE} print-ids -s install -s fetch -m '*/*[.REMOTE_IDS?]' | grep -v -- '-scm:') )
+else
+    packages=( $(for id in $@;do ${CAVE} print-ids -s install -s fetch -m "${id}[.REMOTE_IDS?]";done | grep -v -- '-scm:') )
+fi
+
+unknown_ids=()
+
+for pkg in "${packages[@]}";do
+    pkg_repo=${pkg##*::}
+    for remote_id in $(${CAVE} print-id-metadata --raw-name REMOTE_IDS --format '%v' "=${pkg}");do
+        pkg_details=$(${CAVE} print-ids -m "=${pkg}" --format '%c/%p %v %s\n')
+        pkg_name=${pkg_details%% *}
+        pkg_version=${pkg_details#* }; pkg_version=${pkg_version% *}
+        pkg_version=$(permute_version "${pkg_version}")
+        pkg_slot=${pkg_details##* }
+        if PATH= type check_"${remote_id%:*}" >/dev/null 2>&1;then
+            credibility=
+            pkg_latest=$(check_"${remote_id%:*}" "${remote_id/*:}" "${pkg_version}"); err=$?
+            if [[ "${err}" -eq 0 ]];then # out of date
+                printf "${color_update}[%s]${color_reset} " "::${pkg_repo}" >&2
+                printf "%s\n" "${pkg_name} ${pkg_version}:${pkg_slot} -> ${pkg_name} ${pkg_latest}:${pkg_slot}"
+                [[ "${credibility:-1}" -gt 0 ]] && break # stop on first match; don't overkill!
+            elif [[ "${err}" -eq 1 ]];then # up to date
+                $verbose && printf "${color_updated}[%s]${color_reset} %s %s:%s is the latest version.\n" "::${pkg_repo}" "${pkg_name}" "${pkg_version}" "${pkg_slot}" >&2
+            elif [[ "${err}" -eq 2 ]];then
+                $quiet || printf "${color_error}[%s]${color_reset} ${pkg_name}: failed to talk to the REMOTE_ID \"%s\".\n" "::${pkg_repo}" "${remote_id%:*}" >&2
+            elif [[ "${err}" -eq 3 ]];then
+                $quiet || printf "${color_error}[%s]${color_reset} ${pkg_name}: API rate limit exceeded for REMOTE_ID \"%s\".\n" "::${pkg_repo}" "${remote_id%:*}" >&2
+            elif [[ "${err}" -eq 100 ]];then
+                $quiet || printf "${color_error}[%s]${color_reset} ${pkg_name}: Failed to get any usable data from REMOTE_ID \"%s\".\n" "::${pkg_repo}" "${remote_id%:*}" >&2
+            fi
+        else
+            $verbose && printf "${color_error}[%s]${color_reset} %s: not sure how to check for updates with REMOTE_ID \"%s\"\n" "::${pkg_repo}" "${pkg_name}" "${remote_id%:*}" >&2
+            unknown_ids+=( "${remote_id%:*}" )
+        fi
+        pkg_details=; pkg_name=; pkg_version=;
+    done
+    pkg_repo=;
+done
+
+unknown_ids=( $(echo "${unknown_ids[@]}" | tr ' ' '\n' | sort -ud) )
+
+if [[ -n "${unknown_ids}" ]];then
+    $quiet || printf "IDs we don't know how to check for: %s\n" "${unknown_ids[*]}" >&2
+fi
