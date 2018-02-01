@@ -1,0 +1,44 @@
+#!/bin/sh
+# syslog - dmesg-like interface to the system log
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+err() {
+    printf '%s: %s\n' "${0##*/}" "$*"
+    exit 1
+}
+
+export PAGER=
+
+method=
+
+while [ $# -ne 0 ];do
+    case "${1}" in
+        --follow|-w)    follow=true             ;;
+        --lines=*)      lines="${1#*=}"; shift  ;;
+        --lines|-n)     lines="${2}"; shift     ;;
+        -n[0-9]*)       lines="${1#-n}"; shift  ;;
+        --)             break                   ;;
+        *)
+            err "Unknown command: ${1}"
+        ;;
+    esac
+    shift
+done
+
+if [ -z "${method}" ];then
+    if pgrep systemd-journal >/dev/null 2>&1;then
+        method=systemd-journald
+    fi
+fi
+
+case "${method}" in
+    systemd-journald)
+        lines="${lines:+-n ${lines}}"
+        exec journalctl -b -q --no-hostname -o short-monotonic ${lines:---no-tail} ${follow:+--follow}
+    ;;
+    *)
+        err "Unknown method: ${method}"
+    ;;
+esac
