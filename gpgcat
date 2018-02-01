@@ -1,0 +1,7 @@
+#!/bin/sh
+# gpgcat - concatenate a GPG-encrypted file
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+exec gpg -q -d "$@"
