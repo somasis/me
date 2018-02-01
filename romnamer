@@ -1,0 +1,65 @@
+#!/bin/sh
+# romnamer - rename ROMs in a directory given (or working directory)
+#            according to the data in DAT-o-matic files
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+dir="${1:-${PWD}}"
+cd "${dir}"
+
+me="${0##*/}"
+
+cache="${XDG_CACHE_HOME:-${HOME}/.cache}/${me}"
+
+edo() {
+    printf '+ %s\n' "$*" >&2
+    "$@" || exit $?
+}
+
+if [ -f "${cache}"/games.tmp.txt ] || ! [ -f "${cache}"/games.txt ];then
+    for dat in "${cache}"/*.dat;do
+        if ! [ -f "${dat}" ];then
+            # I wish I could automate this but they don't want direct downloads
+            printf '%s: %s\n' "${me}" "you need to download DATs from http://datomatic.no-intro.org/?page=download and place them in that ${cache}" >&2
+            exit 1
+        fi
+
+        edo xmlstarlet sel -t -m '//datafile/game' \
+                -v @name -o '|' \
+                -m rom \
+                -v @name -o '|' \
+                -v @size -o '|' \
+                -v @sha1 -n \
+                "${dat}" >> "${cache}"/games.tmp.txt
+        edo sed \
+                -e 's/&amp;/\&/g' \
+                -i "${cache}"/games.tmp.txt
+    done
+
+    edo sort -ud "${cache}"/games.tmp.txt > "${cache}"/games.txt
+    edo rm -f "${cache}"/games.tmp.txt
+fi
+
+for rom in *;do
+    sha1=$(sha1sum "${rom}" | cut -d' ' -f1 | tr 'a-z' 'A-Z')
+    
+    entry=$(grep "|${sha1}$" "${cache}"/games.txt | head -n1)
+
+    if [ -z "${entry}" ];then
+        printf '%s: "%s" could not be matched to a game in the database\n' "${me}" "${rom}" >&2
+        continue
+    fi
+
+    new_filename=$(printf '%s\n' "${entry}" | cut -d'|' -f2)
+
+    if [ "${rom}" = "${new_filename}" ];then
+        continue
+    elif [ -f "${new_filename}" ];then
+        printf '%s: we want to rename "%s" to "%s", but "%s" already exists\n' "${me}" "${rom}" "${new_filename}" "${new_filename}" >&2
+        exit 1
+    else
+        edo mv "${rom}" "${new_filename}"
+    fi
+done
+
