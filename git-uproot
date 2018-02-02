@@ -1,0 +1,30 @@
+#!/bin/sh
+# git-uproot - import a file or directory in a git repository, with it's history, into another repo
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+if [ "$#" -eq 0 ];then
+    printf "%s\n" 'git uproot <files>\n' '' \
+        "git uproot imports a file/directory's history into another repository" >&2
+    exit 1
+fi
+
+while [ "$#" -ne 0 ];do
+    file=$(readlink -f "${1}")
+    source=$(git -C "${file%/*}" rev-parse --show-toplevel "${file}" | head -n1)
+
+    if ! git -C "${source}" rev-parse --git-dir >/dev/null 2>&1;then
+        printf '"%s" is not a git repository\n' "${source}" >&2
+        exit 1
+    elif ! git rev-parse --git-dir >/dev/null 2>&1;then
+        printf '"%s" is not a git repository\n' "${PWD}" >&2
+        exit 1
+    fi
+
+    if git -C "${source}" ls-files --error-unmatch "${file}" >/dev/null 2>&1;then
+        git -C "${source}" log --pretty=email --patch-with-stat --reverse -- "${file}" | git am 2>/dev/null
+    fi
+    shift
+done
+
