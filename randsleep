@@ -13,7 +13,7 @@ case "${1}" in
     d|days)         time=$(( ${time} * 86400 ));;
     *)
         printf '%s\n' >&2 \
-            "randsleep [unit] [maximum time]" \
+            "randsleep [unit] [maximum time] [minimum time]" \
             '' \
             'unit: s[econds], m[inutes], h[ours], d[ays]' \
             'if unspecified, the default unit is seconds'
@@ -22,5 +22,6 @@ case "${1}" in
 esac
 
 [ -n "${2}" ] && max="${2}" && time=$(( time % max ))
+[ -n "${3}" ] && min="${3}" && time=$(( time + min ))
 
 exec sleep "${time}"
