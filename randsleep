@@ -4,11 +4,23 @@
 # Copyright 2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
-time=$(tr -dc '0-5' < /dev/urandom | dd bs=1 count=2 2>/dev/null)
+time=$(tr -dc '0-9' < /dev/urandom | dd bs=1 count=2 2>/dev/null)
 
 case "${1}" in
-    m) time=$(( ${time} * 60 )) ;;
-    h) time=$(( $(( ${time} * 60 )) * 60 )) ;;
+    ''|s|seconds)   time="${time}" ;;
+    m|minutes)      time=$(( ${time} * 60 )) ;;
+    h|hours)        time=$(( ${time} * 3600 )) ;;
+    d|days)         time=$(( ${time} * 86400 ));;
+    *)
+        printf '%s\n' >&2 \
+            "randsleep [unit] [maximum time]" \
+            '' \
+            'unit: s[econds], m[inutes], h[ours], d[ays]' \
+            'if unspecified, the default unit is seconds'
+        exit 1
+    ;;
 esac
+
+[ -n "${2}" ] && max="${2}" && time=$(( time % max ))
 
 exec sleep "${time}"
