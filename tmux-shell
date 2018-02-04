@@ -4,16 +4,15 @@
 # Copyright 2017-2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
-output=""
-
-command -v np >/dev/null && np=$(command -v np >/dev/null && np --restrict=73)
-
 if [ -z "${DISPLAY}" ];then
+    np=$(mpc -f '[%artist% - ]%title%[ (%album%)]' current | cut -c-73)
     clock_local=$(date '+%I:%M:%S%p')
+    clock_violet=$(TZ=Australia/Adelaide date '+%I:%M:%S%p')
+
     command -v acpi >/dev/null && battery=$(acpi -bf | sed '1!d; s/.*: //;s/Discharging, //;s/,.*//')
 fi
 
-for item in "${np}" "${battery}" "${clock_local}";do
+for item in "${np}" "${battery}" "${clock_violet}" "${clock_local}";do
     [ -z "${item}" ] && continue
     if [ -z "${output}" ];then
         output="${item}"
