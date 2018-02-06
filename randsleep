@@ -4,7 +4,7 @@
 # Copyright 2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
-time=$(tr -dc '0-9' < /dev/urandom | dd bs=1 count=2 2>/dev/null)
+time=$(cat /dev/urandom | tr -dc '0-9' | dd bs=1 count=2 2>/dev/null)
 
 case "${1}" in
     ''|s|seconds)   time="${time}" ;;
