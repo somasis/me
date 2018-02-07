@@ -4,7 +4,18 @@
 # Copyright 2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
-time=$(cat /dev/urandom | tr -dc '0-9' | dd bs=1 count=2 2>/dev/null)
+# random(): try to generate a random number. we don't care about it being cryptographically secure.
+random() {
+    # we check ${RANDOM} a second time to make sure it's actually the shell's RANDOM
+    [ -n "${RANDOM}" ] && ! [ "${RANDOM}" = "${RANDOM}" ] && printf '%s\n' "${RANDOM:0:2}" && return
+    [ -r /dev/urandom ] && tr -cd '0-9' < /dev/urandom | dd bs=1 count=2 2>/dev/null && return
+    awk 'BEGIN{srand(); printf "%d\n",(rand() * 99)}'
+    
+    return 1
+}
+
+time=$(random)
+[ "$?" -ne 0 ] && printf '%s: %s\n' "${0##*/}" "not sure how to generate a random number" >&2 && exit 127
 
 case "${1}" in
     ''|s|seconds)   time="${time}" ;;
