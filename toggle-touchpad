@@ -4,7 +4,7 @@
 # Copyright 2014-2015 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD License
 
-if type -fPp xfconf-query >/dev/null 2>&1 && [ "${DESKTOP_SESSION}" = XFCE ];then
+if type -fPp xfconf-query >/dev/null 2>&1 && [ "${DESKTOP_SESSION}" = xfce ];then
     method=${method:-xfconf}
     touchpad=$(xfconf-query -c pointers -l | grep /Properties/Device_Enabled | grep '[Tt]ouchpad' | cut -d'/' -f2 | head -1)
     name="${touchpad//_/ }"
@@ -15,7 +15,7 @@ elif type -fPp xinput >/dev/null 2>&1;then
     name=$(xinput list --name-only "$touchpad")
     state=$(echo $(xinput list-props "$touchpad" | grep 'Device Enabled') | cut -d' ' -f4)
 else
-    notify-send -a toggle-touchpad
+    notify-send -a toggle-touchpad "Touchpad" "Can't figure out method to turn off touchpad"
     printf '%s: %s\n' "${0##*/}" "can't figure out method to turn off touchpad"
     exit 127
 fi
@@ -43,7 +43,7 @@ disable_touchpad() {
 }
 
 # state should be a boolean, with 0 being off and 1 being on
-if [[ "$state" -eq 1 ]];then
+if [ "$state" -eq 1 ];then
     echo "Turning off ${name:-$touchpad}..."
     disable_touchpad
 else
