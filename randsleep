@@ -17,6 +17,12 @@ random() {
 time=$(random)
 [ "$?" -ne 0 ] && printf '%s: %s\n' "${0##*/}" "not sure how to generate a random number" >&2 && exit 127
 
+verbose=false
+if [ "$1" = "-v" ];then
+    verbose=true
+    shift
+fi
+
 case "${1}" in
     ''|s|seconds)   time="${time}" ;;
     m|minutes)      time=$(( ${time} * 60 )) ;;
@@ -24,7 +30,7 @@ case "${1}" in
     d|days)         time=$(( ${time} * 86400 ));;
     *)
         printf '%s\n' >&2 \
-            "randsleep [unit] [maximum time] [minimum time]" \
+            "randsleep [-v] [unit] [maximum time] [minimum time]" \
             '' \
             'unit: s[econds], m[inutes], h[ours], d[ays]' \
             'if unspecified, the default unit is seconds'
@@ -35,4 +41,5 @@ esac
 [ -n "${2}" ] && max="${2}" && time=$(( time % max ))
 [ -n "${3}" ] && min="${3}" && time=$(( time + min ))
 
+"${verbose}" && printf '%s: sleeping for %s seconds\n' "${0##*/}" "${time}" >&2
 exec sleep "${time}"
