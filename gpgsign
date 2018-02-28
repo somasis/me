@@ -1,0 +1,20 @@
+#!/bin/sh
+# gpgsign - create a detacted GPG signature for a file
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+until [ $# -eq 1 ];do
+    case "${1}" in
+        --)
+            break
+        ;;
+        -k)
+            shift
+            key="${1}"
+        ;;
+    esac
+    shift
+done
+
+exec gpg ${key:+-u "${key}"} --detach-sign "$1".sig "$1"
