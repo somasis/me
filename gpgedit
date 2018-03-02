@@ -4,7 +4,10 @@
 # Copyright 2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
+me="${0##*/}"
+
 default_key=$(sed -E '/^default-key /!d; s/^default-key[ \t]+//' $(gpgconf --list-dirs homedir)/gpg.conf)
+recipient="${default_key}"
 
 edit() {
     if ! ${EDITOR} "${1}";then
@@ -15,6 +18,20 @@ edit() {
     fi
 }
 
+help() {
+    printf '%s [-r <recipient>|--recipient <recipient>] <file ...>\n' "${me}" >&2
+}
+
+case "$1" in
+    -r|--recipient)
+        [ -z "$2" ] && help && exit 1
+        recipient="$2"; shift 2
+    ;;
+    --help)
+        help
+        exit 1
+    ;;
+esac
 
 until [ $# -eq 0 ];do
     if [ -f "${1}" ];then
@@ -23,7 +40,8 @@ until [ $# -eq 0 ];do
             exit 13
         fi
 
-        key=0x$(gpg --batch --list-packets "${1}" | sed -E '/^:pubkey/!d; s/.* keyid //')
+        key=$(gpg --batch --list-packets "${1}" | sed -E '/^:pubkey/!d; s/.* keyid //')
+        [ -n "${key}" ] && key="0x${key}" || key="${recipient}"
         file_to_edit=$(mktemp)
         file_to_compare=$(mktemp)
         chmod 600 "${file_to_edit}" "${file_to_compare}"
