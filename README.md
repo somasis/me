@@ -23,7 +23,7 @@ Configuration can be set in `$XDG_CONFIG_HOME/oldnotifier.conf`.
 
 #### Configuration variables
 
-- `email` - The email you used to register with The Old Reader; ex. `rssaddict@github.com`
+- `email` - The email you used to register with The Old Reader; ex. `rssaddict@gitlab.com`
 - `password` - Password used to login to The Old Reader; ex. `hunter2`
 - `notify_every` - How often to notify you; ex. `30m`, which would notify you of unread articles
 every thirty minutes.

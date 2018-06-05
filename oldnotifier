@@ -3,7 +3,7 @@
 #
 # Copyright 2014-2015 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
-# https://github.com/somasis/scripts/
+# https://gitlab.com/somasis/scripts/
 #
 # Prerequisites: notify-send, curl, Old Reader account
 #   notify-send might be found in `libnotify-bin`, `libnotify`, or `notify-send`
@@ -85,7 +85,7 @@ config_location="$XDG_CONFIG_HOME/oldnotifier.conf"
 
 [[ -f "$config_location" ]] && . "$config_location"
 
-user_agent="oldnotifier - https://github.com/somasis/scripts"
+user_agent="oldnotifier - https://gitlab.com/somasis/scripts"
 
 # Make sure notify-send is installed.
 if ! command -v notify-send 2>&1 >/dev/null;then
