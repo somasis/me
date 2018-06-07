@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # gmail-open - opens gmail and parses mailto link if given one
 # useful for setting as default mail client in desktop environments
 #

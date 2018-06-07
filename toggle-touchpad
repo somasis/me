@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # toggle-touchpad - toggle the first detected touchpad with xfconf/xinput
 #
 # Copyright 2014-2015 Kylie McClain <kylie@somas.is>

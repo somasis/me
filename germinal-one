@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # germinal-one - allow for using Germinal as a single terminal and provide better tmux integration
 #
 # Copyright 2015-2018 Kylie McClain <kylie@somas.is>

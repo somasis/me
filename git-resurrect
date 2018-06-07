@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # git-resurrect - bring back the last version of a file/directory that existed
 #
 # Copyright 2015 Kylie McClain <kylie@somas.is>
