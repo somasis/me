@@ -32,7 +32,7 @@ if [ -d "${dir}"/dev/pts ];then
 fi
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-edo unshare -p -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh -l}"
+edo unshare -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh -l}"
 
 for d in "${dir}"/{proc,sys,dev/shm,dev/pts,dev,tmp};do
     mountpoint -q "${d}" && edo umount "${d}"
