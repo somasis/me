@@ -5,7 +5,7 @@
 # Distributed under the terms of the 0BSD license
 
 if [ "$#" -eq 0 ];then
-    printf "%s\n" 'git uproot <files>\n' '' \
+    printf "%s\n" 'git uproot <files>' '' \
         "git uproot imports a file/directory's history into another repository" >&2
     exit 1
 fi
