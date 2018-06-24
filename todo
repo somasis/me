@@ -81,7 +81,7 @@ case "${1}" in
     ;;
     *)
         msg "added \"$*\" to list"
-        printf '- %s\n' "$*" >> "${todo}"
+        printf -- '- %s\n' "$*" >> "${todo}"
         cat "${todo}"
     ;;
 esac
