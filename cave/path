@@ -1,8 +1,5 @@
 #!/bin/bash
 # cave/path - show the path to a package's exheres
-#
-# Copyright 2016 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 cave print-id-metadata --raw-name EXHERES --format '%v' "$@"
 [[ -t 0 ]] && printf '\n'

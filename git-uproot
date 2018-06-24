@@ -1,8 +1,5 @@
 #!/bin/sh
 # git-uproot - import a file or directory in a git repository, with it's history, into another repo
-#
-# Copyright 2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 if [ "$#" -eq 0 ];then
     printf "%s\n" 'git uproot <files>' '' \

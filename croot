@@ -1,8 +1,5 @@
 #!/bin/sh
 # croot - chroot with linux-related filesystems
-#
-# Copyright 2015-2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 mount=true
 case "${1}" in

@@ -1,8 +1,5 @@
 #!/bin/sh
 # pacman-mirrorlist-update - rank a list of mirrors
-#
-# Copyright 2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 if ! [ -w /etc/pacman.d/mirrorlist ];then
     printf "%s: can't write to /etc/pacman.d/mirrorlist\n" "${0##*/}" >&2

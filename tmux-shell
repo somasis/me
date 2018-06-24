@@ -1,8 +1,5 @@
 #!/bin/sh
 # tmux-shell - command to give status-bar information
-#
-# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 if [ -z "${DISPLAY}" ];then
     np=$(mpc -f '[%artist% - ]%title%[ (%album%)]' current | cut -c-73)

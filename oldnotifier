@@ -1,10 +1,6 @@
 #!/bin/bash
 # oldnotifier -- notifier for The Old Reader
 #
-# Copyright 2014-2015 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
-# https://gitlab.com/somasis/scripts/
-#
 # Prerequisites: notify-send, curl, Old Reader account
 #   notify-send might be found in `libnotify-bin`, `libnotify`, or `notify-send`
 #

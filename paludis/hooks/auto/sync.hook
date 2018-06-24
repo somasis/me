@@ -1,8 +1,5 @@
 #!/bin/bash
 # sync.hook - Paludis hook to sync to death after each install/repo sync
-#
-# Copyright 2016 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 sync_hook() {
     export PATH="$(${PALUDIS_EBUILD_DIR}/utils/canonicalise ${PALUDIS_EBUILD_DIR}/utils/ ):${PATH}"

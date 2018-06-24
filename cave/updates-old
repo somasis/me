@@ -1,8 +1,5 @@
 #!/bin/bash
 # cave/updates - print packages that have newer versions available, according to REMOTE_IDS
-#
-# Copyright 2016 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 github_client_id=cave-updates
 github_client_secret="f49a2b37a469accf2f1c259447ad1b8b86b46d5e"

@@ -1,8 +1,5 @@
 #!/bin/sh
 # randsleep - sleep for a random amount of time
-#
-# Copyright 2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 # random(): try to generate a random number. we don't care about it being cryptographically secure.
 random() {

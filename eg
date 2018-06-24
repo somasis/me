@@ -4,9 +4,6 @@
 # that tool that has custom content written just to show examples is stupid
 # and it would be better if people instead just contributed good examples
 # to manpages instead.
-#
-# Copyright 2017 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 export PAGER=cat
 

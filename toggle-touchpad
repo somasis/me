@@ -1,8 +1,5 @@
 #!/bin/sh
 # toggle-touchpad - toggle the first detected touchpad with xfconf/xinput
-#
-# Copyright 2014-2015 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD License
 
 if type -fPp xfconf-query >/dev/null 2>&1 && [ "${DESKTOP_SESSION}" = xfce ];then
     method=${method:-xfconf}

@@ -1,9 +1,6 @@
 #!/bin/sh
 # playerctl-cdprev - add CD-like previous command; goes to beginning of track,
 #                    and then next track if done in three seconds of doing that
-#
-# Copyright 2017-2018 Kylie McClain <kylie@somas.is>
-# Distributed under the terms of the 0BSD license
 
 if [ -f ~/.playerctl-cdprev ] || [ $(playerctl "${@}" position) -lt 4 ];then
     playerctl "${@}" previous
