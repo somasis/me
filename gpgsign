@@ -4,6 +4,8 @@
 # Copyright 2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
+[ $# -eq 0 ] && printf '%s\n' 'gpgsign [-k <key>] <file>' >&2 && exit 1
+
 until [ $# -eq 1 ];do
     case "${1}" in
         --)
