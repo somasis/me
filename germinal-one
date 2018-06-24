@@ -64,7 +64,7 @@ germinal_running() {
 }
 
 germinal_has_focus() {
-    if [ $(xdotool getactivewindow getwindowpid) = "${germinal_pid}" ];then
+    if [ "$(xdotool getactivewindow getwindowpid)" = "${germinal_pid}" ];then
         debug "germinal_has_focus: true; germinal[${germinal_pid}] has focus"
         return 0
     else
