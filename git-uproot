@@ -1,27 +1,37 @@
 #!/bin/sh
 # git-uproot - import a file or directory in a git repository, with it's history, into another repo
 
+SUBDIRECTORY_OK=true
+. "$(git --exec-path)/git-sh-setup"
+
 if [ "$#" -eq 0 ];then
     printf "%s\n" 'git uproot <files>' '' \
-        "git uproot imports a file/directory's history into another repository" >&2
+        "git uproot imports a file/directory's history into another repository" \
+        "all files passed must exist in the same repository." >&2
     exit 1
 fi
 
-while [ "$#" -ne 0 ];do
-    file=$(readlink -f "${1}")
-    source=$(git -C "${file%/*}" rev-parse --show-toplevel "${file}" | head -n1)
+file=$(readlink -f "${1}")
+source=$(git -C "${file%/*}" rev-parse --show-toplevel "${file}" | head -n1)
 
-    if ! git -C "${source}" rev-parse --git-dir >/dev/null 2>&1;then
-        printf '"%s" is not a git repository\n' "${source}" >&2
-        exit 1
-    elif ! git rev-parse --git-dir >/dev/null 2>&1;then
-        printf '"%s" is not a git repository\n' "${PWD}" >&2
-        exit 1
-    fi
+if ! git -C "${source}" rev-parse --git-dir >/dev/null 2>&1;then
+    printf '"%s" is not a git repository\n' "${source}" >&2
+    exit 1
+elif ! git rev-parse --git-dir >/dev/null 2>&1;then
+    printf '"%s" is not a git repository\n' "${PWD}" >&2
+    exit 1
+fi
 
-    if git -C "${source}" ls-files --error-unmatch "${file}" >/dev/null 2>&1;then
-        git -C "${source}" log --pretty=email --patch-with-stat --reverse -- "${file}" | git am 2>/dev/null
-    fi
+for f in "${@}";do
+    f=$(readlink -f "${f}")
+    set -- "$@" "${f}"
+done
+
+until [ "${1:0:1}" = / ];do
     shift
 done
+
+if git -C "${source}" ls-files --error-unmatch "$@";then
+    git -C "${source}" log --pretty=email --patch-with-stat --reverse -- "${@}" | git am 2>/dev/null
+fi
 
