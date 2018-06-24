@@ -1,0 +1,36 @@
+#!/bin/sh
+# gpgencrypt - encrypt a file with GPG
+#
+# Copyright 2018 Kylie McClain <kylie@somas.is>
+# Distributed under the terms of the 0BSD license
+
+default_key=$(sed -E '/^default-key /!d; s/^default-key[ \t]+//' $(gpgconf --list-dirs homedir)/gpg.conf)
+recipient="${default_key}"
+
+until [ $# -eq 1 ];do
+    case "${1}" in
+        --)
+            break
+        ;;
+        -k|--key)
+            shift
+            key="${1}"
+        ;;
+        -r|--recipient)
+            shift
+            recipient="${1}"
+        ;;
+        -o|--output)
+            shift
+            output="${1}"
+        ;;
+    esac
+    shift
+done
+
+key=$(gpg --batch --list-packets "${1}" 2>/dev/null | sed -E '/^:pubkey/!d; s/.* keyid //')
+[ -n "${key}" ] && key="0x${key}" || key="${recipient}"
+
+output="${output:-${1}.gpg}"
+
+exec gpg -o "${output}" ${key:+-u "${key}"} ${recipient:+-r "${recipient}"} --encrypt "$1"
