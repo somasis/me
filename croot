@@ -1,10 +1,16 @@
 #!/bin/sh
 # croot - chroot with linux-related filesystems
 #
-# Copyright 2015-2017 Kylie McClain <kylie@somas.is>
+# Copyright 2015-2018 Kylie McClain <kylie@somas.is>
 # Distributed under the terms of the 0BSD license
 
-set -eu
+mount=true
+case "${1}" in
+    --no-mount)
+        mount=false
+        shift
+    ;;
+esac
 
 dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
 home=$(grep -- "^$(id -un):" "${dir}"/etc/passwd | cut -d':' -f6 || printf '/')
@@ -19,21 +25,25 @@ if [ $(id -u) -ne 0 ];then
     exit 13
 fi
 
-mountpoint -q "${dir}"/proc     || edo mount -t proc /proc      "${dir}"/proc
-mountpoint -q "${dir}"/sys      || edo mount -t sysfs /sys      "${dir}"/sys
-mountpoint -q "${dir}"/dev      || edo mount -t devtmpfs /dev   "${dir}"/dev
-if ! mountpoint -q "${dir}"/dev/shm;then
-    [ -d "${dir}"/dev/shm ] || edo mkdir "${dir}"/dev/shm
-    edo mount -t tmpfs /dev/shm  "${dir}"/dev/shm
-fi
-mountpoint -q "${dir}"/tmp      || edo mount -t tmpfs /tmp      "${dir}"/tmp
-if [ -d "${dir}"/dev/pts ];then
-    mountpoint -q "${dir}"/dev/pts || edo mount -t devpts /dev/pts "${dir}"/dev/pts
+if "${mount}";then
+    mountpoint -q "${dir}"/proc     || edo mount -t proc /proc      "${dir}"/proc
+    mountpoint -q "${dir}"/sys      || edo mount -t sysfs /sys      "${dir}"/sys
+    mountpoint -q "${dir}"/dev      || edo mount -t devtmpfs /dev   "${dir}"/dev
+    if ! mountpoint -q "${dir}"/dev/shm;then
+        [ -d "${dir}"/dev/shm ] || edo mkdir "${dir}"/dev/shm
+        edo mount -t tmpfs /dev/shm  "${dir}"/dev/shm
+    fi
+    mountpoint -q "${dir}"/tmp      || edo mount -t tmpfs /tmp      "${dir}"/tmp
+    if [ -d "${dir}"/dev/pts ];then
+        mountpoint -q "${dir}"/dev/pts || edo mount -t devpts /dev/pts "${dir}"/dev/pts
+    fi
 fi
 
 cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
 edo unshare -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh -l}"
 
-for d in "${dir}"/{proc,sys,dev/shm,dev/pts,dev,tmp};do
-    mountpoint -q "${d}" && edo umount "${d}"
-done
+if "${mount}";then
+    for d in "${dir}"/{proc,sys,dev/shm,dev/pts,dev,tmp};do
+        mountpoint -q "${d}" && edo umount "${d}"
+    done
+fi
