@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# git-since - show commits to repo since the upstream branch's last commit
+#
+
+exec git log "$@" $(git rev-parse --abbrev-ref --symbolic-full-name @{u})..$(git rev-parse --abbrev-ref HEAD)
