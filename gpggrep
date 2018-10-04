@@ -23,17 +23,13 @@ done
 
 PATTERN="${1}"; shift
 
-if [ "$#" -eq 0 ];then
-    gpgcat | grep "${grep_args[@]}" -- "${PATTERN}"
+if [ "$#" -lt 2 ];then
+    gpgcat "${1}" | grep "${grep_args[@]}" -- "${PATTERN}"
 else
     for f in "$@";do
-        if [ "$#" -gt 1 ];then
-            export f # pipes may be ran in subshells
-            gpgcat "${f}" | grep "${grep_args[@]}" -n -- "${PATTERN}" | while read -r line;do
-                printf '%s:%s\n' "${f}" "${line}"
-            done
-        else
-            gpgcat "${f}" | grep "${grep_args[@]}" -- "${PATTERN}"
-        fi
+        export f # pipes may be ran in subshells
+        gpgcat "${f}" | grep "${grep_args[@]}" -n -- "${PATTERN}" | while read -r line;do
+            printf '%s:%s\n' "${f}" "${line}"
+        done
     done
 fi
