@@ -38,4 +38,5 @@ name here; ex. `internet-feed-reader`
 
 ## License
 
-These scripts are all licensed under the [0BSD License](LICENSE).
+This is free and unencumbered software released into the public domain. Read the [UNLICENSE] for
+the full details.
