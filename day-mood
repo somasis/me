@@ -1,0 +1,53 @@
+#!/bin/sh
+# day-mood - display statistics about moods in your daylog
+
+mood_good=$'\e[32m'
+mood_bad=$'\e[31m'
+if [ -n "${NO_COLOR}" ];then
+    mood_good=
+    mood_bad=
+fi
+
+if [ "$1" = --help-description ];then
+    printf 'Display statistics about moods through entries.\n'
+    exit 0
+fi
+
+umask 177
+moods=$(mktemp)
+
+day grep -E '^mood:' | cut -d: -f1,3- | \
+    sed -E \
+        -e $"/(happy|good|satisfied|okay|hopeful|great|alright|relaxed|love|lovely|fine|easy|productive|lazy|horny)/ s/^/good /" \
+        -e $"/(awful|bad|dysphoric|sad|asshole|stressed|meh|frustrated|upset|lonely|scared|unsure|useless|volatile|worst)/ s/^/bad /" \
+        -e "s/^(good|bad)( (good|bad))+/\1/" > "${moods}"
+
+sed -E \
+    -e $"/^bad / s/^bad /${mood_bad}/" \
+    -e $"/^good / s/^good /${mood_good}/" \
+    -e $'s/$/\e[0m/' "${moods}"
+
+goods=$(grep -c '^good ' "${moods}")
+bads=$(grep -c '^bad ' "${moods}")
+
+#cut -d' ' -f1- "${moods}" | cut -d':' -f1 | while IFS=$' \n' read type day;do
+#    echo $type $day
+#    day_num=$(date --date="${day}" +%w)
+#    i=$(( ${i:-0} + 1 ))
+#    case "${type}" in
+#        good)
+#            printf "${mood_good}■\e[0m"
+#        ;;
+#        bad)
+#            printf "${mood_bad}■\e[0m"
+#        ;;
+#    esac
+#    if [ "${i}" -gt 7 ];then
+#        i=1
+#        printf '\n'
+#    fi
+#done
+
+printf '%s good days, %s bad days\n' "${goods}" "${bads}"
+
+rm -f "${moods}"
