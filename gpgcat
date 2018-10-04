@@ -1,4 +1,7 @@
 #!/bin/sh
 # gpgcat - concatenate a GPG-encrypted file
 
-exec gpg -q -d "$@"
+until [ $# -eq 0 ];do
+    gpg --batch --no-tty -q -d "$1" || exit $?
+    shift
+done
