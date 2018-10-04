@@ -16,4 +16,4 @@ until [ $# -eq 1 ];do
     shift
 done
 
-exec gpg ${key:+-u "${key}"} --detach-sign "$1".sig "$1"
+exec gpg --batch ${key:+-u "${key}"} --detach-sign "$1".sig "$1"
