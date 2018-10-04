@@ -32,7 +32,7 @@ esac
 
 until [ $# -eq 0 ];do
     if [ -f "${1}" ];then
-        if ! gpg -q -d "${1}" >/dev/null 2>&1;then
+        if ! gpg --no-tty --batch -q -d "${1}" >/dev/null 2>&1;then
             printf "File '%s' either isn't an encrypted file, or we don't have the key to decrypt it.\n" "${1}" >&2
             exit 13
         fi
@@ -42,7 +42,7 @@ until [ $# -eq 0 ];do
         file_to_edit=$(mktemp)
         file_to_compare=$(mktemp)
         chmod 600 "${file_to_edit}" "${file_to_compare}"
-        gpg -q -u "${key}" --decrypt "${1}" > "${file_to_edit}"
+        gpg --no-tty --batch -q -u "${key}" --decrypt "${1}" > "${file_to_edit}"
 
         edit "${file_to_edit}"
 
