@@ -18,8 +18,8 @@ moods=$(mktemp)
 
 day grep -E '^mood:' | cut -d: -f1,3- | \
     sed -E \
-        -e $"/(happy|good|satisfied|okay|hopeful|great|alright|relaxed|love|lovely|fine|easy|productive|lazy|horny)/ s/^/good /" \
-        -e $"/(awful|bad|dysphoric|sad|asshole|stressed|meh|frustrated|upset|lonely|scared|unsure|useless|volatile|worst)/ s/^/bad /" \
+        -e $"/(happy|good|satisfied|okay|hopeful|great|alright|relaxed|love|lovely|fine|easy|productive|lazy|horny|wonderful|nice)/ s/^/good /" \
+        -e $"/(awful|bad|dysphoric|sad|asshole|stressed|meh|frustrated|upset|lonely|scared|unsure|useless|volatile|worst|pissed)/ s/^/bad /" \
         -e "s/^(good|bad)( (good|bad))+/\1/" > "${moods}"
 
 sed -E \
