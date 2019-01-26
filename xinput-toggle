@@ -1,0 +1,35 @@
+#!/bin/sh
+# xinput-toggle - toggle a device on/off with xinput
+
+notify=false
+
+until [ "$#" -le 1 ];do
+    case "${1}" in
+        -n)
+            notify=true
+        ;;
+    esac
+    shift
+done
+
+device="${1}"
+
+[ -z "${device}" ] && printf 'usage: %s %s\n' "${0##*/}" "[--notify] <device>" && exit 1
+
+[ $(xinput list --name-only | grep -Fc "${device}") -eq 0 ] && printf 'error: %s\n' "no device named '${device}'" >&2 && exit 2
+
+case "$(printf '%s\n' "${device}" | tr '[A-Z]' '[a-z]')" in
+    *touchpad*) type=Touchpad       ;;
+    *pen*)      type=Pen            ;;
+    *tablet*)   type=Tablet         ;;
+    *finger*)   type=Touchscreen    ;;
+    *keyboard*) type=Keyboard       ;;
+    *pointer*)  type=Pointer        ;;
+esac
+
+if [ $(xinput list-props "${1}" | sed '/Device Enabled/!d; s/.*:[\t ]*//') -eq 1 ];then 
+    xinput disable "${1}" && "${notify}" && notify-send -u low -a xinput-toggle "${type} \"${device}\" disabled"
+else
+    xinput enable "${1}" && "${notify}" && notify-send -u low -a xinput-toggle "${type} \"${device}\" enabled"
+fi
+
