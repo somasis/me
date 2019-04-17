@@ -1,15 +1,11 @@
 #!/bin/sh
-# eg - a tool to show examples and only examples from manpages
-#
-# that tool that has custom content written just to show examples is stupid
-# and it would be better if people instead just contributed good examples
-# to manpages instead.
+# ex - a tool to show examples from manpages
 
 export PAGER=cat
 
 if [ $# -lt 1 ];then
     printf '%s\n' \
-        "usage: eg name ..."
+        "usage: ${0} name ..."
     exit 5
 fi
 
@@ -42,7 +38,7 @@ for page in ${pages};do
     done < "${list}"
 
     if [ $# -lt 1 ];then
-        printf '%s\n' "eg: no examples found in manual for \"$page\""
+        printf '%s\n' "${0##*/}: no examples found in manual for \"$page\""
         exit 1
     fi
 
