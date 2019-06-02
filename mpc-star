@@ -1,0 +1,37 @@
+#!/bin/sh
+
+rating="${1:-0}"
+mpc_rating=$(expr "${rating}" + "${rating}")
+mpc sticker "$(mpc current -f '%file%')" set rating "${mpc_rating}"
+song=$(mpc current -f "[%artist% - ]%title%[ (%album%)]")
+
+[ -d "${XDG_CACHE_HOME}"/mpc-star ] || mkdir -p "${XDG_CACHE_HOME}"/mpc-star
+
+if [ "${rating}" -gt 0 ];then
+    stars=
+    for i in $(seq 1 "${rating}");do
+        stars="${stars}★"
+    done
+fi
+
+if [ "${#stars}" -ne 5 ];then
+    while [ $(printf '%s' "${stars}" | wc -m) -le 6 ];do
+        stars="${stars}☆"
+    done
+    stars="${stars:0:5}"
+fi
+
+if pgrep mpc-star >/dev/null 2>&1 && [ -r "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id ];then
+    id=$(cat "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id)
+    id=$(dunstify -r "${id}" -u low -i cantata -a mpc-star "" "${song} ${stars}")
+elif ! pgrep mpc-star >/dev/null 2>&1 && [ -r "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id ];then
+    id=$(dunstify -p -u low -i cantata -a mpc-star "" "${song} ${stars}")
+    rm -f "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id
+elif pgrep mpc-star >/dev/null 2>&1 && ! [ -f "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id ];then
+    id=$(dunstify -p -u low -i cantata -a mpc-star "" "${song} ${stars}")
+    printf '%s\n' "${id}" > "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id
+else
+    # ! pgrep mpc-star && ! [ -f "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id ]
+    id=$(dunstify -p -u low -i cantata -a mpc-star "" "${song} ${stars}")
+    printf '%s\n' "${id}" > "${XDG_CACHE_HOME}"/mpc-star/mpc-star-notification.id
+fi
