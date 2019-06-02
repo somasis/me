@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ $(mpc playlist | wc -l) -eq 0 ];then
+    mpc listall | mpc insert
+    mpc -q random on
+    mpc -q play
+else
+    mpc -q toggle
+fi
