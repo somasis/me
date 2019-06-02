@@ -1,0 +1,10 @@
+#!/bin/sh
+
+url=https://youtube.com/watch?v=$(youtube-dl --no-playlist --get-id ytsearch:"$(mpc current -f '%artist% %title%')")
+
+if [ -t 0 ];then
+    printf '%s\n' "${url}" | xclip -in -selection clipboard
+    printf '%s\n' "${url}" >&2
+else
+    printf '%s\n' "${url}"
+fi
