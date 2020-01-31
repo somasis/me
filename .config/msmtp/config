@@ -1,0 +1,25 @@
+defaults
+	port 465
+	tls on
+	tls_starttls off
+	auth plain
+
+account kylie@somas.is
+	host smtp.fastmail.com
+	user kylie@somas.is
+	passwordeval pass somasis/trotsky.somas.is/msmtp/kylie@somas.is
+	from kylie@somas.is
+
+account mcclainkj@appstate.edu
+	host smtp.gmail.com
+	user mcclainkj@appstate.edu
+	passwordeval pass somasis/trotsky.somas.is/msmtp/mcclainkj@appstate.edu
+	from mcclainkj@appstate.edu
+
+account somasissounds@gmail.com
+	host smtp.gmail.com
+	user somasissounds@gmail.com
+	passwordeval pass somasis/trotsky.somas.is/msmtp/somasissounds@gmail.com
+	from somasissounds@gmail.com
+
+account default : kylie@somas.is

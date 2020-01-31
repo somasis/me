@@ -1,0 +1,100 @@
+[settings]
+	screenchange-reload = true
+	pseudo-transparency = true
+
+[bar/default]
+	monitor = eDP-1
+	dpi = 192
+
+	width = 100%
+	height = 64
+	fixed-center = true
+
+	background = #2f343f
+	foreground = #ffffff
+
+	module-margin-left = 8
+	margin-top = 64
+
+	wm-restack = bspwm
+
+	modules-left = bspwm title
+	modules-center = custom-time
+	modules-right = mpd-tail mail-count
+
+	font-0 = "forkawesome:style=regular:size=11;3"
+	font-1 = "forkawesome:style=solid:size=11;3"
+	font-2 = "Liberation Sans:style=regular:size=11;3"
+	font-3 = "Liberation Sans:style=bold:size=11;3"
+	font-4 = "Liberation Sans:style=black:size=11;3"
+	font-5 = "JetBrains Mono:style=regular:size=10;3"
+	font-6 = "JetBrains Mono:style=bold:size=10;3"
+
+	tray-detatched = false
+	tray-background = #597bf7
+	tray-position = right
+	tray-padding = 4
+	tray-maxsize = 32
+
+[module/bspwm]
+	type = internal/bspwm
+	enable-scroll = true
+
+	ws-icon-0 = "1"
+	ws-icon-1 = "2"
+	ws-icon-2 = "3"
+	ws-icon-3 = "4"
+	ws-icon-4 = "5"
+
+	format-padding = 0
+	format = "<label-state> <label-mode> "
+	label-monocle = 
+	label-tiled = t
+	label-fullscreen = 
+	label-floating = 
+	label-pseudotiled = t
+	label-locked = 
+	label-locked-foreground = #bd2c40
+	label-sticky = 
+	label-sticky-foreground = #fba922
+	label-private = 
+	label-private-foreground = #bd2c40
+
+	label-focused-background = #597bf7
+
+# XXX: it'd be nice if this could just be done via the date module
+[module/custom-time]
+	type = custom/script
+	tail = true
+	exec = ~/git/scripts/polybar/clock
+
+	format = <label>
+	label = %output%
+	label-font = 4
+
+[module/mpd-tail]
+	type = custom/script
+	tail = true
+	exec = ~/git/scripts/polybar/mpd-tail
+	enable-scroll = true
+	click-left = mpc toggle
+	click-right = mpc next
+	scroll-up = mpc volume +5
+	scroll-down = mpc volume -5
+	interval = 5
+
+[module/mail-count]
+	type = custom/script
+	tail = true
+	exec = ~/git/scripts/polybar/mail-count
+	click-left = germinal -- aerc
+
+[module/title]
+	type = custom/script
+	tail = true
+	exec = xtitle -is -t 72
+	enable-scroll = true
+	scroll-up = bspc node -f prev.local
+	scroll-down = bspc node -f next.local
+
+	label-font = 7

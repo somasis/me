@@ -1,0 +1,35 @@
+[user]
+	name = Kylie McClain
+	email = kylie@somas.is
+	signingkey = 0x37133B9826BBB5C2
+[commit]
+	gpgsign = true
+
+# Use password-store for git credentials.
+# <https://github.com/languitar/pass-git-helper>
+[credential]
+	helper = !pass-git-helper $@
+	useHttpPath = true
+
+# Use git templates in order to make default branch name "main".
+[init]
+	templateDir = ~/.config/git/template
+
+# See msmtp(1) configuration for details.
+[sendemail]
+	smtpserver = /bin/msmtp
+	annotate = true
+
+[push]
+	default = simple
+[hub]
+	protocol = ssh
+[log]
+	abbrevCommit = false
+[branch]
+	autosetuprebase = always
+[http]
+	followRedirects = true
+
+[includeIf "gitdir:~/git/exherbo/"]
+	path = ~/.config/git/exherbo-config
