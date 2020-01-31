@@ -1,17 +1,17 @@
 #!/bin/sh
-# ex - a tool to show examples from manpages
+# hmm - a tool to show examples from manpages
 
 export PAGER=cat
 
 if [ $# -lt 1 ];then
     printf '%s\n' \
-        "usage: ${0} name ..."
+        "usage: ${0##*/} name ..."
     exit 5
 fi
 
 show_section() {
     local line
-    sed -rn "/^${1}$/{ p; :loop n; p; { /^[A-Z]+/d; }; b loop }" "${man}" | sed '$d'
+    sed -En "/^${1}$/{ p; :loop n; p; { /^[A-Z]+/d; }; b loop }" "${man}" | sed '$d'
 }
 
 pages="$@"
@@ -22,7 +22,7 @@ for page in ${pages};do
     man "$page" > "${man}" || exit 127
     sed -i 's/.\x08//g' "${man}"
 
-    sed -r '1d;/^[A-Z]/!d;s/^([A-Z ]*).*/\1/;$d' "${man}" > "${list}"
+    sed -E '1d;/^[A-Z]/!d;s/^([A-Z ]*).*/\1/;$d' "${man}" > "${list}"
 
     while IFS= read -r section;do
         case "${section}" in
