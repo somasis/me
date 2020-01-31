@@ -1,0 +1,12 @@
+#!/bin/sh
+
+count() {
+    count=$(mdirs ~/mail/*/INBOX | mlist -Ns | wc -l)
+    [ "${count}" -gt 0 ] && printf '\uf0e0 %s unread messages\n' "${count}" && return
+    printf '\n'
+}
+
+count
+while mdirs -a ~/mail/*/INBOX | rwc -ed >/dev/null; do
+    count
+done

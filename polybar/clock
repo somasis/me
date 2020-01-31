@@ -1,0 +1,24 @@
+#!/bin/sh
+
+strftime='%I:%M:%S %p'
+current_strftime="%a, ${strftime}"
+home_strftime="%a, ${strftime}"
+violet_strftime="%a, ${strftime}"
+
+current_TZ="${TZ:-$(readlink -f /etc/localtime | sed 's:.*/zoneinfo/::')}"
+home_TZ=America/New_York
+violet_TZ=Australia/Adelaide
+
+clock() {
+    printf "%s%s" "${1}" "$(date +"$2")"
+}
+
+while :; do
+    # DUMB: if I don't put TZ=${current_TZ} then TZ keeps being overwritten during the loop
+    #       ...depending on what shell it is.
+    TZ=${current_TZ} clock '' "${current_strftime} "
+    [ "${current_TZ}" != "${home_TZ}" ] && TZ=${home_TZ} clock $'\uF015 ' "${home_strftime}"
+    [ "${current_TZ}" != "${violet_TZ}" ] && TZ=${violet_TZ} clock $'\uF004 ' "${violet_strftime}"
+    printf '\n'
+    sleep .9
+done
