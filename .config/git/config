@@ -44,5 +44,7 @@
 	commits = local-commits --reverse --oneline
 	amendall = !git addall; EDITOR=cat git amend
 
+# Directory specific git configuration. See "Includes" in git-config(1).
 [includeIf "gitdir:~/git/exherbo/"]
 	path = ~/.config/git/exherbo-config
+
