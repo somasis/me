@@ -28,6 +28,8 @@
 	autosetuprebase = always
 [http]
 	followRedirects = true
+[stash]
+	showPatch = true
 
 [includeIf "gitdir:~/git/exherbo/"]
 	path = ~/.config/git/exherbo-config
