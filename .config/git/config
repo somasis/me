@@ -31,5 +31,18 @@
 [stash]
 	showPatch = true
 
+[alias]
+	addall = add -Av
+	hunk = add -p
+	unhunk = reset HEAD --
+	com = commit -v
+	amend = commit -v --amend
+	patches = since --reverse --pretty=email
+	rbc = rebase --continue
+	re = rebase
+	ri = rebase -i
+	commits = local-commits --reverse --oneline
+	amendall = !git addall; EDITOR=cat git amend
+
 [includeIf "gitdir:~/git/exherbo/"]
 	path = ~/.config/git/exherbo-config
