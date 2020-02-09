@@ -4,6 +4,7 @@
 	signingkey = 0x37133B9826BBB5C2
 [commit]
 	gpgsign = true
+	verbose = true
 
 # Use password-store for git credentials.
 # <https://github.com/languitar/pass-git-helper>
@@ -30,13 +31,15 @@
 	followRedirects = true
 [stash]
 	showPatch = true
+[status]
+	showStash = true
 
 [alias]
+	com = commit
 	addall = add -Av
-	hunk = add -p
-	unhunk = reset HEAD --
-	com = commit -v
-	amend = commit -v --amend
+	addp = add -p
+	unadd = reset HEAD --
+	amend = commit --amend
 	patches = since --reverse --pretty=email
 	rbc = rebase --continue
 	re = rebase
