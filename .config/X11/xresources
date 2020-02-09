@@ -1,0 +1,42 @@
+Xft.dpi:        192
+Xft.antialias:  1
+Xft.rgba:       none
+Xft.hinting:    1
+Xft.hintstyle:  hintslight
+Xft.autohint:   0
+Xft.lcdfilter:  lcddefault
+
+Xcursor.theme:  Hackneyed
+Xcursor.size:   48
+
+
+! xst - 
+st.termname:    st-256color
+
+st.font:        JetBrains Mono:size=10:antialias=true
+st.bold_font:   1
+st.tabspaces:   4
+
+st.borderpx:    0
+
+st.cursorshape: 5
+st.cursorblinkontype: 1
+
+st.foreground:  #e0eaf0
+st.background:  #2f343f
+st.color0:      #2f343f
+st.color1:      #d2608d
+st.color2:      #99cc99
+st.color3:      #e0bd76
+st.color4:      #5892cc
+st.color5:      #aa8ed6
+st.color6:      #66c7cc
+st.color7:      #c5c8c8
+st.color8:      #484e5b
+st.color9:      #ff336d
+st.color10:     #7de292
+st.color11:     #ffe28d
+st.color12:     #4aa5ff
+st.color13:     #f573b8
+st.color14:     #5ee1f1
+st.color15:     #f2f0ec
