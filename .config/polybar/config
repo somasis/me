@@ -24,9 +24,9 @@
 
 	font-0 = "forkawesome:style=regular:size=11;3"
 	font-1 = "forkawesome:style=solid:size=11;3"
-	font-2 = "Liberation Sans:style=regular:size=11;3"
-	font-3 = "Liberation Sans:style=bold:size=11;3"
-	font-4 = "Liberation Sans:style=black:size=11;3"
+	font-2 = "Noto Sans:style=regular:size=11;3"
+	font-3 = "Noto Sans:style=bold:size=11;3"
+	font-4 = "Noto Sans:style=black:size=11;3"
 	font-5 = "JetBrains Mono:style=regular:size=10;3"
 	font-6 = "JetBrains Mono:style=bold:size=10;3"
 
