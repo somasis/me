@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export LC_ALL=C
+if xset q | grep -q 'DPMS is Enabled'; then
+	xset -dpms
+else
+	xset +dpms
+fi
+
