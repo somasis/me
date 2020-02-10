@@ -1,9 +1,0 @@
-#!/bin/sh
-# gmail-open - opens gmail and parses mailto link if given one
-# useful for setting as default mail client in desktop environments
-
-if [[ "$@" ]];then
-    xdg-open "https://mail.google.com/mail?view=cm&tf=0&to=$(echo $@ | sed 's/mailto://;s/?/\&/;s/&subject=/\&su=/')"
-else
-    xdg-open "https://mail.google.com/"
-fi

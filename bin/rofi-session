@@ -1,0 +1,9 @@
+#!/bin/sh
+
+printf '%s\0icon\x1f%s\n' \
+	'Lock screen'   'system-lock-screen'    \
+	'Sleep'         'system-suspend'        \
+	'Log out'       'system-log-out'        \
+	'Power off'     'system-shutdown'       \
+	'Reboot'        'system-reboot'
+
