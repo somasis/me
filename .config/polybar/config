@@ -66,7 +66,7 @@
 [module/custom-time]
 	type = custom/script
 	tail = true
-	exec = ~/git/scripts/polybar/clock
+	exec = polybar-clock
 
 	format = <label>
 	label = %output%
@@ -75,7 +75,7 @@
 [module/mpd-tail]
 	type = custom/script
 	tail = true
-	exec = ~/git/scripts/polybar/mpd-tail
+	exec = polybar-mpd-tail
 	enable-scroll = true
 	click-left = mpc toggle
 	click-right = mpc next
@@ -86,7 +86,7 @@
 [module/mail-count]
 	type = custom/script
 	tail = true
-	exec = ~/git/scripts/polybar/mail-count
+	exec = polybar-mail-count
 	click-left = germinal -- aerc
 
 [module/title]
