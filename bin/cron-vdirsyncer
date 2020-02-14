@@ -1,7 +1,5 @@
-#!/bin/sh
+#!/bin/sh -x
 
-edo() { echo "+ $*" >&2; "$@"; }
-
-edo vdirsyncer sync
-edo vdirsyncer metasync
-edo khal list >/dev/null 2>&1
+vdirsyncer sync
+vdirsyncer metasync
+khal list >/dev/null 2>&1
