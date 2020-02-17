@@ -11,9 +11,8 @@ usage() {
 }
 
 print_sh() {
-	# shellcheck disable=SC2091
 	cat <<-'EOF'
-	mess() { [ $# -gt 0 ] && $(readlink -f mess) "$@" || cd $($(readlink -f mess)); }
+	mess() { [ $# -gt 0 ] || { cd "$(command mess)" && return; }; command mess "$@"; }
 	EOF
 	exit 0
 }
