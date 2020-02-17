@@ -18,7 +18,7 @@ exec >/dev/null 2>&1
 case "${1}" in
 	"Sleep"*)               systemctl suspend ;;
 	"Lock screen"*)         xsecurelockd -l ;;
-	"Log out"*)             commune xinit logout ;;
+	"Logout"*)              commune xinit logout ;;
 	"Power off"*)           doas poweroff ;;
 	"Reboot"*)              doas reboot ;;
 	"${screensaver} screensaver"*) xset-dpms-toggle ;;
