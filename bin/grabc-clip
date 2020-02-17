@@ -1,0 +1,6 @@
+#!/bin/sh
+
+color=$(grabc "$@")
+
+printf '%s' "${color}" | xsel -b
+notification "grabc" -u low -i color-picker "grabc" "Grabbed color ${color}."
