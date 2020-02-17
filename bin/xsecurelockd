@@ -2,6 +2,7 @@
 
 elgetopt l
 elgetpositionals
+importas -i -u 0 0
 importas -D 0 -u ELGETOPT_l ELGETOPT_l
 
 importas -u HOME HOME
@@ -9,10 +10,9 @@ importas -D ${HOME}/.config -u XDG_CONFIG_HOME XDG_CONFIG_HOME
 importas -u DISPLAY DISPLAY
 s6-env -i DISPLAY="${DISPLAY}" XDG_CONFIG_HOME="${XDG_CONFIG_HOME}"
 
-ifelse { test -d ${XDG_CONFIG_HOME}/xsecurelockd/config } { exit 1 }
-s6-envdir ${XDG_CONFIG_HOME}/xsecurelockd s6-env
+s6-envdir ${XDG_CONFIG_HOME}/xsecurelockd
 
 ifelse { test $ELGETOPT_l -eq 1 } { if { xsecurelock } exit }
 
-importas -D 600 -u TIMEOUT TIMEOUT
-xidle -program "xsecurelockd -l" -timeout ${TIMEOUT}
+importas -D 600 -u TIMEOUT TIMEOUT if { xset s ${TIMEOUT} }
+xss-lock -n "/usr/lib/xsecurelock/dimmer" -l -- ${0} -l
