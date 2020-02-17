@@ -36,7 +36,7 @@ current=$(date +%Y/%V)
 current_link="${MESSDIR}/current"
 current_link_resolved=$(readlink -f "${current_link}")
 
-if ! [ -d "${current}" ]; then
+if ! [ -d "${MESSDIR}/${current}" ]; then
 	mkdir -p "${MESSDIR}/${current}"
 	printf "Created messdir '%s'.\n" "${current}" >&2
 fi
