@@ -1,8 +1,8 @@
 #!/bin/sh
 
 count() {
-    count=$(mdirs ~/mail/*/INBOX | mlist -Ns | wc -l)
-    [ "${count}" -gt 0 ] && printf '\uf0e0 %s unread messages\n' "${count}" && return
+    count=$(mdirs ~/mail/*/INBOX | mlist -s | wc -l)
+    [ "${count}" -gt 0 ] && printf '\uf0e0 %s\n' "${count}" && return
     printf '\n'
 }
 
