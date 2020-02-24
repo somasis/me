@@ -2,6 +2,7 @@
 	name = Kylie McClain
 	email = kylie@somas.is
 	signingkey = 0x37133B9826BBB5C2
+
 [commit]
 	gpgsign = true
 	verbose = true
@@ -50,4 +51,3 @@
 # Directory specific git configuration. See "Includes" in git-config(1).
 [includeIf "gitdir:~/git/exherbo/"]
 	path = ~/.config/git/exherbo-config
-
