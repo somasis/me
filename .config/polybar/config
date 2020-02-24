@@ -1,100 +1,109 @@
+# kak: filetype=ini
+
 [settings]
-	screenchange-reload = true
-	pseudo-transparency = true
+    screenchange-reload = true
+    pseudo-transparency = false
 
 [bar/default]
-	monitor = eDP-1
-	dpi = 192
+    monitor = eDP-1
+    dpi = 192
 
-	width = 100%
-	height = 64
-	fixed-center = true
+    width = 100%
+    height = 64
+    fixed-center = true
 
-	background = #2f343f
-	foreground = #ffffff
+    background = #2f343f
+    foreground = #ffffff
 
-	module-margin-left = 8
-	margin-top = 64
+    module-margin-left = 8
+    margin-top = 64
 
-	wm-restack = bspwm
+    wm-restack = bspwm
 
-	modules-left = bspwm title
-	modules-center = custom-time
-	modules-right = mpd-tail mail-count
+    modules-left = bspwm title
+    modules-center = custom-time next-event
+    modules-right = mpd-tail mail-count
 
-	font-0 = "forkawesome:style=regular:size=11;3"
-	font-1 = "forkawesome:style=solid:size=11;3"
-	font-2 = "Noto Sans:style=regular:size=11;3"
-	font-3 = "Noto Sans:style=bold:size=11;3"
-	font-4 = "Noto Sans:style=black:size=11;3"
-	font-5 = "JetBrains Mono:style=regular:size=10;3"
-	font-6 = "JetBrains Mono:style=bold:size=10;3"
+    font-0 = "forkawesome:style=regular:size=11;3"
+    font-1 = "forkawesome:style=solid:size=11;3"
+    font-2 = "Noto Sans:style=regular:size=11;3"
+    font-3 = "Noto Sans:style=bold:size=11;3"
+    font-4 = "Noto Sans:style=black:size=11;3"
+    font-5 = "JetBrains Mono:style=regular:size=10;3"
+    font-6 = "JetBrains Mono:style=bold:size=10;3"
 
-	tray-detatched = false
-	tray-background = #597bf7
-	tray-position = right
-	tray-padding = 4
-	tray-maxsize = 32
+    tray-detatched = false
+    tray-background = #5294e2
+    tray-position = right
+    tray-padding = 4
+    tray-maxsize = 32
 
 [module/bspwm]
-	type = internal/bspwm
-	enable-scroll = true
+    type = internal/bspwm
+    enable-scroll = true
 
-	ws-icon-0 = "1"
-	ws-icon-1 = "2"
-	ws-icon-2 = "3"
-	ws-icon-3 = "4"
-	ws-icon-4 = "5"
+    ws-icon-0 = "1"
+    ws-icon-1 = "2"
+    ws-icon-2 = "3"
+    ws-icon-3 = "4"
+    ws-icon-4 = "5"
 
-	format-padding = 0
-	format = "<label-state> <label-mode> "
-	label-monocle = 
-	label-tiled = t
-	label-fullscreen = 
-	label-floating = 
-	label-pseudotiled = t
-	label-locked = 
-	label-locked-foreground = #bd2c40
-	label-sticky = 
-	label-sticky-foreground = #fba922
-	label-private = 
-	label-private-foreground = #bd2c40
+    format-padding = 0
+    format = "<label-state> <label-mode> "
+    label-monocle = 
+    label-tiled = t
+    label-fullscreen = 
+    label-floating = 
+    label-pseudotiled = t
+    label-locked = 
+    label-locked-foreground = #bd2c40
+    label-sticky = 
+    label-sticky-foreground = #fba922
+    label-private = 
+    label-private-foreground = #bd2c40
 
-	label-focused-background = #597bf7
+    label-focused-background = #5294e2
 
-# XXX: it'd be nice if this could just be done via the date module
 [module/custom-time]
-	type = custom/script
-	tail = true
-	exec = polybar-clock
+    type = custom/script
+    tail = true
+    exec = polybar-clock
 
-	format = <label>
-	label = %output%
-	label-font = 4
+    format = <label>
+    label = %output%
+    label-font = 4
+
+[module/next-event]
+    type = custom/script
+    exec = polybar-next-event eod --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook
+    interval = 60
+    click-left = germinal -- ikhal
 
 [module/mpd-tail]
-	type = custom/script
-	tail = true
-	exec = polybar-mpd-tail
-	enable-scroll = true
-	click-left = mpc toggle
-	click-right = mpc next
-	scroll-up = mpc volume +5
-	scroll-down = mpc volume -5
-	interval = 5
+    type = custom/script
+    tail = true
+    exec = polybar-mpd-tail
+    enable-scroll = true
+    click-left = mpc toggle
+    click-middle = mpc stop
+    click-right = mpc next
+    scroll-up = mpc volume +5
+    scroll-down = mpc volume -5
+    interval = 5
 
 [module/mail-count]
-	type = custom/script
-	tail = true
-	exec = polybar-mail-count
-	click-left = germinal -- aerc
+    type = custom/script
+    tail = true
+    exec = polybar-mail-count
+    click-left = germinal -- aerc
 
 [module/title]
-	type = custom/script
-	tail = true
-	exec = xtitle -is -t 72
-	enable-scroll = true
-	scroll-up = bspc node -f prev.local
-	scroll-down = bspc node -f next.local
+    type = custom/script
+    tail = true
+    exec = xtitle -is -t 72
+    click-right = bspc node -c
+    enable-scroll = true
+    scroll-up = bspc node -f prev.local
+    scroll-down = bspc node -f next.local
 
-	label-font = 7
+    label-font = 7
