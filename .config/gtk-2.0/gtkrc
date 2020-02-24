@@ -1,10 +1,6 @@
-gtk-theme-name = "Arc-Darker"
+gtk-theme-name = "Arc-Dark"
 gtk-icon-theme-name = "Papirus"
 gtk-font-name = "Noto Sans Regular 11"
-gtk-application-prefer-dark-theme=0
-
-# Disable close, minimize, etc. buttons on CSD.
-gtk-decoration-layout = appmenu:
 
 gtk-menu-images = 1
 gtk-button-images = 0
