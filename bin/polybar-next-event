@@ -2,5 +2,5 @@
 
 exec khal list \
     --day-format '' \
-    --format "$(printf '\uf073 {start-end-time-style}: {title}\n')" \
+    --format "$(printf '\uf073 {start-style}: {title}\n')" \
     now "$@" 2>/dev/null | sed '1!d; s/No events//'
