@@ -28,8 +28,9 @@ done
 shift $((OPTIND - 1))
 
 if "${regenerate}"; then
-    [ -d "${cache}" ] || mkdir -p "${cache}"
-    [ -f "${emoji_list}" ] || regen > "${emoji_list}"
+    mkdir -p "${cache}"
+    regen > "${emoji_list}"
+    exit 0
 fi
 
 if ! [ -f "${emoji_list}" ]; then
