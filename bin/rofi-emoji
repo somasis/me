@@ -5,7 +5,7 @@ emoji_list="${cache}/emoji_list.txt"
 
 regen() {
     curl -sL https://raw.githubusercontent.com/milesj/emojibase/master/packages/data/en/raw.json | \
-        jq -r '.[] | .emoji + "  " + (.annotation) + " " + (.tags | map("#" + .) | join(" ")) + " (" + (.shortcodes | map(":" + . + ":") | join(", ")) + ")"'
+        jq -r '.[] | .emoji + " " + (.annotation) + " " + (.tags | map("#" + .) | join(" ")) + " (" + (.shortcodes | map(":" + . + ":") | join(", ")) + ")"'
 }
 
 usage() { printf 'usage: %s [-crt]\n' "${0##*/}"; exit; }
@@ -40,7 +40,7 @@ fi
 
 # Intentionally leave ${line} unused.
 # shellcheck disable=SC2034
-rofi -dmenu -p 'emoji' < "${emoji_list}" | while read -r emoji line; do
+rofi -dmenu -p "emoji" < "${emoji_list}" | while read -r emoji line; do
     "${clip}" && printf '%s' "${emoji}" | xsel -b
     "${type}" && printf '%s ' "${emoji}" | xdotool type --file -
     { "${clip}" || "${type}"; } || printf '%s\n' "${emoji}"
