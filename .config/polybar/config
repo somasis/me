@@ -22,7 +22,7 @@
 
     modules-left = bspwm title
     modules-center = custom-time
-    modules-right = mpd-tail next-event mail-count
+    modules-right = mpd-tail next-event mail-count battery
 
     font-0 = "forkawesome:style=regular:size=11;3"
     font-1 = "forkawesome:style=solid:size=11;3"
@@ -38,6 +38,31 @@
     tray-position = right
     tray-padding = 4
     tray-maxsize = 32
+
+[module/battery]
+    type = internal/battery
+
+    battery = BAT1
+    adapter = ACAD
+
+    full-at = 99
+
+    format-charging = <animation-charging>
+    format-discharging = <ramp-capacity>
+    format-full = <ramp-capacity>
+
+    ramp-capacity-0 = 
+    ramp-capacity-1 = 
+    ramp-capacity-2 = 
+    ramp-capacity-3 = 
+    ramp-capacity-4 = 
+
+    animation-charging-0 = 
+    animation-charging-1 = 
+    animation-charging-2 = 
+    animation-charging-3 = 
+    animation-charging-4 = 
+
 
 [module/bspwm]
     type = internal/bspwm
