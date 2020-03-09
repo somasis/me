@@ -1,20 +1,41 @@
-bindir ?= $(XDG_BINARY_HOME)
-bindir ?= $(HOME)/.local/bin
+me_git := $(HOME)/git/me.git
 
-BINS := $(patsubst %.in, %, $(wildcard .local/bin/*))
+POUNCE_HOST := angela.somas.is
+POUNCE_NETWORKS := \
+	somasis@irc.freenode.net somasis@irc.oftc.net
 
-INSTALLS := \
-	$(addprefix $(DESTDIR)$(bindir)/,$(BINS:bin/%=%)) \
+CATGIRL_FILES := \
+	$(foreach network,$(POUNCE_NETWORKS),.config/catgirl/$(network).conf)
+
+POUNCE_FILES := \
+	$(foreach network,$(POUNCE_NETWORKS),.config/pounce/$(network).conf)
+
+CONFIG_FILES := \
+	$(CATGIRL_FILES) $(POUNCE_FILES)
 
 .PHONY: all
-all: bin
+all: config
 
-.PHONY: install
-install: $(INSTALLS)
+.PHONY: config
+config: $(CONFIG_FILES)
 
-.PHONY: bin
-bin: $(BINS)
+.PHONY: pounce-$(POUNCE_HOST)
+pounce-$(POUNCE_HOST): $(POUNCE_FILES)
+	rsync -ru $^ pounce@$(POUNCE_HOST):~/.config/pounce
+	ssh pounce@$(POUNCE_HOST) mkdir -p '~/.cache/pounce'
 
-$(DESTDIR)$(bindir)/%: bin/%
-	install -D $< $@
+.PHONY: pull
+pull:
+	git --git-dir="$(me_git)" --work-tree="$(HOME)" pull
+
+.DELETE_ON_ERROR: .config/catgirl/pounce-%.conf
+.config/catgirl/%.conf: .config/catgirl/pounce.in .config/catgirl/catgirl.in .config/catgirl/
+	pp $< $(POUNCE_HOST) $* > $@
+
+.DELETE_ON_ERROR: .config/pounce/%.conf
+.config/pounce/%.conf: .config/pounce/pounce.in .config/pounce/
+	pp $< $(POUNCE_HOST) $* > $@
+
+.config/%/:
+	mkdir -p .config/$*
 
