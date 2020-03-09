@@ -21,8 +21,8 @@
     wm-restack = bspwm
 
     modules-left = bspwm title
-    modules-center = custom-time next-event
-    modules-right = mpd-tail mail-count
+    modules-center = custom-time
+    modules-right = mpd-tail next-event mail-count
 
     font-0 = "forkawesome:style=regular:size=11;3"
     font-1 = "forkawesome:style=solid:size=11;3"
