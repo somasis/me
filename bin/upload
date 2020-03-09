@@ -55,6 +55,9 @@ while [ $# -gt 0 ] || [ "${mode}" = 'upload_stdin' ]; do
     "${notification}" && \
         notification upload -i media-upload "upload" "Uploaded to ${url}.${clip:+ Copied to clipboard.}"
 
-    shift
+    case "${mode}" in
+        upload_stdin)   break ;;
+        *)              shift ;;
+    esac
 done
 
