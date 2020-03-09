@@ -3,34 +3,25 @@
 #
 # for 0x0.st and workalikes
 
-usage() { printf 'usage: %s [-cnsuv] [-h HOST] [FILE ...]\n' "${0##*/}"; }
+usage() { printf 'usage: %s [-cnsuv] [-h HOST] [-p POST_VARIABLE] [FILE/URL ...]\n' "${0##*/}"; }
 
-clip=
-notification=false
-host=https://0x0.st
-mode=upload_stdin
-curl_verbose=
+# ${clip} is empty by default so as to make substitution for notification easier.
+clip='false'
+notification='false'
+host='https://0x0.st'
+post='file'
+mode='upload_stdin'
+curl_verbose='false'
 
-while getopts :cnhsuv arg >/dev/null 2>&1; do
+while getopts :cnsuvh:p: arg >/dev/null 2>&1; do
     case "${arg}" in
-        c)
-            clip=true
-            ;;
-        n)
-            notification=true
-            ;;
-        h)
-            host="${OPTARG}"
-            ;;
-        s)
-            mode=shorten_url
-            ;;
-        u)
-            mode=upload_url
-            ;;
-        v)
-            curl_verbose=true
-            ;;
+        c)  clip="true"         ;;
+        n)  notification="true" ;;
+        h)  host="${OPTARG}"    ;;
+        p)  post="${OPTARG}"    ;;
+        s)  mode="shorten_url"  ;;
+        u)  mode="upload_url"   ;;
+        v)  curl_verbose="true" ;;
         ?)
             printf 'unknown argument -- %s\n' "${OPTARG}"
             usage
@@ -39,15 +30,17 @@ while getopts :cnhsuv arg >/dev/null 2>&1; do
 done
 shift $((OPTIND - 1))
 
-[ $# -gt 0 ] && mode=upload_file
+"${clip}" || clip=
+"${curl_verbose}" || curl_verbose=
+[ $# -gt 0 ] && mode="upload_file"
 
-while [ $# -gt 0 ]; do
+while [ $# -gt 0 ] || [ "${mode}" = 'upload_stdin' ]; do
     case "${mode}" in
         upload_stdin)
-            url=$(curl ${curl_verbose:--sS} -F "file=@/dev/stdin" "${host}")
+            url=$(sponge | curl ${curl_verbose:--sS} -F "${post}=<-" "${host}")
             ;;
         upload_file)
-            url=$(curl ${curl_verbose:--sS} -F "file=@${1}" "${host}")
+            url=$(curl ${curl_verbose:--sS} -F "${post}=@${1}" "${host}")
             ;;
         upload_url)
             url=$(curl ${curl_verbose:--sS} -F "url=${1}" "${host}")
