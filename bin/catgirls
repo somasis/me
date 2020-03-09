@@ -18,6 +18,9 @@ done
 unset TMUX
 
 tmux_conf="${XDG_CONFIG_HOME:-~/.config}"/catgirls/tmux.conf
+
+# HACK: Arch Linux's libressl is installed in /lib/libressl, this really should be fixed in a
+#       package of `catgirl`.
 export LD_LIBRARY_PATH=/lib/libressl:/lib
 
 tmux() {
@@ -27,7 +30,7 @@ tmux() {
 tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux attach-session -t catgirls
 tmux new-session -d -s catgirls 'sh -c read'
 
-# start at 1 so as not to mess with the dummy window
+# Start at 1 so as not to mess with the dummy window.
 color_i=1
 window_i=1
 for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
@@ -38,7 +41,7 @@ for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
     case "${color_i}" in
         1) color=blue       ;;
         2) color=green      ;;
-        3) color=red       ;;
+        3) color=red        ;;
         4) color=magenta    ;;
         5) color=yellow     ;;
         6) color=cyan       ;;
@@ -53,7 +56,7 @@ for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
     [ $color_i -gt 6 ] && color_i=1
 done
 
-# Kill the shell that was started when tmux started.
+# Kill the dummy window that was started when tmux started.
 tmux kill-window -t catgirls:0
 
 tmux select-window -t catgirls:0
