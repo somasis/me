@@ -1,0 +1,61 @@
+#!/bin/sh
+
+usage() { printf 'usage: %s [-d]\n' "${0##*/}"; exit; }
+
+attach=true
+while getopts :d arg >/dev/null 2>&1; do
+    case "${arg}" in
+        d)
+            attach=false
+            ;;
+        ?)
+            printf 'unknown argument -- %s\n' "${OPTARG}" >&2
+            usage
+            ;;
+    esac
+done
+
+unset TMUX
+
+tmux_conf="${XDG_CONFIG_HOME:-~/.config}"/catgirls/tmux.conf
+export LD_LIBRARY_PATH=/lib/libressl:/lib
+
+tmux() {
+    command tmux -f "${tmux_conf}" "$@"
+}
+
+tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux attach-session -t catgirls
+tmux new-session -d -s catgirls 'sh -c read'
+
+# start at 1 so as not to mess with the dummy window
+color_i=1
+window_i=1
+for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
+    server="${f##*/}"; server="${server%%.conf}"
+    tmux new-window -t catgirls: -n "${server}" catgirl "${f}"
+
+    # give each window a different color
+    case "${color_i}" in
+        1) color=blue       ;;
+        2) color=green      ;;
+        3) color=red       ;;
+        4) color=magenta    ;;
+        5) color=yellow     ;;
+        6) color=cyan       ;;
+    esac
+
+    tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=black,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=${color},fg=black"
+    tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=black,fg=${color}"
+
+    color_i=$(( color_i + 1 ))
+    window_i=$(( window_i + 1 ))
+    [ $color_i -gt 6 ] && color_i=1
+done
+
+# Kill the shell that was started when tmux started.
+tmux kill-window -t catgirls:0
+
+tmux select-window -t catgirls:0
+
+"${attach}" && exec tmux -f "${tmux_conf}" attach-session -t catgirls
