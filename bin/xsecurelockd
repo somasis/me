@@ -12,7 +12,13 @@ s6-env -i DISPLAY="${DISPLAY}" XDG_CONFIG_HOME="${XDG_CONFIG_HOME}"
 
 s6-envdir ${XDG_CONFIG_HOME}/xsecurelockd
 
-ifelse { test $ELGETOPT_l -eq 1 } { if { xsecurelock } exit }
+# Hold back `dunst` notifications until after screen is unlocked again.
+ifelse { test $ELGETOPT_l -eq 1 } {
+    foreground { killall -USR1 dunst }
+    foreground { xsecurelock }
+    foreground { killall -USR2 dunst }
+    exit
+}
 
 importas -D 600 -u TIMEOUT TIMEOUT if { xset s ${TIMEOUT} }
 xss-lock -n "/usr/lib/xsecurelock/dimmer" -l -- ${0} -l
