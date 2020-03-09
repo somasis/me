@@ -1,0 +1,47 @@
+# kak: filetype=sh
+
+local-host = 0.0.0.0
+
+#!
+channels() {
+    printf 'join = %s\n' "$(printf '%s,' "$@" | sed 's/,$//')"
+}
+
+host="${2##*@}"
+nick="${2%%@*}"
+
+printf '%s = %s\n' \
+    local-port  "$(pass "${USER}/${1}/pounce/${2}" | sed -E '/^port: /!d; s/^port: //')" \
+    local-cert  "/home/pounce/.config/pounce/${1}/fullchain" \
+    local-priv  "/home/pounce/.config/pounce/${1}/privkey" \
+    host        "${host}" \
+    nick        "${nick}"
+
+case "${nick}" in
+    somasis)
+        printf '%s = %s\n' \
+            user        "kylie" \
+            real        "Kylie McClain <kylie@somas.is>" \
+            local-pass  "$(pass "${USER}/${1}/pounce/${2}" | sed -E '/^salted: /!d; s/^salted: //')" \
+            save        "/home/pounce/.cache/pounce/${2}.log"
+            case "${host}" in
+                irc.freenode.net)
+                    printf '%s = %s\n' \
+                        sasl-plain "${nick}:$(pass "irc/${host}/nickserv/${nick}")"
+
+                    channels \
+                        \##kremlin \##squawk \#ascii.town \#bspwm \
+                        \#exherbo{,-dev} \
+                        \#kakoune \#midipix \
+                        \#musl{,-offtopic} \
+                        \#mutiny \#oasislinux \
+                        \#s6{,-offtopic} \
+                        \#sortix \#toybox \#vuxu
+                    ;;
+                irc.oftc.net)
+                    channels \#osm{,-dev}
+                    ;;
+            esac
+        ;;
+esac
+#!
