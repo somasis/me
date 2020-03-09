@@ -29,11 +29,12 @@
     font-2 = "Noto Sans:style=regular:size=11;3"
     font-3 = "Noto Sans:style=bold:size=11;3"
     font-4 = "Noto Sans:style=black:size=11;3"
-    font-5 = "JetBrains Mono:style=regular:size=10;3"
-    font-6 = "JetBrains Mono:style=bold:size=10;3"
+    font-5 = "Noto Sans Mono:style=regular:size=10;3"
+    font-6 = "Noto Sans Mono:style=bold:size=10;3"
+    font-7 = "Noto Color Emoji:style=regular:scale=8;3"
 
     tray-detatched = false
-    tray-background = #5294e2
+    tray-background = #2f343f
     tray-position = right
     tray-padding = 4
     tray-maxsize = 32
