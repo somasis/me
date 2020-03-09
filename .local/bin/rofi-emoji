@@ -42,7 +42,7 @@ fi
 # shellcheck disable=SC2034
 rofi -dmenu -p "emoji" < "${emoji_list}" | while read -r emoji line; do
     "${clip}" && printf '%s' "${emoji}" | xsel -b
-    "${type}" && printf '%s ' "${emoji}" | xdotool type --file -
+    "${type}" && xdotool key $(printf '%s ' "${emoji}")
     { "${clip}" || "${type}"; } || printf '%s\n' "${emoji}"
 done
 

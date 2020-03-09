@@ -1,7 +1,7 @@
 bindir ?= $(XDG_BINARY_HOME)
 bindir ?= $(HOME)/.local/bin
 
-BINS := $(patsubst %.in, %, $(wildcard bin/*))
+BINS := $(patsubst %.in, %, $(wildcard .local/bin/*))
 
 INSTALLS := \
 	$(addprefix $(DESTDIR)$(bindir)/,$(BINS:bin/%=%)) \
