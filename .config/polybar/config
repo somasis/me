@@ -102,14 +102,14 @@
 
 [module/next-event]
     type = custom/script
-    exec = polybar-next-event eod --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook
+    exec = polybar-next-event eod --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 60
     interval = 60
     click-left = germinal -- ikhal
 
 [module/mpd-tail]
     type = custom/script
     tail = true
-    exec = polybar-mpd-tail
+    exec = polybar-mpd-tail | ellipsis 60
     enable-scroll = true
     click-left = mpc toggle
     click-middle = mpc stop
@@ -127,7 +127,7 @@
 [module/title]
     type = custom/script
     tail = true
-    exec = xtitle -is -t 72
+    exec = xtitle -is -t 90
     click-right = bspc node -c
     enable-scroll = true
     scroll-up = bspc node -f prev.local
