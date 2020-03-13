@@ -104,7 +104,7 @@
     type = custom/script
     exec = polybar-next-event eod --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 60
     interval = 60
-    click-left = germinal -- ikhal
+    click-left = alacritty -e ikhal &
 
 [module/mpd-tail]
     type = custom/script
@@ -122,7 +122,7 @@
     type = custom/script
     tail = true
     exec = polybar-mail-count
-    click-left = germinal -- aerc
+    click-left = alacritty -e aerc &
 
 [module/title]
     type = custom/script
