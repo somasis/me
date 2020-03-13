@@ -116,7 +116,6 @@
     click-right = mpc next
     scroll-up = mpc volume +5
     scroll-down = mpc volume -5
-    interval = 5
 
 [module/mail-count]
     type = custom/script
