@@ -121,6 +121,8 @@
     type = custom/script
     tail = true
     exec = polybar-mail-count
+    # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
+    interval = 900
     click-left = alacritty -e aerc &
 
 [module/title]
