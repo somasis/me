@@ -46,7 +46,7 @@
     battery = BAT1
     adapter = ACAD
 
-    full-at = 99
+    full-at = 95
 
     format-charging = <animation-charging>
     format-discharging = <ramp-capacity>
