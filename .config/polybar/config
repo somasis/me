@@ -32,6 +32,7 @@
     font-5 = "Noto Sans Mono:style=regular:size=10;3"
     font-6 = "Noto Sans Mono:style=bold:size=10;3"
     font-7 = "Noto Color Emoji:style=regular:scale=8;3"
+    font-8 = "Sans:style=regular:size=11;3"
 
     tray-detatched = false
     tray-background = #2f343f
