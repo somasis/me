@@ -51,3 +51,7 @@
 # Directory specific git configuration. See "Includes" in git-config(1).
 [includeIf "gitdir:~/git/exherbo/"]
 	path = ~/.config/git/exherbo-config
+[dude]
+	interval = 600
+	icon = /usr/share/icons/Papirus/32x32/apps/git.svg
+	screensaver-command = false
