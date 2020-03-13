@@ -47,9 +47,15 @@ for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
         6) color=cyan       ;;
     esac
 
+    # set terminal title to the selected window's ("catgirl - user@server").
+    tmux set-option -t catgirls: -g automatic-rename  off
+    tmux set-option -t catgirls: -g set-titles        on
+    tmux set-option -t catgirls: -g set-titles-string "catgirl - #W"
+
     tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=black,fg=${color}"
     tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=${color},fg=black"
-    tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=black,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=terminal,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" remain-on-exit on
 
     color_i=$(( color_i + 1 ))
     window_i=$(( window_i + 1 ))
