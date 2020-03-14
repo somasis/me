@@ -1,0 +1,47 @@
+window:
+    dynamic_padding: false
+    decorations: none
+
+scrolling:
+    history: 10000
+    multiplier: 2
+
+font:
+    normal:
+        family: "Noto Sans Mono"
+        style: Regular
+    size: 10
+
+colors:
+    primary:
+        background: '0x2f343f'
+        foreground: '0xffffff'
+    normal:
+        black:      '0x484e5b'
+        red:        '0xd2608d'
+        green:      '0x99cc99'
+        yellow:     '0xe0bd76'
+        blue:       '0x5892cc'
+        magenta:    '0xcc99cc'
+        cyan:       '0x66c7cc'
+        white:      '0xc5c8c8'
+    bright:
+        black:      '0x6f7583'
+        red:        '0xff336d'
+        green:      '0x7de292'
+        yellow:     '0xffe28d'
+        blue:       '0x4aa5ff'
+        magenta:    '0xf573b8'
+        cyan:       '0x5ee1f1'
+        white:      '0xf2f0ec'
+
+draw_bold_text_with_bright_colors: false
+
+visual_bell:
+    duration: 0
+
+dynamic_title: true
+
+cursor:
+    style: Beam
+
