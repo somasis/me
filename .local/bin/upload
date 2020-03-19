@@ -5,12 +5,22 @@
 
 usage() { printf 'usage: %s [-cnsuv] [-h HOST] [-p POST_VARIABLE] [FILE/URL ...]\n' "${0##*/}"; }
 
+output() {
+    printf '%s\n' "$1"
+    [ -n "${clip}" ] && printf '%s' "$1" | xsel -b
+    "${notification}" && \
+        notification upload -i media-upload "upload" "Uploaded to $1.${clip:+ Copied to clipboard.}"
+}
+
+
 # ${clip} is empty by default so as to make substitution for notification easier.
 clip='false'
 notification='false'
 host='https://0x0.st'
 post='file'
-mode='upload_stdin'
+has_stdin='false'
+mode='upload_file'
+[ -t 0 ] || has_stdin='true'
 curl_verbose='false'
 
 while getopts :cnsuvh:p: arg >/dev/null 2>&1; do
@@ -25,6 +35,7 @@ while getopts :cnsuvh:p: arg >/dev/null 2>&1; do
         ?)
             printf 'unknown argument -- %s\n' "${OPTARG}"
             usage
+            exit 255
             ;;
     esac
 done
@@ -32,13 +43,15 @@ shift $((OPTIND - 1))
 
 "${clip}" || clip=
 "${curl_verbose}" || curl_verbose=
-[ $# -gt 0 ] && mode="upload_file"
+[ $# -eq 0 ] && mode="upload_stdin"
 
-while [ $# -gt 0 ] || [ "${mode}" = 'upload_stdin' ]; do
+if "${has_stdin}"; then
+    url=$(sponge | curl ${curl_verbose:--sS} -F "${post}=<-" "${host}")
+    output "${url}"
+fi
+
+while [ $# -gt 0 ]; do
     case "${mode}" in
-        upload_stdin)
-            url=$(sponge | curl ${curl_verbose:--sS} -F "${post}=<-" "${host}")
-            ;;
         upload_file)
             url=$(curl ${curl_verbose:--sS} -F "${post}=@${1}" "${host}")
             ;;
@@ -50,14 +63,7 @@ while [ $# -gt 0 ] || [ "${mode}" = 'upload_stdin' ]; do
             ;;
     esac
 
-    printf '%s\n' "${url}"
-    [ -n "${clip}" ] && printf '%s' "${url}" | xsel -b
-    "${notification}" && \
-        notification upload -i media-upload "upload" "Uploaded to ${url}.${clip:+ Copied to clipboard.}"
-
-    case "${mode}" in
-        upload_stdin)   break ;;
-        *)              shift ;;
-    esac
+    output "${url}"
+    shift
 done
 
