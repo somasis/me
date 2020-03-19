@@ -80,8 +80,8 @@ for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
     tmux set-option -t catgirls: -g set-titles        on
     tmux set-option -t catgirls: -g set-titles-string "catgirl - #W"
 
-    tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=black,fg=${color}"
-    tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=${color},fg=black"
+    tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=terminal,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=terminal,fg=${color},reverse"
     tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=terminal,fg=${color}"
     tmux set-option -t catgirls:"${window_i}" remain-on-exit on
 
