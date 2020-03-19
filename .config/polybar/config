@@ -22,7 +22,7 @@
 
     modules-left = bspwm title
     modules-center = custom-time
-    modules-right = mpd-tail next-event mail-count battery
+    modules-right = mpd-tail next-event article-count mail-count battery
 
     font-0 = "forkawesome:style=regular:size=11;3"
     font-1 = "forkawesome:style=solid:size=11;3"
@@ -116,6 +116,12 @@
     click-right = mpc next
     scroll-up = mpc volume +5
     scroll-down = mpc volume -5
+
+[module/article-count]
+    type = custom/script
+    exec = polybar-article-count
+    interval = 60
+    click-left = alacritty -e newsboat &
 
 [module/mail-count]
     type = custom/script
