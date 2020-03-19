@@ -1,0 +1,15 @@
+# kak: filetype=sh
+
+private-query
+limit = 50
+
+#!
+host="${2##*@}"
+nick="${2%%@*}"
+
+printf '%s = %s\n' \
+    host        "${1}" \
+    port        "$(pass "${USER}/${1}/pounce/${2}" | sed -E '/^port: /!d; s/^port: //')" \
+    pass        "$(pass "${USER}/${1}/pounce/${2}" | head -n1)" \
+    user        "${nick}_litterbox"
+#!
