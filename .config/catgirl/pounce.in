@@ -11,6 +11,6 @@ printf 'user = %s\n' "${USER}_$(hostname | tr '\.' '_')"
 
 printf 'nick = %s\n' "${2%%@*}"
 printf 'pass = %s\n' "$(pass ${USER}/${1}/pounce/${2} | head -n1)"
-printf 'save = %s\n' "${2}"
+printf 'save = %s\n' "${2}.log"
 #!
 
