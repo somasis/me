@@ -1,0 +1,15 @@
+#!/bin/sh
+
+export HTTP_PROXY="http://localhost:0"
+export HTTPS_PROXY="https://localhost:0"
+export FTP_PROXY="ftp://localhost:0"
+
+cols=$(tput cols)
+[ "${cols}" -gt 100 ] && cols=100
+
+exec w3m \
+    -T text/html \
+    -cols "${cols}" \
+    -dump \
+    -o display_image=false \
+    -o display_link_number=true
