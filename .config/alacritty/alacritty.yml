@@ -49,3 +49,5 @@ visual_bell:
 
 dynamic_title: true
 
+mouse_bindings:
+    - { mouse: Middle, action: PasteSelection }
