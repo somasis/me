@@ -104,7 +104,7 @@
 
 [module/next-event]
     type = custom/script
-    exec = polybar-next-event eod --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 60
+    exec = polybar-next-event eod -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
     interval = 60
     click-left = alacritty -e ikhal &
 
