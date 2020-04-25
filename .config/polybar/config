@@ -96,6 +96,7 @@
     type = custom/script
     tail = true
     exec = polybar-clock
+    click-left = alacritty -e ikhal &
 
     format = <label>
     label = %output%
