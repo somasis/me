@@ -8,19 +8,19 @@ defaults
 account kylie@somas.is
     host smtp.fastmail.com
     user kylie@somas.is
-    passwordeval pass somasis/trotsky.somas.is/msmtp/kylie@somas.is
+    passwordeval sh -c 'pass somasis/trotsky.somas.is/msmtp/kylie@somas.is | head -n1'
     from kylie@somas.is
 
 account mcclainkj@appstate.edu
     host smtp.gmail.com
     user mcclainkj@appstate.edu
-    passwordeval pass somasis/trotsky.somas.is/msmtp/mcclainkj@appstate.edu
+    passwordeval sh -c 'pass somasis/trotsky.somas.is/msmtp/mcclainkj@appstate.edu | head -n1'
     from mcclainkj@appstate.edu
 
 account somasissounds@gmail.com
     host smtp.gmail.com
     user somasissounds@gmail.com
-    passwordeval pass somasis/trotsky.somas.is/msmtp/somasissounds@gmail.com
+    passwordeval sh -c 'pass somasis/trotsky.somas.is/msmtp/somasissounds@gmail.com | head -n1'
     from somasissounds@gmail.com
 
 account default : kylie@somas.is
