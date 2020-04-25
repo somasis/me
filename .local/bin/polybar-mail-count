@@ -7,6 +7,6 @@ count() {
 }
 
 count
-while mdirs -a ~/mail/*/INBOX | sed 's|$|/cur|' | rwc -ed >/dev/null; do
+while mdirs -a ~/mail/*/INBOX | sed 's|$|/cur|' | rwc -ced >/dev/null; do
     count
 done
