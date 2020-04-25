@@ -33,6 +33,7 @@
     font-6 = "IBM Plex Mono:style=bold:size=10;3"
     font-7 = "Noto Color Emoji:style=regular:scale=10;3"
     font-8 = "Sans:style=regular:size=11;3"
+    font-9 = "Noto Sans CJK JP:style=regular:size=11;3"
 
     tray-detatched = false
     tray-background = #2f343f
