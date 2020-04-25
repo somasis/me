@@ -12,7 +12,7 @@ nick="${2%%@*}"
 
 printf '%s = %s\n' \
     host        "${host}" \
-    nick        "${nick}"
+    nick        "${nick}" \
     local-port  "$(pass "${USER}/${1}/pounce/${2}" | sed -E '/^port: /!d; s/^port: //')" \
     local-cert  "/home/pounce/.config/pounce/${1}/fullchain" \
     local-priv  "/home/pounce/.config/pounce/${1}/privkey" \
