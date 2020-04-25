@@ -1,6 +1,6 @@
 #!/bin/sh
 
-strftime='%X'
+strftime='%I:%M %p'
 current_strftime="%a, ${strftime}"
 home_strftime="%a, ${strftime}"
 violet_strftime="%a, ${strftime}"
