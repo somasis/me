@@ -1,12 +1,12 @@
 # kak: autowrap_column=-1
 
 "query:Unread articles:unread = \"yes\" and tags !# \"query\""
-"query:... Friends:tags # \"friend\""
-"query:... News:tags # \"news\""
-"query:... Blogs:tags # \"blog\""
-"query:... Computer:tags # \"computer\""
-"query:... Mapping:tags # \"map\""
-"query:... Comics:tags # \"comics\""
+#"query:... Friends:tags # \"friend\""
+#"query:... News:tags # \"news\""
+#"query:... Blogs:tags # \"blog\""
+#"query:... Computer:tags # \"computer\""
+#"query:... Mapping:tags # \"map\""
+#"query:... Comics:tags # \"comics\""
 
 https://leahneukirchen.org/blog/index.atom blog friend
 https://leahneukirchen.org/trivium/index.atom blog friend
