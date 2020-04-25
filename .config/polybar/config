@@ -26,11 +26,11 @@
 
     font-0 = "forkawesome:style=regular:size=11;3"
     font-1 = "forkawesome:style=solid:size=11;3"
-    font-2 = "Noto Sans:style=regular:size=11;3"
-    font-3 = "Noto Sans:style=bold:size=11;3"
-    font-4 = "Noto Sans:style=black:size=11;3"
-    font-5 = "Noto Sans Mono:style=regular:size=10;3"
-    font-6 = "Noto Sans Mono:style=bold:size=10;3"
+    font-2 = "IBM Plex Sans:style=regular:size=11;3"
+    font-3 = "IBM Plex Sans:style=bold:size=11;3"
+    font-4 = "IBM Plex Sans:style=black:size=11;3"
+    font-5 = "IBM Plex Mono:style=regular:size=10;3"
+    font-6 = "IBM Plex Mono:style=bold:size=10;3"
     font-7 = "Noto Color Emoji:style=regular:scale=10;3"
     font-8 = "Sans:style=regular:size=11;3"
 

@@ -1,6 +1,6 @@
 gtk-theme-name = "Arc-Dark"
 gtk-icon-theme-name = "Papirus"
-gtk-font-name = "Noto Sans Regular 11"
+gtk-font-name = "IBM Plex Sans Regular 11"
 
 gtk-menu-images = 1
 gtk-button-images = 0
