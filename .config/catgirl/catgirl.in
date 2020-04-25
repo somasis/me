@@ -1,3 +1,4 @@
 # kak: filetype=ini
 
 notify = catgirl-notify
+ignore = * [JPQ][OAU][IR][NT] #*
