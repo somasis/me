@@ -18,9 +18,7 @@ clip='false'
 notification='false'
 host='https://0x0.st'
 post='file'
-has_stdin='false'
 mode='upload_file'
-[ -t 0 ] || has_stdin='true'
 curl_verbose='false'
 
 while getopts :cnsuvh:p: arg >/dev/null 2>&1; do
@@ -43,11 +41,11 @@ shift $((OPTIND - 1))
 
 "${clip}" || clip=
 "${curl_verbose}" || curl_verbose=
-[ $# -eq 0 ] && mode="upload_stdin"
 
-if "${has_stdin}"; then
+if [ "$#" -eq 0 ]; then
     url=$(sponge | curl ${curl_verbose:--sS} -F "${post}=<-" "${host}")
     output "${url}"
+    exit
 fi
 
 while [ $# -gt 0 ]; do
