@@ -36,3 +36,6 @@ itemview-title-format       "%T %> %F - %u unread, %t total"
 urlview-title-format        "URLs"
 dialogs-title-format        "Dialogs"
 
+# Killfile
+ignore-mode "display"
+ignore-article "*" "author = \"somasis\" and tags # \"osm\""
