@@ -1,0 +1,41 @@
+#!/bin/sh
+
+server="${PPID}"
+server=$(tr '\0' '\n' < /proc/"${PPID}"/cmdline | tail -n1)
+server="${server##*/}"; server="${server%%.conf}"
+
+chat="$1"; shift
+if match -E "^(<\S+>|\* \S+)$(printf '\t')" "$*"; then
+    sender=$(printf '%s' "$1" | cut -f1 | sed -E '/^\* / s/^\* (\S+)/\1/; /^<\S+>/ s/^<(\S+)>/\1/')
+    message=$(printf '%s' "$1" | cut -f2-)
+else
+    sender=
+    message="$*"
+fi
+shift
+
+[ "${chat}" = "${sender}" ] && sender=
+message=$(printf '%s' "${message}" | sed 's/</\&lt;/g;s/>/\&gt;/g')
+
+id=$(printf '%s' "${chat}" | sha1sum | tr -cd '1-9' | cut -c-8)
+
+action=$(timeout 60 dunstify \
+    -a catgirl \
+    -i irc-chat \
+    -r "${id}" \
+    --action="default,Read" \
+    "${chat}" \
+    "${sender:+&lt;$sender&gt; }${message}") || exit 0
+
+exec >/dev/null 2>&1
+
+# oh this is disgusting i LOVE IT
+case "${action}" in
+    'default')
+        tmux find-window -t catgirls: -N "${server}" \; send-keys Down Enter
+        tmux send-keys -t catgirls: M-0 End C-u
+        tmux send-keys -t catgirls: -l "/window ${chat}"
+        tmux send-keys -t catgirls: Enter C-y
+        ;;
+esac
+
