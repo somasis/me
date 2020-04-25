@@ -122,7 +122,7 @@
 [module/article-count]
     type = custom/script
     exec = polybar-article-count
-    interval = 60
+    tail = true
     click-left = alacritty -e newsboat &
 
 [module/mail-count]
