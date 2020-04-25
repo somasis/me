@@ -24,6 +24,7 @@
 
 [push]
 	default = simple
+	rebase = true
 [log]
 	abbrevCommit = false
 [branch]
