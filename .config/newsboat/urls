@@ -19,11 +19,12 @@ https://maxice8.github.io/rss.xml computer
 https://latacora.micro.blog/feed.xml computer
 https://sanctum.geek.nz/arabesque/feed/ computer
 https://ideditor.blog/feed.xml computer map
-https://www.openstreetmap.org/api/0.6/notes/feed?bbox=-81.918076,36.111477,-81.455917,36.391293 "~OpenStreetMap: Notes in Watauga County" map
-https://www.openstreetmap.org/api/0.6/notes/feed?bbox=-80.7872772,35.1850329,-80.2963257,35.5093128 "~OpenStreetMap: Notes in Cabarrus County" map
-https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-81.918076,36.111477,-81.455917,36.391293 "~OpenStreetMap: Changes to be reviewed in Watauga County" map
-https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-80.7872772,35.1850329,-80.2963257,35.5093128 "~OpenStreetMap: Changes to be reviewed in Cabarrus County" map
-https://www.weeklyosm.eu/feed "~weeklyOSM" map
+https://www.openstreetmap.org/api/0.6/notes/feed?bbox=-81.918076,36.111477,-81.455917,36.391293 "~OpenStreetMap: Notes in Watauga County" map osm
+https://www.openstreetmap.org/api/0.6/notes/feed?bbox=-80.7872772,35.1850329,-80.2963257,35.5093128 "~OpenStreetMap: Notes in Cabarrus County" map osm
+https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-81.918076,36.111477,-81.455917,36.391293 "~OpenStreetMap: Changes to be reviewed in Watauga County" map osm
+https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-80.7872772,35.1850329,-80.2963257,35.5093128 "~OpenStreetMap: Changes to be reviewed in Cabarrus County" map osm
+https://www.weeklyosm.eu/feed "~weeklyOSM" map osm
+https://us3.campaign-archive.com/feed?u=162692bfdedb78ec46fd108a3&id=801ce00e6d "~OpenStreetMap US Newsletter" osm
 https://www.codemadness.nl/atom.xml blog computer
 https://waldon.blog/feed "~Chris Waldon" blog computer friend
 https://ewontfix.com/feed.rss computer friend
