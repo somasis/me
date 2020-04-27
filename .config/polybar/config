@@ -2,69 +2,65 @@
 
 [settings]
     screenchange-reload = true
-    pseudo-transparency = false
 
 [bar/default]
-    monitor = eDP-1
-    dpi = 192
+    dpi                 = ${xrdb:Xft.dpi:96}
 
-    width = 100%
-    height = 64
-    fixed-center = true
+    width               = 100%
+    height              = 64
+    fixed-center        = true
 
-    background = #2f343f
-    foreground = #ffffff
+    background          = #00000000
+    foreground          = #ffffff
 
-    module-margin-left = 8
-    margin-top = 64
+    module-margin-left  = 8
+    margin-top          = 64
 
-    wm-restack = bspwm
+    wm-restack          = bspwm
 
-    modules-left = bspwm title
-    modules-center = custom-time
-    modules-right = next-event mpd-tail article-count mail-count battery
+    modules-left        = bspwm title
+    modules-center      = custom-time countdown
+    modules-right       = next-event mpd-tail article-count mail-count battery
 
-    font-0 = "forkawesome:style=regular:size=11;3"
-    font-1 = "forkawesome:style=solid:size=11;3"
-    font-2 = "IBM Plex Sans:style=regular:size=11;3"
-    font-3 = "IBM Plex Sans:style=bold:size=11;3"
-    font-4 = "IBM Plex Sans:style=black:size=11;3"
-    font-5 = "IBM Plex Mono:style=regular:size=10;3"
-    font-6 = "IBM Plex Mono:style=bold:size=10;3"
-    font-7 = "Noto Color Emoji:style=regular:scale=10;3"
-    font-8 = "Sans:style=regular:size=11;3"
-    font-9 = "Noto Sans CJK JP:style=regular:size=11;3"
+    font-0              = "forkawesome:style=regular:size=11;3"
+    font-1              = "forkawesome:style=solid:size=11;3"
+    font-2              = "sans-serif:style=regular:size=11;3"
+    font-3              = "sans-serif:style=bold:size=11;3"
+    font-4              = "sans-serif:style=black:size=11;3"
+    font-5              = "monospace:style=regular:size=10;3"
+    font-6              = "monospace:style=bold:size=10;3"
+    font-7              = "Twitter Color Emoji:style=regular:scale=10;3"
+    font-8              = "Noto Sans CJK JP:style=regular:size=11;3"
 
-    tray-detatched = false
-    tray-background = #2f343f
-    tray-position = right
-    tray-padding = 4
-    tray-maxsize = 32
+    tray-detatched      = false
+    tray-background     = #00000000
+    tray-position       = right
+    tray-padding        = 4
+    tray-maxsize        = 32
 
 [module/battery]
-    type = internal/battery
+    type                    = internal/battery
 
-    battery = BAT1
-    adapter = ACAD
+    battery                 = BAT1
+    adapter                 = ACAD
 
-    full-at = 95
+    full-at                 = 95
 
-    format-charging = <animation-charging>
-    format-discharging = <ramp-capacity>
-    format-full = <ramp-capacity>
+    format-charging         = <animation-charging>
+    format-discharging      = <ramp-capacity>
+    format-full             = <ramp-capacity>
 
-    ramp-capacity-0 = 
-    ramp-capacity-1 = 
-    ramp-capacity-2 = 
-    ramp-capacity-3 = 
-    ramp-capacity-4 = 
+    ramp-capacity-0         = 
+    ramp-capacity-1         = 
+    ramp-capacity-2         = 
+    ramp-capacity-3         = 
+    ramp-capacity-4         = 
 
-    animation-charging-0 = 
-    animation-charging-1 = 
-    animation-charging-2 = 
-    animation-charging-3 = 
-    animation-charging-4 = 
-
+    animation-charging-0    = 
+    animation-charging-1    = 
+    animation-charging-2    = 
+    animation-charging-3    = 
+    animation-charging-4    = 
 
 [module/bspwm]
     type = internal/bspwm
@@ -78,19 +74,19 @@
 
     format-padding = 0
     format = "<label-state> <label-mode> "
+
     label-monocle = 
     label-tiled = t
     label-fullscreen = 
     label-floating = 
     label-pseudotiled = t
     label-locked = 
-    label-locked-foreground = #bd2c40
     label-sticky = 
-    label-sticky-foreground = #fba922
     label-private = 
+    label-locked-foreground = #bd2c40
+    label-sticky-foreground = #fba922
     label-private-foreground = #bd2c40
-
-    label-focused-background = #5294e2
+    label-focused-background = #438dc5
 
 [module/custom-time]
     type = custom/script
@@ -102,44 +98,58 @@
     label = %output%
     label-font = 4
 
-[module/next-event]
+[module/countdown]
     type = custom/script
-    exec = polybar-next-event eod -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
-    interval = 60
-    click-left = alacritty -e ikhal &
+    exec = echo $(( 29 - $(date +'%e') ))
+
+    interval = 30
+
+    format = <label> days
+
+[module/next-event]
+    type            = custom/script
+    exec            = polybar-next-event eod \
+                      -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
+    click-left      = alacritty -e ikhal &
+
+    interval        = 60
 
 [module/mpd-tail]
-    type = custom/script
-    tail = true
-    exec = polybar-mpd-tail | ellipsis 60
-    enable-scroll = true
-    click-left = mpc toggle
-    click-middle = mpc stop
-    click-right = mpc next
-    scroll-up = mpc volume +5
-    scroll-down = mpc volume -5
+    type            = custom/script
+    exec            = polybar-mpd-tail | ellipsis 60
+    click-left      = mpc toggle
+    click-middle    = mpc stop
+    click-right     = mpc next
+    enable-scroll   = true
+    scroll-down     = mpc volume -5
+    scroll-up       = mpc volume +5
+
+    tail            = true
 
 [module/article-count]
-    type = custom/script
-    exec = polybar-article-count
-    tail = true
-    click-left = alacritty -e newsboat &
+    type            = custom/script
+    exec            = polybar-article-count
+    click-left      = alacritty -e newsboat &
+
+    tail            = true
 
 [module/mail-count]
-    type = custom/script
-    tail = true
-    exec = polybar-mail-count
+    type            = custom/script
+    exec            = polybar-mail-count
+    click-left      = alacritty -e aerc &
+
     # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
-    interval = 900
-    click-left = alacritty -e aerc &
+    tail            = true
+    interval        = 900
 
 [module/title]
-    type = custom/script
-    tail = true
-    exec = xtitle -is -t 90
-    click-right = bspc node -c
-    enable-scroll = true
-    scroll-up = bspc node -f prev.local
-    scroll-down = bspc node -f next.local
+    type            = custom/script
+    exec            = xtitle -is -t 90
+    click-right     = bspc node -c
+    enable-scroll   = true
+    scroll-down     = bspc node -f next.local
+    scroll-up       = bspc node -f prev.local
 
-    label-font = 7
+    tail            = true
+
+    label-font      = 7
