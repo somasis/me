@@ -8,11 +8,8 @@ scrolling:
 
 font:
     normal:
-        family: "IBM Plex Mono"
+        family: "monospace"
         style: Regular
-    italic:
-        family: "IBM Plex Mono"
-        style: Italic
     size: 10
 
 colors:

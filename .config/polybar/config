@@ -29,7 +29,7 @@
     font-4              = "sans-serif:style=black:size=11;3"
     font-5              = "monospace:style=regular:size=10;3"
     font-6              = "monospace:style=bold:size=10;3"
-    font-7              = "Twitter Color Emoji:style=regular:scale=10;3"
+    font-7              = "emoji:style=regular:scale=10;3"
     font-8              = "Noto Sans CJK JP:style=regular:size=11;3"
 
     tray-detatched      = false
