@@ -7,7 +7,7 @@ mark-as-read-on-hover yes       # moving down list marks articles as read
 download-full-page yes          # download link's contents when no summary is given
 prepopulate-query-feeds yes     # without this query feeds are empty by default
 reload-threads 4
-refresh-on-start yes
+refresh-on-startup yes
 
 # Article display settings
 html-renderer "~/.local/lib/aerc/filters/html"
