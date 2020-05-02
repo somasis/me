@@ -19,7 +19,7 @@
     wm-restack          = bspwm
 
     modules-left        = bspwm title
-    modules-center      = custom-time countdown
+    modules-center      = custom-time
     modules-right       = next-event mpd-tail article-count mail-count battery
 
     font-0              = "forkawesome:style=regular:size=11;3"
@@ -97,14 +97,6 @@
     format = <label>
     label = %output%
     label-font = 4
-
-[module/countdown]
-    type = custom/script
-    exec = echo $(( 29 - $(date +'%e') ))
-
-    interval = 30
-
-    format = <label> days
 
 [module/next-event]
     type            = custom/script
