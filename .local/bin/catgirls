@@ -22,13 +22,17 @@ fi
 attach=true
 kill_all=false
 open_terminal=false
-while getopts :dkt arg >/dev/null 2>&1; do
+spoiler=false
+while getopts :dkst arg >/dev/null 2>&1; do
     case "${arg}" in
         d)
             attach=false
             ;;
         k)
             kill_all=true
+            ;;
+        s)
+            spoiler=true
             ;;
         t)
             open_terminal=true
@@ -41,6 +45,17 @@ while getopts :dkt arg >/dev/null 2>&1; do
 done
 
 unset TMUX
+
+if "${spoiler}"; then
+    if [ -f "${cache}"/spoiler ]; then
+        tmux send-keys C-z c
+        exec rm -f "${cache}"/spoiler
+    else
+        tmux send-keys C-z c 1,1
+        exec touch "${cache}"/spoiler
+    fi
+    exit $?
+fi
 
 if "${kill_all}"; then
     tmux list-windows -F '#S:#I' | while read -r window; do
