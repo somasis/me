@@ -66,7 +66,9 @@ fi
 
 if "${open_terminal}"; then
     test -n "$(tmux list-clients -F '#S' -t catgirls)" && exec xdotool search --name 'catgirl - .*' windowactivate
-    exec "${TERMINAL}" -e catgirls
+    trap "catgirls -c" EXIT
+    "${TERMINAL}" -e catgirls
+    exit $?
 fi
 
 tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux attach-session -t catgirls
