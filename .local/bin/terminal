@@ -1,0 +1,10 @@
+#!/bin/sh
+
+case "$1" in
+    -c|-e|-x|--command)
+        shift
+    ;;
+esac
+
+[ -n "${DISPLAY}" ] && exec alacritty -e "$@"
+exec "$@"

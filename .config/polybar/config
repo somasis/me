@@ -92,7 +92,7 @@
     type = custom/script
     tail = true
     exec = polybar-clock
-    click-left = alacritty -e ikhal &
+    click-left = terminal ikhal &
 
     format = <label>
     label = %output%
@@ -101,7 +101,7 @@
 [module/next-event]
     type            = custom/script
     exec            = polybar-next-event eod -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
-    click-left      = alacritty -e ikhal &
+    click-left      = terminal ikhal &
 
     interval        = 60
 
@@ -120,14 +120,14 @@
 [module/article-count]
     type            = custom/script
     exec            = polybar-article-count
-    click-left      = alacritty -e newsboat &
+    click-left      = terminal newsboat &
 
     tail            = true
 
 [module/mail-count]
     type            = custom/script
     exec            = polybar-mail-count
-    click-left      = alacritty -e aerc &
+    click-left      = terminal aerc &
 
     # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
     tail            = true
