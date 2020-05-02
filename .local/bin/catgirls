@@ -20,16 +20,16 @@ if [ -f "${tmux_conf}" ]; then
 fi
 
 attach=true
-kill_all=false
+close=false
 open_terminal=false
 spoiler=false
-while getopts :dkst arg >/dev/null 2>&1; do
+while getopts :cdst arg >/dev/null 2>&1; do
     case "${arg}" in
+        c)
+            close=true
+            ;;
         d)
             attach=false
-            ;;
-        k)
-            kill_all=true
             ;;
         s)
             spoiler=true
@@ -57,7 +57,7 @@ if "${spoiler}"; then
     exit $?
 fi
 
-if "${kill_all}"; then
+if "${close}"; then
     tmux list-windows -F '#S:#I' | while read -r window; do
         tmux send-keys -t "${window}" C-e C-u M-0
     done
