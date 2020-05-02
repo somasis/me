@@ -18,7 +18,7 @@ text-width 100
 color listfocus white blue bold
 color listnormal_unread green black bold
 color listfocus_unread black green bold
-color info black magenta bold
+color info white magenta bold
 
 # Appearance settings
 datetime-format     "%B %d"                         # March 19
