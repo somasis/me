@@ -10,7 +10,7 @@
 
 https://leahneukirchen.org/blog/index.atom blog friend
 https://leahneukirchen.org/trivium/index.atom blog friend
-https://text.causal.agency/feed.atom blog computer friend
+filter:~/.local/lib/newsboat/filters/ignore-summary:https://text.causal.agency/feed.atom blog computer friend
 https://www.7596ff.com/rss.xml blog friend
 https://pikhq.com/index.xml blog friend
 https://www.somas.is/feed.xml blog me
@@ -27,17 +27,19 @@ https://www.weeklyosm.eu/feed "~weeklyOSM" map osm
 https://us3.campaign-archive.com/feed?u=162692bfdedb78ec46fd108a3&id=801ce00e6d "~OpenStreetMap US Newsletter" osm
 https://www.codemadness.nl/atom.xml blog computer
 https://waldon.blog/feed "~Chris Waldon" blog computer friend
-https://ewontfix.com/feed.rss computer friend
+filter:~/.local/lib/newsboat/filters/ignore-summary:https://ewontfix.com/feed.rss computer friend
 https://www.cambridge.org/core/rss/product/id/F3D70AB528A9726BC052F1AEB771A611 "~Hypatia: Most Recent" journal philosophy
 https://beepb00p.xyz/atom.xml computer
+https://onethingwell.org/rss computer
 https://dataswamp.org/~solene/rss.xml blog computer
 https://drewdevault.com/feed.xml blog computer
 http://www.landley.net/rss.xml "~Rob Landley" blog computer
 https://flak.tedunangst.com/rss "~Ted Unangst: flak" blog computer
+https://phidica.tumblr.com/rss "~Phidica" blog friend
 
 https://www.webtoons.com/en/challenge/i-want-to-be-a-cute-anime-girl/rss?title_no=349416 comics
 https://xkcd.com/atom.xml comics
 
 https://www.currentaffairs.org/feed news
 https://lwn.net/headlines/newrss news computer
-# Current Affairs needs an rss feed...
+

@@ -14,14 +14,19 @@ LITTERBOX_FILES := \
 POUNCE_FILES := \
 	$(foreach network,$(IRC_NETWORKS),.config/pounce/$(network).conf)
 
+NEWSBOAT_URLS := \
+	.config/newsboat/urls.pub .config/newsboat/urls.secret
+
 CONFIG_FILES := \
-	$(CATGIRL_FILES) $(LITTERBOX_FILES) $(POUNCE_FILES)
+	$(CATGIRL_FILES) $(LITTERBOX_FILES) $(POUNCE_FILES) .config/newsboat/urls
 
 .PHONY: all
 all: config
 
 .PHONY: config
 config: $(CONFIG_FILES)
+
+newsboat: ~/.config/newsboat/urls
 
 .PHONY: pounce-$(POUNCE_HOST)
 pounce-$(POUNCE_HOST): $(POUNCE_FILES)
@@ -52,3 +57,5 @@ pull:
 .config/%/:
 	mkdir -p .config/$*
 
+.config/newsboat/urls: $(NEWSBOAT_URLS)
+	cat $(NEWSBOAT_URLS) > $@
