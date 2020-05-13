@@ -6,5 +6,6 @@ case "$1" in
     ;;
 esac
 
-[ -n "${DISPLAY}" ] && exec alacritty -e "$@"
-exec "$@"
+[ -t 2 ] && exec "$@"
+exec alacritty ${@:+-e "$@"}
+
