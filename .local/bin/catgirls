@@ -1,16 +1,17 @@
 #!/bin/sh
 
-usage() { printf 'usage: %s [-dt]\n' "${0##*/}"; exit; }
+usage() { printf 'usage: %s [-cdrst]\n' "${0##*/}"; exit; }
 
 : "${XDG_CONFIG_HOME:=~/.config}"
 : "${XDG_CACHE_HOME:-~/.cache}"
 tmux_conf="${XDG_CONFIG_HOME}"/catgirls/tmux.conf
 cache="${XDG_CACHE_HOME}"/catgirls
-
 mkdir -p "${cache}"
 
+[ -f "${tmux_conf}" ] || unset tmux_conf
+
 tmux() {
-    command tmux ${tmux_conf:+-f "$tmux_conf"} "$@"
+    command tmux ${tmux_conf:+-f "$tmux_conf"} -L catgirls "$@"
 }
 
 attach=true
@@ -55,7 +56,7 @@ if "${close}"; then
     tmux list-windows -F '#S:#I' | while read -r window; do
         tmux send-keys -t "${window}" C-e C-u M-0
     done
-    exec tmux detach-client
+    exec tmux -L catgirls detach-client
 fi
 
 if "${open_terminal}"; then
@@ -65,7 +66,7 @@ if "${open_terminal}"; then
     exit $?
 fi
 
-tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux attach-session -t catgirls
+tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux -L catgirls attach-session -t catgirls
 tmux new-session -d -s catgirls
 
 # Start at 1 so as not to mess with the dummy window.
@@ -91,7 +92,7 @@ tmux kill-window -t catgirls:0
 tmux select-window -t catgirls:0
 
 # Sort the windows by the order they're in in ~/.config/catgirls/order.
-if [ -e "${config}"/order ]; then
+if [ -e "${XDG_CONFIG_HOME}"/catgirls/order ]; then
     set -x
     order_i=0
     while read -r title; do
@@ -99,7 +100,7 @@ if [ -e "${config}"/order ]; then
             -s :$(tmux list-windows -F '#I:#W' | grep ":${title}$" | cut -d: -f1) \
             -t :"${order_i}"
         order_i=$(( order_i + 1 ))
-    done < "${config}/order"
+    done < "${XDG_CONFIG_HOME}"/catgirls/order
     tmux move-window -r
     set +x
 fi
@@ -128,4 +129,4 @@ tmux list-windows -F '#I' | while read -r window; do
     [ $color_i -gt 6 ] && color_i=1
 done
 
-"${attach}" && exec tmux -f "${tmux_conf}" attach-session -t catgirls
+"${attach}" && exec tmux ${tmux_conf:+-f "$tmux_conf"} -L catgirls attach-session -t catgirls
