@@ -5,14 +5,9 @@ usage() { printf 'usage: %s [-dt]\n' "${0##*/}"; exit; }
 : "${XDG_CONFIG_HOME:=~/.config}"
 : "${XDG_CACHE_HOME:-~/.cache}"
 tmux_conf="${XDG_CONFIG_HOME}"/catgirls/tmux.conf
-config="${XDG_CONFIG_HOME}"/catgirls
 cache="${XDG_CACHE_HOME}"/catgirls
 
 mkdir -p "${cache}"
-
-# HACK: Arch Linux's libressl is installed in /lib/libressl, this really should be fixed in a
-#       package of `catgirl`.
-export LD_LIBRARY_PATH=/lib/libressl:/lib
 
 if [ -f "${tmux_conf}" ]; then
     tmux() {
@@ -78,7 +73,7 @@ tmux new-session -d -s catgirls
 # Start at 1 so as not to mess with the dummy window.
 color_i=1
 window_i=1
-for f in "${XDG_CONFIG_HOME:-~/.config}"/catgirl/*.conf; do
+for f in "${XDG_CONFIG_HOME}"/catgirl/*.conf; do
     server="${f##*/}"; server="${server%%.conf}"
     tmux new-window -t catgirls: -n "${server}" \
         sh -c '(exit 63); while [ $? -eq 63 ]; do catgirl '"'${f}'"' || sleep 15; done'
