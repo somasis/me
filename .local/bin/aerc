@@ -1,4 +1,4 @@
 #!/bin/sh
 
-mbsync -a >/dev/null 2>&1 &
-exec /bin/aerc
+mbsync -aq &
+exec /bin/aerc "$@"
