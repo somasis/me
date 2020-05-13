@@ -9,11 +9,9 @@ cache="${XDG_CACHE_HOME}"/catgirls
 
 mkdir -p "${cache}"
 
-if [ -f "${tmux_conf}" ]; then
-    tmux() {
-        command tmux -f "${tmux_conf}" "$@"
-    }
-fi
+tmux() {
+    command tmux ${tmux_conf:+-f "$tmux_conf"} "$@"
+}
 
 attach=true
 close=false
