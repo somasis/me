@@ -76,6 +76,38 @@ for f in "${XDG_CONFIG_HOME}"/catgirl/*.conf; do
     tmux new-window -t catgirls: -n "${server}" \
         sh -c '(exit 63); while [ $? -eq 63 ]; do catgirl '"'${f}'"' || sleep 15; done'
 
+    # set terminal title to the selected window's ("catgirl - user@server").
+    tmux set-option -t catgirls: -g automatic-rename  off
+    tmux set-option -t catgirls: -g set-titles        on
+    tmux set-option -t catgirls: -g set-titles-string "catgirl - #W"
+
+    tmux set-option -t catgirls:"${window_i}" remain-on-exit on
+
+    window_i=$(( window_i + 1 ))
+done
+
+# Kill the dummy window that was started when tmux started.
+tmux kill-window -t catgirls:0
+tmux select-window -t catgirls:0
+
+# Sort the windows by the order they're in in ~/.config/catgirls/order.
+if [ -e "${config}"/order ]; then
+    set -x
+    order_i=0
+    while read -r title; do
+        tmux swap-window -d \
+            -s :$(tmux list-windows -F '#I:#W' | grep ":${title}$" | cut -d: -f1) \
+            -t :"${order_i}"
+        order_i=$(( order_i + 1 ))
+    done < "${config}/order"
+    tmux move-window -r
+    set +x
+fi
+
+# Color windows individually, since they are now ordered
+color_i=1
+window_i=0
+tmux list-windows -F '#I' | while read -r window; do
     # give each window a different color
     case "${color_i}" in
         1) color=blue       ;;
@@ -86,11 +118,6 @@ for f in "${XDG_CONFIG_HOME}"/catgirl/*.conf; do
         6) color=cyan       ;;
     esac
 
-    # set terminal title to the selected window's ("catgirl - user@server").
-    tmux set-option -t catgirls: -g automatic-rename  off
-    tmux set-option -t catgirls: -g set-titles        on
-    tmux set-option -t catgirls: -g set-titles-string "catgirl - #W"
-
     tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=terminal,fg=${color}"
     tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=terminal,fg=${color},reverse"
     tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=terminal,fg=${color}"
@@ -100,10 +127,5 @@ for f in "${XDG_CONFIG_HOME}"/catgirl/*.conf; do
     window_i=$(( window_i + 1 ))
     [ $color_i -gt 6 ] && color_i=1
 done
-
-# Kill the dummy window that was started when tmux started.
-tmux kill-window -t catgirls:0
-
-tmux select-window -t catgirls:0
 
 "${attach}" && exec tmux -f "${tmux_conf}" attach-session -t catgirls
