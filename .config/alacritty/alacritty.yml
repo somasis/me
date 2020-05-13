@@ -19,7 +19,7 @@ colors:
 
     normal:
         black:      '0x4b4b4b'
-        red:        '0xe25f5f'
+        red:        '0xcf4342'
         green:      '0xbdcd6a'
         yellow:     '0xef9324'
         blue:       '0x438dc5'
@@ -29,7 +29,7 @@ colors:
 
     bright:
         black:      '0x777777'
-        red:        '0xf78d8d'
+        red:        '0xfe6262'
         green:      '0xd7f0a4'
         yellow:     '0xfae56d'
         blue:       '0x96c7ec'
