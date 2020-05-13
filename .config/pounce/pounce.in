@@ -36,13 +36,24 @@ case "${nick}" in
                     \#kakoune \#midipix \
                     \#musl{,-offtopic} \
                     \#mutiny \#oasislinux \
-                    \#s6{,-offtopic} \
-                    \#sortix \#toybox \#vuxu
+                    \#s6{,-offtopic} \#sortix \
+                    \#sortix \#toybox \#vuxu \
+                    \#bash \#newsboat \#awk \
+                    \#beets \#metabrainz \#sr.ht
                 ;;
             irc.oftc.net)
                 channels \#osm{,-dev}
                 ;;
-        esac
+            irc.esper.net)
+                channels \#thasauce
+                ;;
+            irc.gitter.im)
+                printf '%s = %s\n' \
+                    pass "$(pass "irc/${host}/${nick}")"
+
+                channels \#asciidoctor/asciidoctor
+                ;;
+            esac
         ;;
 esac
 #!
