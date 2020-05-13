@@ -4,8 +4,11 @@ usage() { printf 'usage: %s [-dt]\n' "${0##*/}"; exit; }
 
 TERMINAL="${TERMINAL:-xterm}"
 
-tmux_conf="${XDG_CONFIG_HOME:-~/.config}"/catgirls/tmux.conf
-cache="${XDG_CACHE_HOME:-~/.cache}"/catgirls
+: "${XDG_CONFIG_HOME:=~/.config}"
+: "${XDG_CACHE_HOME:-~/.cache}"
+tmux_conf="${XDG_CONFIG_HOME}"/catgirls/tmux.conf
+config="${XDG_CONFIG_HOME}"/catgirls
+cache="${XDG_CACHE_HOME}"/catgirls
 
 mkdir -p "${cache}"
 
