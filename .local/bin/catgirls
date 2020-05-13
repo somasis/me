@@ -2,8 +2,6 @@
 
 usage() { printf 'usage: %s [-dt]\n' "${0##*/}"; exit; }
 
-TERMINAL="${TERMINAL:-xterm}"
-
 : "${XDG_CONFIG_HOME:=~/.config}"
 : "${XDG_CACHE_HOME:-~/.cache}"
 tmux_conf="${XDG_CONFIG_HOME}"/catgirls/tmux.conf
@@ -70,7 +68,7 @@ fi
 if "${open_terminal}"; then
     test -n "$(tmux list-clients -F '#S' -t catgirls)" && exec xdotool search --name 'catgirl - .*' windowactivate
     trap "catgirls -c" EXIT
-    "${TERMINAL}" -e catgirls
+    terminal catgirls
     exit $?
 fi
 
