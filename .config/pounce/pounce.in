@@ -37,9 +37,7 @@ case "${nick}" in
                     \#musl{,-offtopic} \
                     \#mutiny \#oasislinux \
                     \#s6{,-offtopic} \#sortix \
-                    \#sortix \#toybox \#vuxu \
-                    \#bash \#newsboat \#awk \
-                    \#beets \#metabrainz \#sr.ht
+                    \#toybox \#vuxu
                 ;;
             irc.oftc.net)
                 channels \#osm{,-dev}
