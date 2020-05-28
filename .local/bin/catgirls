@@ -41,6 +41,15 @@ done
 
 unset TMUX
 
+if "${open_terminal}"; then
+    test -n "$(tmux list-clients -F '#S' -t catgirls)" && exec xdotool search --name 'catgirl - .*' windowactivate
+    trap "catgirls -c" EXIT
+    terminal catgirls
+    exit $?
+fi
+
+# Provide black fg/black bg toggling as a "spoiler function"
+tmux set-hook -g client-detached "run-shell { rm -f \"${cache}\"/spoiler; catgirls -c }"
 if "${spoiler}"; then
     if [ -f "${cache}"/spoiler ]; then
         tmux send-keys C-z c
@@ -59,12 +68,6 @@ if "${close}"; then
     exec tmux -L catgirls detach-client
 fi
 
-if "${open_terminal}"; then
-    test -n "$(tmux list-clients -F '#S' -t catgirls)" && exec xdotool search --name 'catgirl - .*' windowactivate
-    trap "catgirls -c" EXIT
-    terminal catgirls
-    exit $?
-fi
 
 tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux -L catgirls attach-session -t catgirls
 tmux new-session -d -s catgirls
