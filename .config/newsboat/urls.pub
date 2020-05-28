@@ -11,6 +11,7 @@
 https://leahneukirchen.org/blog/index.atom blog friend
 https://leahneukirchen.org/trivium/index.atom blog friend
 filter:~/.local/lib/newsboat/filters/ignore-summary:https://text.causal.agency/feed.atom blog computer friend
+https://1.0.168.192.in-addr.xyz/blag/index.atom "~multi" blog computer friend
 https://www.7596ff.com/rss.xml blog friend
 https://pikhq.com/index.xml blog friend
 https://www.somas.is/feed.xml blog me
@@ -35,6 +36,7 @@ https://dataswamp.org/~solene/rss.xml blog computer
 https://drewdevault.com/feed.xml blog computer
 http://www.landley.net/rss.xml "~Rob Landley" blog computer
 https://flak.tedunangst.com/rss "~Ted Unangst: flak" blog computer
+https://www.cogitri.dev/posts/index.xml "~Cogitri's blog" blog computer
 https://phidica.tumblr.com/rss "~Phidica" blog friend
 
 https://www.webtoons.com/en/challenge/i-want-to-be-a-cute-anime-girl/rss?title_no=349416 comics
