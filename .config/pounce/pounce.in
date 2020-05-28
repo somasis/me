@@ -51,6 +51,10 @@ case "${nick}" in
 
                 channels \#asciidoctor/asciidoctor
                 ;;
+            irc.interlinked.me)
+                printf '%s = %s\n' \
+                    sasl-plain "${nick}:$(pass "irc/${host}/nickserv/${nick}")"
+                ;;
             esac
         ;;
 esac
