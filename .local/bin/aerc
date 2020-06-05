@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/execlineb
 
-mbsync -aq &
-exec /bin/aerc "$@"
+elgetpositionals
+background { mbsync -aq }
+/bin/aerc $@
