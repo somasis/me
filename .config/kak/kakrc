@@ -18,10 +18,12 @@ set-option global grepcmd 'ag --column'
 map global normal <a-tab> ':buffer-next<ret>'
 
 # Plugins
-## $ git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
-source "%val{config}/plugins/plug.kak/rc/plug.kak"
 
 ## Initialize plug.kak
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
+
+## Plugins and their options
+
 plug "https://github.com/alexherbo2/auto-pairs.kak"
 plug "https://github.com/whereswaldon/shellcheck.kak"
 
@@ -32,8 +34,11 @@ plug "https://github.com/lePerdu/kakboard" %{
 plug "https://gitlab.com/andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop 4
 } config %{
+    # Default to using spaces for everything.
     hook global BufOpenFile .* %{ expandtab }
     hook global BufNewFile  .* %{ expandtab }
+
+    # With exceptions.
     hook global BufOpenFile .*\.scd noexpandtab
     hook global WinSetOption filetype=(makefile) smarttab
     hook global WinSetOption filetype=(c|cpp) smarttab
@@ -57,15 +62,18 @@ hook global BufCreate .*\.git/COMMIT_EDITMSG %{
     set-option buffer autowrap_column 72
 }
 
+## scdoc(1).
 hook global BufCreate .*\.scd %{
     set-option buffer filetype markdown
     set-option buffer autowrap_column 80
 }
 
+## pass(1) temporary files.
 hook global BufCreate /dev/shm/pass\..* %{
     autowrap-disable
 }
 
+## Used by aerc(1).
 hook global WinSetOption filetype=mail %{
     set-option buffer autowrap_column 72
     set-option buffer autoreload no
