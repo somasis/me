@@ -121,6 +121,7 @@ if [ -e "${XDG_CONFIG_HOME}"/catgirls/order ]; then
         order_i=$(( order_i + 1 ))
     done < "${XDG_CONFIG_HOME}"/catgirls/order
     tmux move-window -r
+    tmux select-window -t catgirls:0
 fi
 
 # Color windows individually, since they are now ordered
