@@ -11,6 +11,8 @@ font:
         family: "monospace"
         style: Regular
     size: 10
+    offset:
+        y: -3
 
 colors:
     primary:
