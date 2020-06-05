@@ -116,7 +116,7 @@ add-highlighter global/ regex \h+$ 0:default,red+f
 # Highlight the autowrapping column, highlight any characters past that column
 add-highlighter global/ wrap -word
 add-highlighter global/ column %opt{autowrap_column} default,black
-add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:red,black+bf
+add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:white,red+bf
 
 ## Highlight word under the cursor
 declare-option -hidden regex curword
