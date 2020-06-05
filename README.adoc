@@ -2,10 +2,4 @@
 
 Dotfiles of various sorts; scripts, configuration files, modifications, etc.
 
-== `.config`
 
-Configuration files used on my machines.
-
-== `.local/bin`
-
-Contains scripts and utilities that I use often.
