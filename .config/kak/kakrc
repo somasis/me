@@ -80,6 +80,7 @@ hook global BufCreate .*\.scd %{
 
 ## pass(1) temporary files.
 hook global BufCreate /dev/shm/pass\..* %{
+    set-option buffer filetype yaml
     autowrap-disable
 }
 
