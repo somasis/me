@@ -70,7 +70,7 @@ fi
 
 if "${close}"; then
     tmux list-windows -F '#S:#I' | while read -r window; do
-        tmux send-keys -t "${window}" C-e C-u M-0
+        tmux send-keys -t "${window}" C-e C-u M-0 C-y
     done
     exec tmux -L catgirls detach-client
 fi
