@@ -28,17 +28,16 @@ all: config
 .PHONY: config
 config: kak newsboat ssh $(CONFIG_FILES)
 
+.PHONY: kak
+kak: .config/kak/plugins/plug.kak
 
 .PHONY: newsboat
-newsboat: ~/.config/newsboat/urls
-
-.PHONY: kak
-kak: ~/.config/kak/plugins/plug.kak
+newsboat: .config/newsboat/urls
 
 .PHONY: ssh
-ssh: ~/.ssh/config
+ssh: .ssh/config
 
-~/.config/kak/plugins/plug.kak:
+.config/kak/plugins/plug.kak:
 	git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
 
 .PHONY: pounce-$(POUNCE_HOST)
@@ -55,8 +54,8 @@ litterbox-$(POUNCE_HOST): $(LITTERBOX_FILES)
 pull:
 	git --git-dir="$(me_git)" --work-tree="$(HOME)" pull
 
-.DELETE_ON_ERROR: ~/.ssh/config
-~/.ssh/config: ~/.ssh/config.in
+.DELETE_ON_ERROR: .ssh/config
+.ssh/config: .ssh/config.in
 	pp $< > $@
 
 .DELETE_ON_ERROR: .config/catgirl/%.conf
