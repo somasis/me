@@ -25,9 +25,16 @@ CONFIG_FILES := \
 all: config
 
 .PHONY: config
-config: $(CONFIG_FILES)
+config: kak newsboat $(CONFIG_FILES)
 
+.PHONY: newsboat
 newsboat: ~/.config/newsboat/urls
+
+.PHONY: kak
+kak: ~/.config/kak/plugins/plug.kak
+
+~/.config/kak/plugins/plug.kak:
+	git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
 
 .PHONY: pounce-$(POUNCE_HOST)
 pounce-$(POUNCE_HOST): $(POUNCE_FILES)

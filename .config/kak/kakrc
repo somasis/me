@@ -1,0 +1,118 @@
+# Set default interface options
+set-option global ui_options \
+    ncurses_assistant=cat \
+    ncurses_set_title=true \
+    ncurses_status_on_top=true
+
+# Set default text-editing options
+set-option global tabstop 4
+set-option global indentwidth 4
+set-option global autowrap_column 100
+
+# Set options for default plugins
+set-option global makecmd 'make -j12'
+set-option global grepcmd 'ag --column'
+
+# Keybinds
+## Kakoune // Change to next buffer // alt + tab
+map global normal <a-tab> ':buffer-next<ret>'
+
+# Plugins
+## $ git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
+
+## Initialize plug.kak
+plug "https://github.com/alexherbo2/auto-pairs.kak"
+plug "https://github.com/whereswaldon/shellcheck.kak"
+
+plug "https://github.com/lePerdu/kakboard" %{
+    hook global WinCreate .* %{ kakboard-enable }
+}
+
+plug "https://gitlab.com/andreyorst/smarttab.kak" defer smarttab %{
+    set-option global softtabstop 4
+} config %{
+    hook global BufOpenFile .* %{ expandtab }
+    hook global BufNewFile  .* %{ expandtab }
+    hook global BufOpenFile .*\.scd noexpandtab
+    hook global WinSetOption filetype=(makefile) smarttab
+    hook global WinSetOption filetype=(c|cpp) smarttab
+}
+
+# Hooks
+hook global WinCreate ^[^*]+$ %{
+    autowrap-enable
+}
+
+hook global BufCreate .* %{
+    modeline-parse
+    git show-diff
+}
+
+hook global BufWritePost .* %{
+    git show-diff
+}
+
+hook global BufCreate .*\.git/COMMIT_EDITMSG %{
+    set-option buffer autowrap_column 72
+}
+
+hook global BufCreate .*\.scd %{
+    set-option buffer filetype markdown
+    set-option buffer autowrap_column 80
+}
+
+hook global BufCreate /dev/shm/pass\..* %{
+    autowrap-disable
+}
+
+hook global WinSetOption filetype=mail %{
+    set-option buffer autowrap_column 72
+    set-option buffer autoreload no
+}
+
+## Use tab/shift-tab for completion
+hook global InsertCompletionShow .* %{
+    map window insert <tab> <c-n>; map window insert <s-tab> <c-p>
+}
+
+hook global InsertCompletionHide .* %{
+    unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p>
+}
+
+# Highlighters
+# Number lines, show whitespaces
+add-highlighter global/ number-lines -separator " ▏" -hlcursor -min-digits 3
+add-highlighter global/ show-whitespaces -spc " " -tab "→"
+add-highlighter global/ show-matching
+
+# Highlight issues, nasty code, and notes, in descending order of goodness
+add-highlighter global/ regex \W(BUG|FIXME)(\((\S+)\))? 1:white,red+bf      2:white,blue+f
+add-highlighter global/ regex \W(HACK|XXX)(\((\S+)\))?  1:black,yellow+bf   2:white,blue+f
+add-highlighter global/ regex \W(NOTE|TODO)(\((\S+)\))? 1:black,green+bf    2:white,blue+f
+
+# Highlight trailing spaces
+add-highlighter global/ regex \h+$ 0:default,red+f
+
+# Highlight the autowrapping column, highlight any characters past that column
+add-highlighter global/ wrap -word
+add-highlighter global/ column %opt{autowrap_column} default,black
+add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:red,black+bf
+
+## Highlight word under the cursor
+declare-option -hidden regex curword
+set-face global CurWord default,black
+
+hook global NormalIdle .* %{
+    eval -draft %{
+        try %{
+            exec <space><a-i>w <a-k>\A\S+\z<ret>
+            set-option buffer curword "\b\Q%val{selection}\E\b"
+        } catch %{
+            set-option buffer curword ''
+        }
+    }
+}
+
+add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
+
