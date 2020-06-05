@@ -11,6 +11,8 @@ mkdir -p "${cache}"
 [ -f "${tmux_conf}" ] || unset tmux_conf
 
 tmux() {
+    # Use a separate socket so as to prevent `tmux` from creating
+    # windows in our session by default.
     command tmux ${tmux_conf:+-f "$tmux_conf"} -L catgirls "$@"
 }
 
@@ -42,7 +44,8 @@ done
 unset TMUX
 
 if "${open_terminal}"; then
-    test -n "$(tmux list-clients -F '#S' -t catgirls)" && exec xdotool search --name 'catgirl - .*' windowactivate
+    test -n "$(tmux list-clients -F '#S' -t catgirls)" && \
+        exec xdotool search --name 'catgirl - .*' windowactivate
     trap "catgirls -c" EXIT
     terminal catgirls
     exit $?
@@ -69,7 +72,8 @@ if "${close}"; then
 fi
 
 
-tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && exec tmux -L catgirls attach-session -t catgirls
+tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && \
+    exec tmux -L catgirls attach-session -t catgirls
 tmux new-session -d -s catgirls
 
 # Start at 1 so as not to mess with the dummy window.
@@ -96,16 +100,14 @@ tmux select-window -t catgirls:0
 
 # Sort the windows by the order they're in in ~/.config/catgirls/order.
 if [ -e "${XDG_CONFIG_HOME}"/catgirls/order ]; then
-    set -x
     order_i=0
     while read -r title; do
         tmux swap-window -d \
-            -s :$(tmux list-windows -F '#I:#W' | grep ":${title}$" | cut -d: -f1) \
+            -s ":$(tmux list-windows -F '#I:#W' | grep ":${title}$" | cut -d: -f1)" \
             -t :"${order_i}"
         order_i=$(( order_i + 1 ))
     done < "${XDG_CONFIG_HOME}"/catgirls/order
     tmux move-window -r
-    set +x
 fi
 
 # Color windows individually, since they are now ordered
@@ -122,9 +124,12 @@ tmux list-windows -F '#I' | while read -r window; do
         6) color=cyan       ;;
     esac
 
-    tmux set-option -t catgirls:"${window_i}" -a window-status-style "bg=terminal,fg=${color}"
-    tmux set-option -t catgirls:"${window_i}" -a window-status-current-style "bg=terminal,fg=${color},reverse"
-    tmux set-option -t catgirls:"${window_i}" -a window-status-activity-style "bg=terminal,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" \
+        -a window-status-style "bg=terminal,fg=${color}"
+    tmux set-option -t catgirls:"${window_i}" \
+        -a window-status-current-style "bg=terminal,fg=${color},reverse"
+    tmux set-option -t catgirls:"${window_i}" \
+        -a window-status-activity-style "bg=terminal,fg=${color}"
     tmux set-option -t catgirls:"${window_i}" remain-on-exit on
 
     color_i=$(( color_i + 1 ))
