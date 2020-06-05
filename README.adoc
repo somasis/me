@@ -7,5 +7,6 @@ $ mkdir ~/git
 $ git clone --bare https://github.com/somasis/me ~/git/me.git
 $ git --git-dir=~/git/me.git --work-tree=~ checkout
 $ alias me='git --git-dir=~/git/me.git --work-tree=~'
+$ make
 ----
 
