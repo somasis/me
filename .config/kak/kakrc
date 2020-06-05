@@ -42,6 +42,8 @@ plug "https://gitlab.com/andreyorst/smarttab.kak" defer smarttab %{
     hook global BufOpenFile .*\.scd noexpandtab
     hook global WinSetOption filetype=(makefile) smarttab
     hook global WinSetOption filetype=(c|cpp) smarttab
+    hook global BufOpenFile .*/git/config %{ smarttab }
+    hook global BufOpenFile .*\.git/config %{ smarttab }
 }
 
 # Hooks
@@ -58,8 +60,16 @@ hook global BufWritePost .* %{
     git show-diff
 }
 
-hook global BufCreate .*\.git/COMMIT_EDITMSG %{
+## Lightly enforce the 50/72 rule.
+hook global WinSetOption filetype=git-commit %{
     set-option buffer autowrap_column 72
+
+    # <https://github.com/kakoune-editor/kakoune-extra-filetypes/blob/master/rc/git-commit-overflow.kak>
+    # Commit title; everything over 50 is yellow.
+    add-highlighter window/ regex \A\n*[^#\n]{50}([^\n]+) 1:black,yellow+f
+
+    # Line following the title should be empty
+    add-highlighter window/ regex \A[^\n]*\n([^#\n]+) 1:white,red+b
 }
 
 ## scdoc(1).
