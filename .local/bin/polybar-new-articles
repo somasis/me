@@ -7,8 +7,9 @@ newsboat() {
 }
 
 unread() {
-    unread=$(newsboat -x print-unread 2>/dev/null | cut -d' ' -f1)
-    integer -p "${unread}" && test "${unread}" -ne 0 && printf '\uf09e %s\n' "${unread}" && return 0
+    [ $(newsboat -x print-unread 2>/dev/null | cut -d' ' -f1) -ne 0 ] \
+        && printf '\uf09e\n' \
+        && return 0
     printf '\n'
 }
 

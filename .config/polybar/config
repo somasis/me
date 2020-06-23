@@ -119,7 +119,7 @@
 
 [module/article-count]
     type            = custom/script
-    exec            = polybar-article-count
+    exec            = polybar-new-articles
     click-left      = terminal newsboat &
 
     tail            = true
