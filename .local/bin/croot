@@ -1,46 +1,93 @@
 #!/bin/sh
 # croot - chroot with linux-related filesystems
 
+. idioms
+
+set -e
+
+croot_usage() { usage "${0##*/} [-lmn] [USER@]ROOT [COMMAND]"; }
+
+[ $# -eq 0 ] && croot_usage
+
+USER=
+HOME=
+
 mount=true
-case "${1}" in
-    --no-mount)
-        mount=false
-        shift
-    ;;
+mount_only=false
+login=false
+while getopts :lmn arg >/dev/null 2>&1; do
+    case "${arg}" in
+        l)
+            login=true
+            ;;
+        m)
+            mount=true
+            mount_only=true
+            ;;
+        n)
+            mount=false
+            ;;
+        ?)
+            error "unknown argument -- %s\n" "${OPTARG}"
+            croot_usage
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+[ $# -ge 1 ] || croot_usage
+
+root="$1"; shift
+case "${root}" in
+    *@*)
+        USER="${root%%@*}"
+        root="${root#*@}"
+        ;;
+    *)
+        root="${root}"
+        ;;
 esac
 
-dir="${1:-${PWD}}"; [[ "$#" -gt 0 ]] && shift
-home=$(grep -- "^$(id -un):" "${dir}"/etc/passwd | cut -d':' -f6 || printf '/')
-
-edo() {
-    echo "${0##*/}: $@" >&2
-    "$@"; return $?
-}
-
-if [ $(id -u) -ne 0 ];then
-    printf '%s: %s\n' "${0##*/}" "need root"
-    exit 13
-fi
+USER="${USER:-$(id -un)}"
 
 if "${mount}";then
-    mountpoint -q "${dir}"/proc     || edo mount -t proc /proc      "${dir}"/proc
-    mountpoint -q "${dir}"/sys      || edo mount -t sysfs /sys      "${dir}"/sys
-    mountpoint -q "${dir}"/dev      || edo mount -t devtmpfs /dev   "${dir}"/dev
-    if ! mountpoint -q "${dir}"/dev/shm;then
-        [ -d "${dir}"/dev/shm ] || edo mkdir "${dir}"/dev/shm
-        edo mount -t tmpfs /dev/shm  "${dir}"/dev/shm
+    mountpoint -q "${root}"/proc        || call mount -t proc /proc      "${root}"/proc
+    mountpoint -q "${root}"/sys         || call mount -t sysfs /sys      "${root}"/sys
+    mountpoint -q "${root}"/dev         || call mount -t devtmpfs /dev   "${root}"/dev
+    if ! mountpoint -q "${root}"/dev/shm;then
+        [ -d "${root}"/dev/shm ]        || call mkdir "${root}"/dev/shm
+        call mount -t tmpfs /dev/shm "${root}"/dev/shm
     fi
-    mountpoint -q "${dir}"/tmp      || edo mount -t tmpfs /tmp      "${dir}"/tmp
-    if [ -d "${dir}"/dev/pts ];then
-        mountpoint -q "${dir}"/dev/pts || edo mount -t devpts /dev/pts "${dir}"/dev/pts
+    mountpoint -q "${root}"/tmp         || call mount -t tmpfs /tmp      "${root}"/tmp
+    if [ -d "${root}"/dev/pts ];then
+        mountpoint -q "${root}"/dev/pts || call mount -t devpts /dev/pts "${root}"/dev/pts
     fi
 fi
 
-cat /etc/resolv.conf > "${dir}"/etc/resolv.conf
-edo unshare -muif env -i HOME="${home}" TERM="${TERM}" chroot "${dir}" /bin/sh -c ". /etc/profile; exec ${@:-/bin/sh -l}"
+cat /etc/resolv.conf > "${root}"/etc/resolv.conf
+
+"${mount_only}" && exit 0
+
+if "${login}"; then
+    call unshare -mpuif --mount-proc="$(readlink -f "${root}")/proc" \
+        s6-env -i TERM="${TERM}" \
+            s6-chroot "${root}" login ${USER:+"$USER"}
+else
+    HOME=$(grep -- "^${USER}:" "${root}"/etc/passwd | cut -d':' -f6 || printf '/')
+    SHELL=$(grep -- "^${USER}:" "${root}"/etc/passwd | cut -d':' -f7 || printf '/bin/sh')
+    if [ -n "$*" ]; then
+        set -- su -c "$@" - "${USER}"
+    else
+        set -- su - "${USER}" -l
+    fi
+
+    call unshare -mpuif --mount-proc="$(readlink -f "${root}")/proc" \
+        s6-env -i HOME="${HOME}" USER="${USER}" TERM="${TERM}" SHELL="${SHELL}" \
+            s6-chroot "${root}" "$@"
+fi
 
 if "${mount}";then
-    for d in "${dir}"/{proc,sys,dev/shm,dev/pts,dev,tmp};do
-        mountpoint -q "${d}" && edo umount "${d}"
+    for d in proc sys dev/shm dev/pts dev tmp;do
+        mountpoint -q "${root}"/"${d}" && call umount "${root}"/"${d}"
     done
 fi
