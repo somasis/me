@@ -16,6 +16,8 @@
     module-margin-left  = 8
     margin-top          = 64
 
+    line-size           = 4
+
     wm-restack          = bspwm
 
     modules-left        = bspwm title
@@ -85,7 +87,7 @@
     label-locked-foreground = #bd2c40
     label-sticky-foreground = #fba922
     label-private-foreground = #bd2c40
-    label-focused-background = #438dc5
+    label-focused-overline = #438dc5
 
 [module/custom-time]
     type = custom/script
@@ -143,3 +145,4 @@
     tail            = true
 
     label-font      = 7
+    label-overline = #438dc5
