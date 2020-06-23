@@ -14,8 +14,10 @@ set-option global makecmd 'make -j12'
 set-option global grepcmd 'ag --column'
 
 # Keybinds
-## Kakoune // Change to next buffer // alt + tab
-map global normal <a-tab> ':buffer-next<ret>'
+## Kakoune // Change to next buffer // alt + a
+map global normal <a-a> ':buffer-next<ret>'
+## Kakoune // Change to previous buffer // alt + shift + a
+map global normal <a-A> ':buffer-previous<ret>'
 
 # Plugins
 
