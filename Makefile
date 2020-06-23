@@ -1,8 +1,7 @@
 me_git := $(HOME)/git/me.git
 
 IRC_NETWORKS := \
-	somasis@irc.freenode.net somasis@irc.esper.net somasis@irc.gitter.im somasis@irc.oftc.net \
-	somasis@irc.interlinked.me
+	somasis@irc.freenode.net somasis@irc.esper.net somasis@irc.gitter.im somasis@irc.oftc.net
 
 POUNCE_HOST := angela.somas.is
 
