@@ -1,6 +1,12 @@
 #!/bin/sh
 # open - xdg-open(1) replacement using {protocol,MIME,extension}-based configuration
 
+set -eu
+
+export _idioms_colors=true
+# shellcheck source=/lib/idioms/idioms.sh
+. idioms
+
 : "${XDG_CONFIG_HOME:=~/.config}"
 
 # Set some common defaults.
@@ -19,9 +25,10 @@ edo_nohup() {
 
 run() {
     value="$1"; shift
-    # shellcheck disable=SC2046,SC2059
+    # shellcheck disable=SC2059,SC2086
     #       SC2046: don't complain about word splitting, we want that
     #       SC2059: don't complain about using variables in printf, we want that!
+    #       SC2086: don't complain about word splitting on the catchall
     case "${value}" in
         *'%s'*'&') edo_nohup $(printf "${value% &}" "$@") & ;;
         *'&') edo_nohup "${value% &}" "$@" & ;;
@@ -37,7 +44,7 @@ extension() {
         if [ -e "${XDG_CONFIG_HOME}/open/extension/${extension}" ]; then
             run "$(cat "${XDG_CONFIG_HOME}/open/extension/${extension}")" "$1"
         else
-            printf 'warning: no handler for "%s" extension used in "%s"\n' "${extension}" "$1" >&2
+            warn "no handler for '${extension}' extension used in '${1}'"
             return 1
         fi
 
@@ -53,7 +60,7 @@ protocol() {
         if [ -e "${XDG_CONFIG_HOME}/open/protocol/${protocol}" ]; then
             run "$(cat "${XDG_CONFIG_HOME}/open/protocol/${protocol}")" "$1"
         else
-            printf 'warning: no handler for "%s" protocol used in "%s"\n' "${protocol}" "$1" >&2
+            warn "no handler for '${protocol}' protocol used in '${1}'"
             return 1
         fi
         shift
@@ -64,10 +71,7 @@ mime() {
     while [ $# -gt 0 ]; do
         # This check is needed because otherwise file(1), according to POSIX, just reports
         # filesystem errors on stdout(!) rather than failing
-        [ -e "$1" ] || {
-            printf 'error: file "%s" does not exist\n' "$1" >&2
-            return 1
-        }
+        [ -e "$1" ] || die 2 "file '$1' does not exist"
 
         # -i for printing mimetype only
         # -L for following symlinks
@@ -84,7 +88,7 @@ mime() {
         elif [ -e "${XDG_CONFIG_HOME}/open/mime/${parent}" ]; then
             run "$(cat "${XDG_CONFIG_HOME}/open/mime/${parent}")" "$1"
         else
-            printf 'warning: no handler for "%s" MIME type used in "%s"\n' "${mime}" "$1" >&2
+            warn "no handler for '${mime}' MIME type used in '${1}'"
             return 1
         fi
         shift
@@ -96,6 +100,5 @@ while [ $# -gt 0 ]; do
     match -E '\.\S+$' "$1" && extension "$1" && shift && continue
     mime "$1" && shift && continue
 
-    printf 'error: not sure how to handle "%s"\n' "$1" >&2
-    exit 1
+    die 95 "not sure how to handle '${1}'"
 done
