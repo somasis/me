@@ -4,9 +4,59 @@ Dotfiles of various sorts; scripts, configuration files, modifications, etc.
 
 ----
 $ mkdir ~/git
-$ git clone --bare https://github.com/somasis/me ~/git/me.git
+$ git clone --bare https://git.mutiny.red/somasis/me ~/git/me.git
 $ git --git-dir=~/git/me.git --work-tree=~ checkout
 $ alias me='git --git-dir=~/git/me.git --work-tree=~'
 $ make
 ----
 
+== Components used
+
+:mess: https://leahneukirchen.org/blog/archive/2006/01/keeping-your-home-clean-with-mess.html
+
+* https://skarnet.org/software/s6[s6]
+* https://skarnet.org/software/execline[execline] - scripting language used for some scripts in
+  ~/.local/bin
+* https://github.com/alacritty/alacritty[alacritty] - non-VTE based terminal without much cruft
+  (in my opinion)
+    ** I was at one point interested in trying `st`, but it's a different garbage fire entirely.
+* https://github.com/baskerville/bspwm[bspwm] - tiling window manager
+* https://github.com/baskerville/sxhkd[sxhkd] - keyboard shortcut daemon
+* https://github.com/polybar/polybar[polybar] - desktop panel (clock, workspace switcher, window
+  titles, system tray, now playing, etc.)
+    ** I'd like something simpler, but nothing else seems to have as much usability. I also
+       considered lemonbar in the past.
+    ** https://github.com/baskerville/xtitle[xtitle] - used as a script module on polybar,
+       prints window titles, printing new titles on focus change; one would think xdotool or
+       something most people already have would do this, but it doesn't seem so.
+* https://github.com/google/xsecurelock[xsecurelock] - screen locker with emphasis on high security
+    ** https://bitbucket.org/raymonad/xss-lock[xss-lock] - integrate locker with suspend events
+* https://github.com/Airblader/unclutter-xfixes[unclutter-xfixes] - hides mouse pointer when typing
+  and after a period of time
+* https://git.causal.agency/catgirl[catgirl] - IRC client
+    ** I use the `catgirls` script located in `~/.local/bin` to make it integrate well with tmux and
+       my desktop keyboard shortcuts.
+* https://git.causal.agency/pounce[pounce] - IRC bouncer; running on a different machine
+* https://git.causal.agency/litterbox[litterbox] - IRC logger; running on a different machine
+* https://github.com/tmux/tmux[tmux]
+* {mess}[mess] - system for creating temporary, yet archived working directories (a port of the
+  Ruby script is located in ~/.local/bin)
+* https://www.musicpd.org/[Music Player Daemon]
+    ** https://github.com/MusicPlayerDaemon/mpdscribble[mpdscribble] - lastfm/listenbrainz scrobbler
+* https://aerc-mail.org/[aerc] - mail client
+    ** Buggy, written in Go, and somewhat underdeveloped, but it's not as irritating to configure as
+       mutt or neomutt.
+* http://isync.sourceforge.net/[mbsync] - mailbox synchronizer, synchronizing between remote IMAP
+  folders and local Maildirs.
+* https://github.com/leahneukirchen/mblaze[mblaze] - maildir tools, only currently used for the new
+  mail count in polybar
+* https://github.com/leahneukirchen/rwc[rwc] - "run when changed"
+* https://github.com/newsboat/newsboat[newsboat] - RSS reader
+* https://github.com/mutinyproject/idioms[idioms] - scripting idioms used throughout ~/.local/bin
+* https://github.com/mawww/kakoune[kakoune] - modal text editor that integrates nicely with other
+  Unix tools
+* https://mkws.sh/pp.html[pp] - preprocessor that calls out to shell
+    ** I've considered just switching and learning how to use m4 recently, though. Cuts out a
+       dependency.
+* https://github.com/dunst-project/dunst[dunst] - notification daemon
+* https://github.com/davatorium/rofi[rofi] - the best dmenu alternative
