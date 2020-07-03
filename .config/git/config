@@ -4,7 +4,7 @@
 	signingkey = 0x37133B9826BBB5C2
 
 [commit]
-	gpgsign = true
+	gpgsign = false
 	verbose = true
 
 # Use password-store for git credentials.
