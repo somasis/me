@@ -28,7 +28,8 @@ case "${nick}" in
         case "${host}" in
             irc.freenode.net)
                 printf '%s = %s\n' \
-                    sasl-plain "${nick}:$(pass "irc/${host}/nickserv/${nick}")"
+                    sasl-plain "${nick}:$(pass "irc/${host}/nickserv/${nick}")" \
+                    blind-req "userhost-in-names" # <https://git.causal.agency/pounce/commit/?id=d09477b58e39bb9a301a592e9bc7505b046660e1>
 
                 channels \
                     \##kremlin \##squawk \#ascii.town \#bspwm \
