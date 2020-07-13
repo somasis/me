@@ -14,7 +14,7 @@ clock() {
 }
 
 while :; do
-    # DUMB: if I don't put TZ=${current_TZ} then TZ keeps being overwritten during the loop
+    # HACK: if I don't put TZ=${current_TZ} then TZ keeps being overwritten during the loop
     #       ...depending on what shell it is.
     TZ=${current_TZ} clock '' "${current_strftime}"
     [ "${current_TZ}" != "${home_TZ}" ] && TZ=${home_TZ} clock $' \uF015 ' "${home_strftime}"
