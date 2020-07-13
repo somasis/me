@@ -1,7 +1,6 @@
 [user]
 	name = Kylie McClain
 	email = kylie@somas.is
-	signingkey = 0x37133B9826BBB5C2
 
 [commit]
 	gpgsign = false
