@@ -7,6 +7,9 @@
 	gpgsign = false
 	verbose = true
 
+[pull]
+	rebase = true
+
 # Use password-store for git credentials.
 # <https://github.com/languitar/pass-git-helper>
 [credential]
