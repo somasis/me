@@ -1,4 +1,5 @@
 window:
+    dynamic_title: true
     dynamic_padding: false
     decorations: none
 
@@ -45,10 +46,8 @@ cursor:
 
 draw_bold_text_with_bright_colors: false
 
-visual_bell:
+bell:
     duration: 0
-
-dynamic_title: true
 
 selection:
     save_to_clipboard: true
