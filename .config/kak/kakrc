@@ -26,6 +26,7 @@ source "%val{config}/plugins/plug.kak/rc/plug.kak"      # Plugin manager.
 plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching parenthesis.
 plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
 plug "https://github.com/occivink/kakoune-find"         # Find and replace across buffers.
+plug "https://github.com/gspia/csv.kak"                 # Highlight columns of CSV files.
 
 # Integrate yank with Xorg clipboard.
 plug "https://github.com/lePerdu/kakboard" config %{
