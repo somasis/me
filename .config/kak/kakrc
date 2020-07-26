@@ -28,6 +28,14 @@ plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint she
 plug "https://github.com/occivink/kakoune-find"         # Find and replace across buffers.
 plug "https://github.com/gspia/csv.kak"                 # Highlight columns of CSV files.
 
+# Highlight hexadecimal colors in buffers.
+plug "https://github.com/alexherbo2/palette.kak" config %{
+    # Update palette on each key.
+    hook global InsertIdle .* %{
+        palette-update
+    }
+}
+
 # Integrate yank with Xorg clipboard.
 plug "https://github.com/lePerdu/kakboard" config %{
     hook global WinCreate .* %{ kakboard-enable }
