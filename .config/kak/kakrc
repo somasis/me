@@ -76,6 +76,11 @@ hook global BufWritePost .* %{
     git show-diff
 }
 
+## Make directory for buffer prior to writing it.
+hook global BufWritePre .* %{
+    nop %sh{ mkdir -p "$(dirname "$kak_hook_param")" }
+}
+
 ## Lightly enforce the 50/72 rule for git commit summaries.
 hook global WinSetOption filetype=git-commit %{
     set-option buffer autowrap_column 72
