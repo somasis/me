@@ -36,6 +36,11 @@ plug "https://github.com/alexherbo2/palette.kak" config %{
     }
 }
 
+# Change cursor color on inactive window.
+plug "https://github.com/greenfork/active-window.kak" config %{
+    set-face global InactiveCursor default,rgb:5d5d5d
+}
+
 # Integrate yank with Xorg clipboard.
 plug "https://github.com/lePerdu/kakboard" config %{
     hook global WinCreate .* %{ kakboard-enable }
