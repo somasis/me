@@ -3,13 +3,6 @@
 _idioms_colors=true
 . idioms
 
-case "${0##*/}" in
-    oksh|ksh|-oksh|-ksh)
-        PS1="\[${text_reset}${text_bold}${text_fg_blue}\]\u@\[${text_fg_magenta}\h\]\[${text_fg_white}\]:\w ‡\[${text_reset}\] "
-#        PS1="\[${text_reset}${text_bold}${text_fg_blue}\]\u@\[${text_fg_magenta}\h\]\[${text_fg_white}\]:\w ☰\[${text_reset}\] "
-        ;;
-esac
-
 alias rsrc='. ~/.profile; . ~/.config/ksh/rc'
 
 for f in "${XDG_CONFIG_HOME}"/ksh/rc.d/*.ksh; do
