@@ -1,5 +1,6 @@
 # kak: autowrap_column=-1
 "query:Unread articles:unread = \"yes\" and tags !# \"query\""
+"query:... Aggregators:tags # \"aggregators\""
 "query:... Blogs:tags # \"blog\""
 "query:... Friends:tags # \"friend\""
 "query:... News:tags # \"news\""
@@ -29,6 +30,9 @@ https://emeliacleveland.net/feed/                   blog friend
 https://apenwarr.ca/log/rss.php                     blog computer
 https://blog.knightsofthelambdacalcul.us/index.xml  blog computer
 https://nitter.net/oilshellblog/rss                 "~Oil Shell" blog computer scripting shell
+
+# Aggregators
+https://tilde.news/rss                          aggregators
 
 # News
 https://www.currentaffairs.org/feed             news usa
