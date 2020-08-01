@@ -1,4 +1,6 @@
 # kak: filetype=ini
 
 notify = catgirl-notify
+
+# Hide joins/parts/quits.
 ignore = * [JPQ][OAU][IR][NT] #*
