@@ -139,8 +139,8 @@
     exec            = xtitle -is -t 90
     click-right     = bspc node -c
     enable-scroll   = true
-    scroll-down     = bspc node -f next.local
-    scroll-up       = bspc node -f prev.local
+    scroll-down     = bspc node -f next.local.!hidden.window
+    scroll-up       = bspc node -f prev.local.!hidden.window
 
     tail            = true
 
