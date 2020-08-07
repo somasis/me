@@ -1,7 +1,7 @@
 me_git := $(HOME)/git/me.git
 
 IRC_NETWORKS := \
-	somasis@irc.freenode.net somasis@irc.esper.net somasis@irc.gitter.im somasis@irc.oftc.net
+	somasis@irc.freenode.net somasis@irc.tilde.chat somasis@irc.esper.net somasis@irc.gitter.im
 
 POUNCE_HOST := angela.somas.is
 
@@ -38,6 +38,9 @@ ssh: .ssh/config
 
 .config/kak/plugins/plug.kak:
 	git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
+
+.PHONY: $(POUNCE_HOST)
+$(POUNCE_HOST): pounce-$(POUNCE_HOST) litterbox-$(POUNCE_HOST)
 
 .PHONY: pounce-$(POUNCE_HOST)
 pounce-$(POUNCE_HOST): $(POUNCE_FILES)

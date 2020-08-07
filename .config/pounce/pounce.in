@@ -32,17 +32,22 @@ case "${nick}" in
                     blind-req "userhost-in-names" # <https://git.causal.agency/pounce/commit/?id=d09477b58e39bb9a301a592e9bc7505b046660e1>
 
                 channels \
-                    \##kremlin \##squawk \#ascii.town \#bspwm \
+                    \##kremlin \##squawk \#ascii.town \
                     \#exherbo{,-dev} \
                     \#kakoune \#midipix \
                     \#musl{,-offtopic} \
                     \#mutiny \#oasislinux \
-                    \#s6{,-offtopic} \#sortix \
-                    \#toybox \#vuxu
+                    \#s6{,-offtopic} \
+                    \#vuxu \
+                    \##casseroles
                 ;;
-            irc.oftc.net)
-                channels \#osm{,-dev}
-                ;;
+            irc.tilde.chat)
+                printf '%s = %s\n' \
+                    sasl-plain "${nick}:$(pass "irc/${host}/nickserv/${nick}")" \
+
+                channels \
+                    \#meta \#security \#politics \#covid19 \#gemini \#nsfw \#minecraft
+            ;;
             irc.esper.net)
                 channels \#thasauce
                 ;;
