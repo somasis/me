@@ -38,6 +38,12 @@ https://tilde.news/rss                          aggregators
 https://www.currentaffairs.org/feed             news usa
 https://redflag.org.au/rss                      news australia
 https://lwn.net/headlines/newrss                news computer
+"query:Watauga Democrat:tags # \"wataugademocrat\"" "~Watauga Democrat"
+https://theappalachianonline.com/feed/ "~The Appalachian" news asu
+https://www.wataugademocrat.com/search/?f=rss&t=article&c=news/local&l=50&s=start_time&sd=desc "!Watauga Democrat: Local News" news local wataugademocrat
+https://www.wataugademocrat.com/search/?f=rss&t=article&c=news/asu_news&l=50&s=start_time&sd=desc "!Watauga Democrat: Appalachian State University News" news asu wataugademocrat
+https://wataugaonline.com/feed/ "~Watauga Online" news local
+https://feeds.feedburner.com/HCPress "~High Country Press" news local
 
 # Computers
 https://latacora.micro.blog/feed.xml            computer
