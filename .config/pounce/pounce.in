@@ -21,7 +21,7 @@ case "${nick}" in
     somasis)
         printf '%s = %s\n' \
             user        "kylie" \
-            real        "Kylie McClain <kylie@somas.is>" \
+            real        "Kylie McClain <kylie@somas.is> (she/her)" \
             save        "/home/pounce/.cache/pounce/${2}.log" \
             local-pass  "$(pass "${USER}/${1}/pounce/${2}" | sed -E '/^salted: /!d; s/^salted: //')"
 
