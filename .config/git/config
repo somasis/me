@@ -18,6 +18,7 @@
 # Use git templates in order to make default branch name "main".
 [init]
 	templateDir = ~/.config/git/template/
+	defaultBranch = main
 
 # See msmtp(1) configuration for details.
 [sendemail]
