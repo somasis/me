@@ -3,7 +3,7 @@ defaults
     tls on
     tls_starttls off
     auth plain
-    logfile ~/.cache/msmtp/msmtp.log
+    logfile -
 
 account kylie@somas.is
     host smtp.fastmail.com
