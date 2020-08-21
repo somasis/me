@@ -42,7 +42,7 @@ colors:
 
 cursor:
     style: Beam
-    unfocused_hollow: true
+    unfocused_hollow: false
 
 draw_bold_text_with_bright_colors: false
 
