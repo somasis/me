@@ -24,6 +24,7 @@ action=$(timeout 60 dunstify \
     -i irc-chat \
     -r "${id}" \
     --action="default,Read" \
+    -- \
     "${chat}" \
     "${sender:+&lt;$sender&gt; }${message}") || exit 0
 
