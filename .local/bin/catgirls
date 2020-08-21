@@ -94,7 +94,7 @@ color_i=1
 window_i=1
 for f in "${XDG_CONFIG_HOME}"/catgirl/*.conf; do
     server="${f##*/}"; server="${server%%.conf}"
-    tmux new-window -t catgirls: -n "${server#*@}" \
+    tmux new-window -t catgirls: -n "${server}" \
         sh -c '(exit 63); while [ $? -eq 63 ]; do catgirl '"'${f}'"' || sleep 1; done'
 
     # set terminal title to the selected window's ("catgirl - user@server").
