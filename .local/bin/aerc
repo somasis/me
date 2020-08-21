@@ -1,5 +1,10 @@
 #!/bin/execlineb
 
 elgetpositionals
+
 background { mbsync -aq }
-/bin/aerc $@
+foreground { settitle aerc }
+if { /bin/aerc $@ }
+background { mbsync -aq }
+
+exit
