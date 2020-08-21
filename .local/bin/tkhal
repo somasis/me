@@ -1,0 +1,21 @@
+#!/bin/execlineb
+
+elgetpositionals
+
+background {
+    fdclose 1
+    fdclose 2
+    foreground { vdirsyncer metasync }
+    foreground { vdirsyncer sync }
+}
+
+foreground { settitle ikhal }
+if { ikhal $@ }
+
+background {
+    fdclose 1
+    fdclose 2
+    foreground { vdirsyncer metasync }
+    foreground { vdirsyncer sync }
+}
+exit

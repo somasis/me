@@ -93,7 +93,7 @@
     type = custom/script
     tail = true
     exec = polybar-clock
-    click-left = terminal ikhal &
+    click-left = terminal tkhal &
 
     format = <label>
     label = %output%
@@ -102,7 +102,7 @@
 [module/next-event]
     type            = custom/script
     exec            = polybar-next-event eod -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
-    click-left      = terminal ikhal &
+    click-left      = terminal tkhal &
 
     interval        = 60
 
