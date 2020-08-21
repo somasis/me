@@ -4,7 +4,7 @@ window:
     decorations: none
 
 scrolling:
-    history: 50000
+    history: 1000
     multiplier: 2
 
 font:
