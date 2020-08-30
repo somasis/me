@@ -6,7 +6,6 @@ Dotfiles of various sorts; scripts, configuration files, modifications, etc.
 $ mkdir ~/git
 $ git clone --bare https://git.mutiny.red/somasis/me ~/git/me.git
 $ git --git-dir=~/git/me.git --work-tree=~ checkout
-$ alias me='git --git-dir=~/git/me.git --work-tree=~'
 $ make
 ----
 
@@ -52,7 +51,7 @@ $ make
   mail count in polybar
 * https://github.com/leahneukirchen/rwc[rwc] - "run when changed"
 * https://github.com/newsboat/newsboat[newsboat] - RSS reader
-* https://github.com/mutinyproject/idioms[idioms] - scripting idioms used throughout ~/.local/bin
+* https://git.mutiny.red/mutiny/idioms[idioms] - scripting idioms used throughout ~/.local/bin
 * https://github.com/mawww/kakoune[kakoune] - modal text editor that integrates nicely with other
   Unix tools
 * https://mkws.sh/pp.html[pp] - preprocessor that calls out to shell
