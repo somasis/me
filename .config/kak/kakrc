@@ -51,34 +51,34 @@ plug "https://github.com/andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop 4
 } config %{
     # Default to using spaces for everything.
-    hook global BufOpenFile .* %{ expandtab }
-    hook global BufNewFile  .* %{ expandtab }
+    hook global -group user-smarttab BufOpenFile .* %{ expandtab }
+    hook global -group user-smarttab BufNewFile  .* %{ expandtab }
 
     # With exceptions.
-    hook global BufOpenFile .*\.scd noexpandtab
-    hook global WinSetOption filetype=(makefile) smarttab
-    hook global WinSetOption filetype=(c|cpp) smarttab
-    hook global BufOpenFile .*/git/config %{ smarttab }
-    hook global BufOpenFile .*\.git/config %{ smarttab }
+    hook global -group user-smarttab BufOpenFile .*\.scd noexpandtab
+    hook global -group user-smarttab WinSetOption filetype=(makefile) smarttab
+    hook global -group user-smarttab WinSetOption filetype=(c|cpp) smarttab
+    hook global -group user-smarttab BufOpenFile .*/git/config %{ smarttab }
+    hook global -group user-smarttab BufOpenFile .*\.git/config %{ smarttab }
 }
 
 # Hooks
-hook global WinCreate ^[^*]+$ %{
+hook -group user-wincreate global WinCreate ^[^*]+$ %{
     autowrap-enable
 }
 
-hook global BufCreate .* %{
+hook -group user-bufcreate global BufCreate .* %{
     modeline-parse
     git show-diff
 }
 
-hook global BufWritePost .* %{
-    git show-diff
+hook -group user-bufwritepre global BufWritePre .* %{
+    ## Make directory for buffer prior to writing it.
+    nop %sh{ mkdir -p "$(dirname "$kak_hook_param")" }
 }
 
-## Make directory for buffer prior to writing it.
-hook global BufWritePre .* %{
-    nop %sh{ mkdir -p "$(dirname "$kak_hook_param")" }
+hook -group user-bufwritepost global BufWritePost .* %{
+    git show-diff
 }
 
 ## Lightly enforce the 50/72 rule for git commit summaries.
@@ -156,4 +156,3 @@ hook global NormalIdle .* %{
 }
 
 add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
-
