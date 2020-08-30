@@ -28,7 +28,7 @@ all: config
 config: kak newsboat ssh $(CONFIG_FILES)
 
 .PHONY: kak
-kak: .config/kak/plugins/plug.kak
+kak: .local/share/kak/plugins/plug.kak
 
 .PHONY: newsboat
 newsboat: .config/newsboat/urls
@@ -36,8 +36,8 @@ newsboat: .config/newsboat/urls
 .PHONY: ssh
 ssh: .ssh/config
 
-.config/kak/plugins/plug.kak:
-	git clone https://github.com/andreyorst/plug.kak.git ~/.config/kak/plugins/plug.kak
+.local/share/kak/plugins/plug.kak:
+	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ~/.local/share/kak/plugins/plug.kak
 
 .PHONY: $(POUNCE_HOST)
 $(POUNCE_HOST): pounce-$(POUNCE_HOST) litterbox-$(POUNCE_HOST)
