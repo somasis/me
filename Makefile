@@ -1,4 +1,4 @@
-me_git := $(HOME)/git/me.git
+me_git := ${HOME}/git/me.git
 
 IRC_HOST = angela.somas.is
 
@@ -40,7 +40,7 @@ catgirl-${IRC_HOST}:
 
 .PHONY: pull
 pull:
-	git --git-dir="$(me_git)" --work-tree="$(HOME)" pull
+	git --git-dir="${me_git}" --work-tree="${HOME}" pull
 
 .DELETE_ON_ERROR: .ssh/config
 .ssh/config: .ssh/config.in
