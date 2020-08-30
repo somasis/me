@@ -1,56 +1,42 @@
 me_git := $(HOME)/git/me.git
 
-IRC_NETWORKS := \
-	somasis@irc.freenode.net somasis@irc.tilde.chat somasis@irc.esper.net somasis@irc.gitter.im
-
-POUNCE_HOST := angela.somas.is
-
-CATGIRL_FILES := \
-	$(foreach network,$(IRC_NETWORKS),.config/catgirl/$(network).conf)
-
-LITTERBOX_FILES := \
-	$(foreach network,$(IRC_NETWORKS),.config/litterbox/$(network).conf)
-
-POUNCE_FILES := \
-	$(foreach network,$(IRC_NETWORKS),.config/pounce/$(network).conf)
+IRC_HOST = angela.somas.is
 
 NEWSBOAT_URLS := \
-	.config/newsboat/urls.pub .config/newsboat/urls.secret
-
-CONFIG_FILES := \
-	$(CATGIRL_FILES) $(LITTERBOX_FILES) $(POUNCE_FILES) .config/newsboat/urls \
-	.ssh/config
+	${XDG_CONFIG_HOME}/newsboat/urls.pub ${XDG_CONFIG_HOME}/newsboat/urls.secret
 
 .PHONY: all
-all: config
-
-.PHONY: config
-config: kak newsboat ssh $(CONFIG_FILES)
+all: kak newsboat ssh
 
 .PHONY: kak
-kak: .local/share/kak/plugins/plug.kak
+kak: ${XDG_DATA_HOME}/kak/plugins/plug.kak
 
 .PHONY: newsboat
-newsboat: .config/newsboat/urls
+newsboat: ${XDG_CONFIG_HOME}/newsboat/urls
 
 .PHONY: ssh
 ssh: .ssh/config
 
-.local/share/kak/plugins/plug.kak:
-	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ~/.local/share/kak/plugins/plug.kak
+${XDG_DATA_HOME}/kak/plugins/plug.kak:
+	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ${XDG_DATA_HOME}/kak/plugins/plug.kak
 
-.PHONY: $(POUNCE_HOST)
-$(POUNCE_HOST): pounce-$(POUNCE_HOST) litterbox-$(POUNCE_HOST)
+.PHONY: ${IRC_HOST}
+${IRC_HOST}: pounce-${IRC_HOST} litterbox-${IRC_HOST}
 
-.PHONY: pounce-$(POUNCE_HOST)
-pounce-$(POUNCE_HOST): $(POUNCE_FILES)
-	rsync -ru --delete-after $^ pounce@$(POUNCE_HOST):~/.config/pounce
-	ssh pounce@$(POUNCE_HOST) mkdir -p '~/.cache/pounce'
+.PHONY: pounce-${IRC_HOST}
+pounce-${IRC_HOST}:
+	rsync -ru --delete-after --ignore /home/pounce/${XDG_CONFIG_HOME}/pounce/${IRC_HOST} ${XDG_CONFIG_HOME}/pounce/ pounce@${IRC_HOST}:${XDG_CONFIG_HOME}/pounce
+	ssh pounce@${IRC_HOST} mkdir -p '~/.cache/pounce'
 
-.PHONY: litterbox-$(POUNCE_HOST)
-litterbox-$(POUNCE_HOST): $(LITTERBOX_FILES)
-	rsync -ru --delete-after $^ pounce@$(POUNCE_HOST):~/.config/litterbox
-	ssh pounce@$(POUNCE_HOST) mkdir -p '~/.local/share/litterbox'
+.PHONY: litterbox-${IRC_HOST}
+litterbox-${IRC_HOST}:
+	rsync -ru --delete-after ${XDG_CONFIG_HOME}/litterbox/ pounce@${IRC_HOST}:${XDG_CONFIG_HOME}/litterbox
+	ssh pounce@${IRC_HOST} mkdir -p "${XDG_DATA_HOME}/litterbox" "~/.cache/litterbox"
+
+.PHONY: catgirl-${IRC_HOST}
+catgirl-${IRC_HOST}:
+	rsync -ru --delete-after ${XDG_CONFIG_HOME}/catgirl/ somasis@${IRC_HOST}:${XDG_CONFIG_HOME}/catgirl
+	ssh somasis@${IRC_HOST} mkdir -p "${XDG_DATA_HOME}/catgirl" "~/.cache/catgirl"
 
 .PHONY: pull
 pull:
@@ -60,20 +46,8 @@ pull:
 .ssh/config: .ssh/config.in
 	pp $< > $@
 
-.DELETE_ON_ERROR: .config/catgirl/%.conf
-.config/catgirl/%.conf: .config/catgirl/pounce.in .config/catgirl/catgirl.in .config/catgirl/
-	pp $< $(POUNCE_HOST) $* > $@
+${XDG_CONFIG_HOME}/%/:
+	mkdir -p ${XDG_CONFIG_HOME}/$*
 
-.DELETE_ON_ERROR: .config/litterbox/%.conf
-.config/litterbox/%.conf: .config/litterbox/pounce.in .config/litterbox/
-	pp $< $(POUNCE_HOST) $* > $@
-
-.DELETE_ON_ERROR: .config/pounce/%.conf
-.config/pounce/%.conf: .config/pounce/pounce.in .config/pounce/
-	pp $< $(POUNCE_HOST) $* > $@
-
-.config/%/:
-	mkdir -p .config/$*
-
-.config/newsboat/urls: $(NEWSBOAT_URLS)
-	cat $(NEWSBOAT_URLS) > $@
+${XDG_CONFIG_HOME}/newsboat/urls: ${NEWSBOAT_URLS}
+	cat ${NEWSBOAT_URLS} > $@
