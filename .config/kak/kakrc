@@ -47,7 +47,7 @@ plug "https://github.com/lePerdu/kakboard" config %{
 }
 
 # Easier indentation style management.
-plug "https://gitlab.com/andreyorst/smarttab.kak" defer smarttab %{
+plug "https://github.com/andreyorst/smarttab.kak" defer smarttab %{
     set-option global softtabstop 4
 } config %{
     # Default to using spaces for everything.
