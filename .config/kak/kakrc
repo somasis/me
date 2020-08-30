@@ -21,7 +21,7 @@ map global normal <a-A> ':buffer-next<ret>'
 
 # Plugins
 
-source "%val{config}/plugins/plug.kak/rc/plug.kak"      # Plugin manager.
+source %sh{ echo "${XDG_DATA_HOME}"/kak/plugins/plug.kak/rc/plug.kak }  # Plugin manager.
 
 plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching parenthesis.
 plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
