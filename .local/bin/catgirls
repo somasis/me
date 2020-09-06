@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage() { printf 'usage: %s [-cdrst]\n' "${0##*/}"; exit; }
+usage() { printf 'usage: %s [-cdst]\n' "${0##*/}"; exit; }
 
 : "${XDG_CONFIG_HOME:=~/.config}"
 : "${XDG_CACHE_HOME:-~/.cache}"
@@ -19,18 +19,14 @@ tmux() {
 attach=true
 close=false
 open_terminal=false
-redraw=false
 spoiler=false
-while getopts :cdrst arg >/dev/null 2>&1; do
+while getopts :cdst arg >/dev/null 2>&1; do
     case "${arg}" in
         c)
             close=true
             ;;
         d)
             attach=false
-            ;;
-        r)
-            redraw=true
             ;;
         s)
             spoiler=true
@@ -73,16 +69,6 @@ if "${close}"; then
         tmux send-keys -t "${window}" C-e C-u M-0 C-y
     done
     exec tmux -L catgirls detach-client
-fi
-
-# HACK: catgirl seems kinda slow to respond to redrawing on resizes, at least in `tmux`.
-#       so, provide an option to redraw whenever we resize the client.
-tmux set-hook -g client-resized 'run-shell { catgirls -r }'
-if "${redraw}"; then
-    tmux list-windows -F '#S:#I' | while read -r window; do
-        tmux send-keys -t "${window}" C-l
-    done
-    exit $?
 fi
 
 tmux has-session -t catgirls >/dev/null 2>&1 && "${attach}" && \
