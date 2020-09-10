@@ -1,0 +1,12 @@
+#!/bin/sh
+# manhl - highlight the output of `man` according to LESS_TERMCAP_* variables
+# thanks june for knowing how `man` output works
+
+bold=$(printf 's/_\b(.)/'"${LESS_TERMCAP_us}"'\\1\e[m/g')
+italic=$(printf 's/.\b(.)/'"${LESS_TERMCAP_md}"'\\1\e[m/g')
+
+exec sed -E \
+    -e "${bold}" \
+    -e "${italic}" \
+    "$@"
+
