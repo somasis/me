@@ -29,4 +29,3 @@ bspc config pointer_action3 resize_corner   # Resize windows from corner during 
 
 # Window rules
 bspc rule -r '*'
-
