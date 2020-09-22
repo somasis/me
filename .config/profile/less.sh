@@ -10,11 +10,14 @@ export LESS_TERMCAP_se=$(printf "\e[0m")
 export LESS_TERMCAP_so=$(printf "\e[0m")
 export LESS_TERMCAP_ue=$(printf "\e[0m")
 
-# -s - combine multiple blank lines
+# -i - Ignore case in searches if there's no uppercase characters in the pattern
+# -s - Combine multiple blank lines
+# -F - Quit if the whole thing can be viewed on one screen
+# -M - Show the lines and percentage of way through the input.
 # -R - "Like -r, but only ANSI "color" escape sequences are output in "raw" form."
 # --mouse - support mouse scrolling
 # --wheel-lines - only scroll 2 lines for each tick of the wheel
-export LESS='-sR --mouse --wheel-lines=2'
+export LESS='-isMFR --mouse --wheel-lines=2'
 
 # XDG compliance
 export LESSHISTFILE="${XDG_CACHE_HOME}"/less/history
