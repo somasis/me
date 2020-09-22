@@ -11,7 +11,15 @@ usage() {
 }
 
 print_sh() {
-    printf '%s' 'mess() { [ $# -gt 0 ] || { cd "$(command mess)" && return; }; command mess "$@"; }'
+    cat <<'EOF'
+mess() {
+    if [ $# -eq 0 ]; then
+        cd "$(command mess)" && return
+    else
+        command mess "$@"
+    fi
+}
+EOF
     exit 0
 }
 
