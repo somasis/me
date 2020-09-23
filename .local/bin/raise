@@ -1,0 +1,6 @@
+#!/bin/sh
+# raise(1) - run a command, or raise a window matching that command if it exists
+
+title="${1}"; shift
+
+xdotool search --onlyvisible --name "${title}" windowactivate || exec "$@"

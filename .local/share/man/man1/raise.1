@@ -1,0 +1,29 @@
+.Dd September 23, 2020
+.Dt RAISE 1
+.Os
+.
+.Sh NAME
+.Nm raise
+.Nd raise a window if it exists, otherwise run a command
+.
+.Sh SYNOPSIS
+.Nm
+.Ar TITLE
+.Ar COMMAND
+.
+.Sh DESCRIPTION
+.Nm
+uses
+.Xr xdotool 1
+to switch to the window matching
+.Ar TITLE
+if it exists.
+If it does not exist, it runs the
+.Ar COMMAND
+given.
+.
+.Sh SEE ALSO
+.Xr xdotool 1
+.
+.Sh AUTHORS
+.An Kylie McClain Aq Mt kylie@somas.is
