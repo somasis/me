@@ -98,6 +98,11 @@ hook global BufCreate .*\.scd %{
     set-option buffer autowrap_column 80
 }
 
+## man(7) and mdoc(7).
+hook global WinSetOption filetype=troff %{
+    set-option buffer autowrap_column 72
+}
+
 ## pass(1) temporary files.
 hook global BufCreate /dev/shm/pass\..* %{
     set-option buffer filetype yaml
@@ -119,6 +124,11 @@ hook global InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p>
 }
 
+# Update autowrap column highlighter when it changes.
+hook global BufSetOption autowrap_column=.* %{
+    add-highlighter -override global/wrap column %opt{autowrap_column} default,black
+}
+
 # Highlighters
 
 ## Number lines, show whitespaces.
@@ -136,7 +146,6 @@ add-highlighter global/ regex \h+$ 0:default,red+f
 
 ## Highlight the autowrapping column, highlight any characters past that column.
 add-highlighter global/ wrap -word
-add-highlighter global/ column %opt{autowrap_column} default,black
 add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:white,red+bf
 
 ## Highlight word under the cursor.
