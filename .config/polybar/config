@@ -93,18 +93,18 @@
     type = custom/script
     tail = true
     exec = polybar-clock
-    click-left = terminal tkhal &
+    click-left = raise '^ikhal$' terminal tkhal &
 
     format = <label>
     label = %output%
-    label-font = 4
+    label-font = 5
 
 [module/next-event]
     type            = custom/script
-    exec            = polybar-next-event eod -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
-    click-left      = terminal tkhal &
+    exec            = polybar-next-event --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | ellipsis 45
+    click-left      = raise '^ikhal$' terminal tkhal &
 
-    interval        = 60
+    interval        = 50
 
 [module/mpd-tail]
     type            = custom/script
@@ -121,14 +121,14 @@
 [module/article-count]
     type            = custom/script
     exec            = polybar-new-articles
-    click-left      = terminal newsboat &
+    click-left      = raise '^newsboat$' terminal newsboat &
 
     tail            = true
 
 [module/mail-count]
     type            = custom/script
     exec            = polybar-mail-count
-    click-left      = terminal aerc &
+    click-left      = raise '^aerc$' terminal aerc &
 
     # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
     tail            = true
