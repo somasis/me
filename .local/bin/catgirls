@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage() { printf 'usage: %s [-cdst]\n' "${0##*/}"; exit; }
+usage() { printf 'usage: %s [-cds]\n' "${0##*/}"; exit; }
 
 : "${XDG_CONFIG_HOME:=~/.config}"
 : "${XDG_CACHE_HOME:-~/.cache}"
@@ -18,9 +18,8 @@ tmux() {
 
 attach=true
 close=false
-open_terminal=false
 spoiler=false
-while getopts :cdst arg >/dev/null 2>&1; do
+while getopts :cds arg >/dev/null 2>&1; do
     case "${arg}" in
         c)
             close=true
@@ -31,9 +30,6 @@ while getopts :cdst arg >/dev/null 2>&1; do
         s)
             spoiler=true
             ;;
-        t)
-            open_terminal=true
-            ;;
         ?)
             printf 'unknown argument -- %s\n' "${OPTARG}" >&2
             usage
@@ -42,14 +38,6 @@ while getopts :cdst arg >/dev/null 2>&1; do
 done
 
 unset TMUX
-
-if "${open_terminal}"; then
-    test -n "$(tmux list-clients -F '#S' -t catgirls)" && \
-        exec xdotool search --name 'catgirl - .*' windowactivate
-    trap "catgirls -c" EXIT
-    terminal catgirls
-    exit $?
-fi
 
 # Provide black fg/black bg toggling as a "spoiler function"
 tmux set-hook -g client-detached "run-shell { rm -f \"${cache}\"/spoiler; catgirls -c }"
