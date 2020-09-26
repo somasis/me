@@ -8,6 +8,7 @@
 .
 .Sh SYNOPSIS
 .Nm
+.Op Fl v
 .Ar TITLE
 .Ar COMMAND
 .
@@ -21,6 +22,13 @@ if it exists.
 If it does not exist, it runs the
 .Ar COMMAND
 given.
+.Pp
+The options are as follows:
+.
+.Bl -tag -width Ds
+.It Fl v
+Only switch to windows that are on the current desktop.
+.El
 .
 .Sh SEE ALSO
 .Xr xdotool 1

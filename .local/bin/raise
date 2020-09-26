@@ -1,6 +1,24 @@
 #!/bin/sh
 # raise(1) - run a command, or raise a window matching that command if it exists
 
+usage() {
+    printf 'usage: %s\n' \
+        "raise [-v] TITLE COMMAND..." >&2
+    exit 69
+}
+
+while getopts :v arg >/dev/null 2>&1; do
+    case "${arg}" in
+        v)
+            xdotool_search_args="--onlyvisible"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
 title="${1}"; shift
 
-xdotool search --onlyvisible --name "${title}" windowactivate || exec "$@"
+xdotool search ${xdotool_search_args} --name "${title}" windowactivate || exec "$@"
