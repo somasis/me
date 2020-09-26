@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#exec >"${XDG_RUNTIME_DIR}"/sx.log 2>&1
-
 eval $(dbus-launch --sh-syntax)
 
 # Initialize systemd crap.
@@ -18,21 +16,4 @@ xwallpaper --zoom "${XDG_CONFIG_HOME:-~/.config}"/X11/wallpaper-zoom
 # Disable touchscreen.
 xinput-toggle -d "Wacom HID 50FD Finger touch"
 
-# Startup applications
-polybar -r default &
-nm-applet &
-xsecurelockd &
-sxhkd &
-dunst &
-picom -b &
-blueman-applet &
-CM_MAX_CLIPS=10000 clipmenud &
-
-catgirls -d &
-discord --start-minimized &
-steam -silent &
-unclutter --ignore-scrolling --timeout 15 &
-
-exec bspwm
-
-#exec catsitd-xorg -d
+exec catsitd-xorg -d
