@@ -1,7 +1,7 @@
 #!/bin/ksh
 # aliases - See ksh(1).
 
-alias ls='ls -Flah --color'
+alias ls='ls -Flh --color'
 alias vi='$EDITOR'
 alias todo='todo.sh'
 
