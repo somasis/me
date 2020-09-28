@@ -1,7 +1,9 @@
 #!/bin/ksh
 
-_idioms_colors=true
-. idioms
+if command -v idioms >/dev/null 2>&1; then
+    _idioms_colors=true
+    . idioms
+fi
 
 alias rsrc='. ~/.profile; . ~/.config/ksh/rc'
 
