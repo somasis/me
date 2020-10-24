@@ -14,8 +14,7 @@ $ make
 :mess: https://leahneukirchen.org/blog/archive/2006/01/keeping-your-home-clean-with-mess.html
 
 * https://skarnet.org/software/s6[s6]
-* https://skarnet.org/software/execline[execline] - scripting language used for some scripts in
-  ~/.local/bin
+* https://skarnet.org/software/execline[execline] - language used for some scripts in ~/bin
 * https://github.com/alacritty/alacritty[alacritty] - non-VTE based terminal without much cruft
   (in my opinion)
     ** I was at one point interested in trying `st`, but it's a different garbage fire entirely.
@@ -33,13 +32,13 @@ $ make
 * https://github.com/Airblader/unclutter-xfixes[unclutter-xfixes] - hides mouse pointer when typing
   and after a period of time
 * https://git.causal.agency/catgirl[catgirl] - IRC client
-    ** I use the `catgirls` script located in `~/.local/bin` to make it integrate well with tmux and
-       my desktop keyboard shortcuts.
+    ** I use the `catgirls` script located in `~/bin` to make it integrate well with tmux and my
+       desktop keyboard shortcuts.
 * https://git.causal.agency/pounce[pounce] - IRC bouncer; running on a different machine
 * https://git.causal.agency/litterbox[litterbox] - IRC logger; running on a different machine
 * https://github.com/tmux/tmux[tmux]
 * {mess}[mess] - system for creating temporary, yet archived working directories (a port of the
-  Ruby script is located in ~/.local/bin)
+  Ruby script is located in ~/bin)
 * https://www.musicpd.org/[Music Player Daemon]
     ** https://github.com/MusicPlayerDaemon/mpdscribble[mpdscribble] - lastfm/listenbrainz scrobbler
 * https://aerc-mail.org/[aerc] - mail client
@@ -51,7 +50,7 @@ $ make
   mail count in polybar
 * https://github.com/leahneukirchen/rwc[rwc] - "run when changed"
 * https://github.com/newsboat/newsboat[newsboat] - RSS reader
-* https://git.mutiny.red/mutiny/idioms[idioms] - scripting idioms used throughout ~/.local/bin
+* https://git.mutiny.red/mutiny/idioms[idioms] - scripting idioms used throughout ~/bin
 * https://github.com/mawww/kakoune[kakoune] - modal text editor that integrates nicely with other
   Unix tools
 * https://mkws.sh/pp.html[pp] - preprocessor that calls out to shell
