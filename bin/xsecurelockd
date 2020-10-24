@@ -1,0 +1,27 @@
+#!/bin/execlineb
+
+elgetopt l
+elgetpositionals
+importas -i -u 0 0
+importas -D 0 -u ELGETOPT_l ELGETOPT_l
+
+importas -u HOME HOME
+importas -D ${HOME}/.config -u XDG_CONFIG_HOME XDG_CONFIG_HOME
+importas DISPLAY DISPLAY
+importas PATH PATH
+importas USER USER
+
+s6-envdir ${XDG_CONFIG_HOME}/xsecurelockd
+
+# Hold back `dunst` notifications until after screen is unlocked again.
+ifelse { test $ELGETOPT_l -eq 1 } {
+    foreground { dunstctl set-paused true }
+    foreground { catsit-xorg stop picom }
+    foreground { xsecurelock }
+    foreground { catsit-xorg start picom }
+    foreground { dunstctl set-paused false }
+    exit
+}
+
+importas -D 600 -u TIMEOUT TIMEOUT if { xset s ${TIMEOUT} }
+xss-lock -n "/usr/lib/xsecurelock/dimmer" -l -- ${0} -l

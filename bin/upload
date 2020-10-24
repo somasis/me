@@ -1,0 +1,67 @@
+#!/bin/sh -e
+# upload - client for uploading files
+#
+# for 0x0.st and workalikes
+
+usage() { printf 'usage: %s [-cnsuv] [-h HOST] [-p POST_VARIABLE] [FILE/URL ...]\n' "${0##*/}"; }
+
+output() {
+    printf '%s\n' "$1"
+    [ -n "${clip}" ] && printf '%s' "$1" | xsel -b
+    "${notification}" && \
+        notification upload -i upload-media "upload" "Uploaded to $1.${clip:+ Copied to clipboard.}"
+}
+
+
+# ${clip} is empty by default so as to make substitution for notification easier.
+clip='false'
+notification='false'
+host='https://0x0.st'
+post='file'
+mode='upload_file'
+curl_verbose='false'
+
+while getopts :cnsuvh:p: arg >/dev/null 2>&1; do
+    case "${arg}" in
+        c)  clip="true"         ;;
+        n)  notification="true" ;;
+        h)  host="${OPTARG}"    ;;
+        p)  post="${OPTARG}"    ;;
+        s)  mode="shorten_url"  ;;
+        u)  mode="upload_url"   ;;
+        v)  curl_verbose="true" ;;
+        ?)
+            printf 'unknown argument -- %s\n' "${OPTARG}"
+            usage
+            exit 255
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+"${clip}" || clip=
+"${curl_verbose}" || curl_verbose=
+
+if [ "$#" -eq 0 ]; then
+    url=$(sponge | curl ${curl_verbose:--sS} -F "${post}=<-" "${host}")
+    output "${url}"
+    exit
+fi
+
+while [ $# -gt 0 ]; do
+    case "${mode}" in
+        upload_file)
+            url=$(curl ${curl_verbose:--sS} -F "${post}=@${1}" "${host}")
+            ;;
+        upload_url)
+            url=$(curl ${curl_verbose:--sS} -F "url=${1}" "${host}")
+            ;;
+        shorten_url)
+            url=$(curl ${curl_verbose:--sS} -F "shorten=${1}" "${host}")
+            ;;
+    esac
+
+    output "${url}"
+    shift
+done
+

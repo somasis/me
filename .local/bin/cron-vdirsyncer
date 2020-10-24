@@ -1,6 +1,0 @@
-#!/bin/sh
-
-exec >/dev/null
-vdirsyncer metasync
-vdirsyncer sync
-khal list 2>&1

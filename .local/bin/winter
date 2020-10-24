@@ -1,9 +1,0 @@
-#!/bin/sh
-# winter - start xsnow in the winter
-
-[ $# -eq 0 ] && set -- -snowflakes 500 -ssnowdepth 50 -notrees
-
-# only works for the northern hemisphere, obviously
-if LC_ALL=C date +%b | grep -Eq '^(Oct|Dec|Jan|Feb)';then
-    exec xsnow "$@"
-fi

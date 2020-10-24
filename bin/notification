@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[ "$#" -lt 1 ] && dunstify --help && exit 1
+
+app="${1}"; shift
+
+notification="${XDG_CACHE_HOME:-~/.cache}"/notification/"${app}".id
+[ -d "${notification%/*}" ] || mkdir -p "${notification%/*}"
+
+[ -f "${notification}" ] && id=$(cat "${notification}")
+id=$(dunstify ${id:+-r $id} -p -a "${app}" "$@")
+printf '%s' "${id}" > "${notification}"
+

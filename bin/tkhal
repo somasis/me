@@ -1,0 +1,9 @@
+#!/bin/sh
+
+vdirsyncer metasync >/dev/null 2>&1 &
+vdirsyncer sync >/dev/null 2>&1 &
+settitle ikhal
+ikhal "$@"
+vdirsyncer metasync >/dev/null 2>&1 &
+vdirsyncer sync >/dev/null 2>&1 &
+

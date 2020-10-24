@@ -25,18 +25,18 @@ ${IRC_HOST}: pounce-${IRC_HOST} litterbox-${IRC_HOST}
 
 .PHONY: pounce-${IRC_HOST}
 pounce-${IRC_HOST}:
-	rsync -ru --delete-after --ignore /home/pounce/${XDG_CONFIG_HOME}/pounce/${IRC_HOST} ${XDG_CONFIG_HOME}/pounce/ pounce@${IRC_HOST}:${XDG_CONFIG_HOME}/pounce
+	rsync -ru --delete-after --exclude /home/pounce/.config/pounce/${IRC_HOST} ${XDG_CONFIG_HOME}/pounce/ pounce@${IRC_HOST}:~/.config/pounce
 	ssh pounce@${IRC_HOST} mkdir -p '~/.cache/pounce'
 
 .PHONY: litterbox-${IRC_HOST}
 litterbox-${IRC_HOST}:
-	rsync -ru --delete-after ${XDG_CONFIG_HOME}/litterbox/ pounce@${IRC_HOST}:${XDG_CONFIG_HOME}/litterbox
-	ssh pounce@${IRC_HOST} mkdir -p "${XDG_DATA_HOME}/litterbox" "~/.cache/litterbox"
+	rsync -ru --delete-after ${XDG_CONFIG_HOME}/litterbox/ pounce@${IRC_HOST}:~/.config/litterbox
+	ssh pounce@${IRC_HOST} mkdir -p "~/.local/share/litterbox" "~/.cache/litterbox"
 
 .PHONY: catgirl-${IRC_HOST}
 catgirl-${IRC_HOST}:
-	rsync -ru --delete-after ${XDG_CONFIG_HOME}/catgirl/ somasis@${IRC_HOST}:${XDG_CONFIG_HOME}/catgirl
-	ssh somasis@${IRC_HOST} mkdir -p "${XDG_DATA_HOME}/catgirl" "~/.cache/catgirl"
+	rsync -ru --delete-after ${XDG_CONFIG_HOME}/catgirl/ somasis@${IRC_HOST}:~/.config/catgirl
+	ssh somasis@${IRC_HOST} mkdir -p "~/.local/share/catgirl" "~/.cache/catgirl"
 
 .PHONY: pull
 pull:

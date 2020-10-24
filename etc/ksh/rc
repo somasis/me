@@ -1,0 +1,12 @@
+#!/bin/ksh
+
+if command -v idioms >/dev/null 2>&1; then
+    _idioms_colors=true
+    . idioms
+fi
+
+alias rsrc='. ~/.profile; . "${XDG_CONFIG_HOME}"/ksh/rc'
+
+for f in "${XDG_CONFIG_HOME}"/ksh/rc.d/*.ksh; do
+    [ -f "${f}" ] && . "${f}"
+done

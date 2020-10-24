@@ -1,0 +1,25 @@
+#!/bin/execlineb
+
+#set -x
+importas HOME HOME
+importas -D ${HOME}/.config XDG_CONFIG_HOME XDG_CONFIG_HOME
+
+export DESKTOP_SESSION bspwm
+#export DESKTOP_SESSION=bspwm
+
+# Read in Xresources.
+foreground {
+xrdb -merge ${XDG_CONFIG_HOME}/X11/xresources
+}
+
+# Set wallpaper.
+foreground {
+xwallpaper --zoom ${XDG_CONFIG_HOME}/X11/wallpaper-zoom
+}
+
+# Disable touchscreen.
+foreground {
+xinput-toggle -d "Wacom HID 50FD Finger touch"
+}
+
+catsitd-xorg -d

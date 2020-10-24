@@ -1,0 +1,79 @@
+#!/bin/sh
+
+mpc current >/dev/null 2>&1 || exit 127
+
+current_rating() {
+    mpc sticker "$(mpc current -f %file%)" get rating 2>/dev/null | cut -d= -f2
+}
+
+convert_rating_to_stars() {
+    [ -n "$1" ] || set -- 0
+    if [ "${1}" -gt 0 ];then
+        stars=
+        for i in $(seq 1 "${1}");do
+            stars="${stars}★"
+        done
+    fi
+
+    if [ "${#stars}" -ne 5 ];then
+        while [ $(printf '%s' "${stars}" | wc -m) -le 6 ];do
+            stars="${stars}☆"
+        done
+        stars="${stars:0:5}"
+    fi
+
+    printf '%s\n' "${stars}"
+}
+
+convert_rating_to_num() {
+    case "${1}" in
+        10)     rating=5      ;;
+        9)      rating=4.5    ;;
+        8)      rating=4      ;;
+        7)      rating=3.5    ;;
+        6)      rating=3      ;;
+        5)      rating=2.5    ;;
+        4)      rating=2      ;;
+        3)      rating=1.5    ;;
+        2)      rating=1      ;;
+        1)      rating=0.5    ;;
+        0|'')   rating=0      ;;
+    esac
+
+    printf '%s\n' "${rating}"
+}
+
+if [ $# -eq 0 ]; then
+    convert_rating_to_num $(current_rating)
+    exit
+else
+    case "${1}" in
+        -s)
+            convert_rating_to_stars $(current_rating)
+            exit
+            ;;
+    esac
+fi
+
+rating="${1:-0}"
+mpc_rating=$(expr "${rating}" + "${rating}")
+mpc sticker "$(mpc current -f '%file%')" set rating "${mpc_rating}"
+song=$(mpc current -f "[%artist% - ]%title%[ (%album%)]")
+
+if [ "${rating}" -gt 0 ];then
+    stars=
+    for i in $(seq 1 "${rating}");do
+        stars="${stars}★"
+    done
+fi
+
+if [ "${#stars}" -ne 5 ];then
+    while [ $(printf '%s' "${stars}" | wc -m) -le 6 ];do
+        stars="${stars}☆"
+    done
+    stars="${stars:0:5}"
+fi
+
+echo "${rating}"
+
+notification mpc-star -u low -i multimedia-audio-player "mpc-star" "${song} ${stars}"

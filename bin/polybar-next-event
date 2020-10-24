@@ -1,0 +1,8 @@
+#!/bin/sh
+
+khal list \
+    --day-format '' \
+    --format "$(printf '\uf073 {start-style}: {title}\n')" \
+    "$@" \
+    now eod \
+    | sed '/^ |->:.*/d; s/^No events$//; 1q'

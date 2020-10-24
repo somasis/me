@@ -1,0 +1,18 @@
+#!/bin/sh
+
+format=' [%artist% - ]%title%'
+
+current() {
+    mpc current ${format:+ -f "$format"} 2>/dev/null
+}
+
+current
+
+while mpc >/dev/null 2>&1; do
+    mpc idle player >/dev/null 2>&1
+    if [ $(mpc status | wc -l) -eq 3 ];then
+        current
+    else # stopped, print an empty line and clear the module text
+        printf '\n'
+    fi
+done
