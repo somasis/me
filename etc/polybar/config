@@ -22,7 +22,7 @@
     wm-restack          = bspwm
 
     modules-left        = bspwm title
-    modules-center      = custom-time
+    modules-center      = clock
     modules-right       = mpd-tail next-event article-count mail-count battery
 
     font-0              = "forkawesome:style=regular:size=11;2"
@@ -71,7 +71,7 @@
     label-private-foreground = #bd2c40
     label-focused-overline = #438dc5
 
-[module/custom-time]
+[module/clock]
     type = custom/script
     tail = true
     exec = polybar-clock
