@@ -7,9 +7,9 @@ set-option global ui_options \
 # Set default text-editing options
 set-option global tabstop 4
 set-option global indentwidth 4
-set-option global autowrap_column 100
 
 # Set options for default plugins
+set-option global autowrap_column 100
 set-option global makecmd 'make -j12'
 
 # Keybinds
@@ -20,6 +20,7 @@ map global normal <a-A> ':buffer-next<ret>'
 
 # Plugins
 
+## kak-lsp, not managed by plug.kak.
 eval %sh{ kak-lsp --kakoune -s $kak_session }
 hook global WinSetOption filetype=(c|cpp) %{
     lsp-enable-window
