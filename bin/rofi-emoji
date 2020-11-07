@@ -5,7 +5,7 @@ emoji_list="${cache}/emoji_list.txt"
 
 regen() {
     curl -sL --fail-early https://cdn.jsdelivr.net/npm/emojibase-data@latest/en/compact.json \
-        | jq -r '.[] | .unicode + " " + .annotation + " " + (.tags | map("#" + .) | join(" "))?'
+        | jq -r '.[] | .unicode + " " + .annotation + " " + (.tags | map(":" + . + ":") | join(" "))?'
 }
 
 usage() { printf 'usage: %s [-crt]\n' "${0##*/}"; exit; }
