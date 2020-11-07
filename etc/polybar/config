@@ -23,7 +23,7 @@
 
     modules-left        = bspwm title
     modules-center      = clock
-    modules-right       = mpd-tail next-event article-count mail-count battery
+    modules-right       = mpd-tail next-event article-count mail-count pacman battery
 
     font-0              = "forkawesome:style=regular:size=11;2"
     font-1              = "forkawesome:style=solid:size=11;2"
@@ -39,6 +39,11 @@
     tray-position       = right
     tray-padding        = 4
     tray-maxsize        = 32
+
+[module/pacman]
+    type        = custom/script
+    exec        = polybar-pacman
+    tail        = true
 
 [module/battery]
     type        = custom/script

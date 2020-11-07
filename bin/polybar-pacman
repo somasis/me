@@ -1,0 +1,15 @@
+#!/bin/sh
+
+updates() {
+    pacman -Qu | grep -qv ignored && printf '\uf01b\n' || printf '\n'
+}
+
+updates
+
+while rwc -e \
+    /var/lib/pacman/sync/*.db \
+    /var/lib/pacman/db.lck \
+    >/dev/null 2>&1; do
+    updates
+    sleep 1
+done
