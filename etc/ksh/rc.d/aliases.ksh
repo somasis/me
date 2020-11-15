@@ -1,7 +1,7 @@
 #!/bin/ksh
 # aliases - See ksh(1).
 
-alias ls='ls -Flh --color'
+alias ls='ls -aFlh --color'
 alias vi='$EDITOR'
 
 alias gitolite='ssh git@rosa'
