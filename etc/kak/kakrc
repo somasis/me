@@ -110,6 +110,16 @@ hook global BufCreate .*\.scd %{
 ## man(7) and mdoc(7).
 hook global WinSetOption filetype=troff %{
     set-option buffer autowrap_column 72
+
+    # Update all .Dd dates before saving the buffer.
+    hook buffer BufWritePre .* %{
+        exec -draft \
+            <esc>% \
+            s^\.Dd\s<ret> \
+            x \
+            S^\.Dd\s<ret>\
+            |date<space>+"%B<space>%d,<space>%Y"<ret><esc>
+    }
 }
 
 ## pass(1) temporary files.
