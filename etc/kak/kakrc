@@ -31,7 +31,10 @@ source %sh{ echo "${XDG_DATA_HOME}"/kak/plugins/plug.kak/rc/plug.kak }  # Plugin
 plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching parenthesis.
 plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
 plug "https://github.com/occivink/kakoune-find"         # Find and replace across buffers.
+
+## Filetypes
 plug "https://github.com/gspia/csv.kak"                 # Highlight columns of CSV files.
+plug "https://github.com/Ordoviz/mediawiki.kak"         # Syntax highlighting for MediaWiki markup.
 
 # Highlight hexadecimal colors in buffers.
 plug "https://github.com/alexherbo2/palette.kak" config %{
