@@ -1,8 +1,10 @@
 #!/bin/ksh
 # completion - Completion arrays for ksh(1).
 
-set -A complete_passage_1 -- init list convert generate edit help show
-set -A complete_passage -- $(passage show)
+if command -v passage >/dev/null 2>&1; then
+    set -A complete_passage_1 -- init list convert generate edit help show
+    set -A complete_passage -- $(passage show)
+fi
 
 set -A complete_mount -- \
     $({
