@@ -1,0 +1,85 @@
+.Dd November 19, 2020
+.Dt MESS 1
+.Os
+.
+.Sh NAME
+.Nm mess
+.Nd manage a
+.Xr mess 7
+directory structure
+.
+.Sh SYNOPSIS
+.Nm
+.Op Fl s
+.
+.Sh DESCRIPTION
+.Nm
+is a command used to keep the
+.Pa ~/mess/current
+symbolic link up to date.
+.Pp
+When ran without options,
+.Nm
+will check to ensure that it points to the current year and week
+number's
+.Em mess directory .
+If it does not, it will overwrite the link to point to it. If the
+.Em mess directory
+for the current year and week number does not exist, it will be
+created.
+.Pp
+Regardless of what happens, the path to the current
+.Em mess directory
+gets printed before exiting.
+.Pp
+The options are as follows:
+.
+.Bl -tag -width Ds
+.It Fl s
+Print out a
+.Xr sh 1
+.Tq mess
+function that, when ran without any arguments, changes directory to
+to the current mess directory.
+If any arguments are given,
+.Nm
+itself is ran instead with those arguments.
+.Pp
+To make the function available to your shell, put the following
+somewhere in its startup sequence:
+.Bd -literal -offset indent
+$ eval "$(mess -s)"
+.Ed
+.El
+.
+.Sh NOTES
+.Ss Automating ~/mess/current updating
+You probably want to update the
+.Em current
+symbolic link automatically.
+It is recommended that you set a job scheduled to run at the top of each
+hour in order to do so.
+.Pp
+An example of doing so with
+.Xr crontab 5 :
+.Bd -literal -offset indent
+0 * * * * mess
+.Ed
+.Ss
+.Sh SEE ALSO
+.Xr mess 7
+.Rs
+.%T Keeping your home clean with \(dqmess\(dq
+.%U https://leahneukirchen.org/blog/archive/2006/01/keeping-your-home-clean-with-mess.html
+.%A Leah Neukirchen
+.Re
+.
+.Sh HISTORY
+The concept, and original Ruby implementation of
+.Nm
+was created in 2006 by
+.An -nosplit
+.An Leah Neukirchen Aq Mt leah@vuxu.org .
+.
+.Sh AUTHORS
+.An Kylie McClain Aq Mt kylie@somas.is
