@@ -115,10 +115,9 @@ hook global WinSetOption filetype=troff %{
     hook buffer BufWritePre .* %{
         exec -draft \
             <esc>% \
-            s^\.Dd\s<ret> \
+            s^\.Dd<ret> \
             x \
-            S^\.Dd\s<ret>\
-            |date<space>+"%B<space>%d,<space>%Y"<ret><esc>
+            |date<space>+".Dd<space>%B<space>%d,<space>%Y"<ret><esc>
     }
 }
 
