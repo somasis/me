@@ -6,16 +6,13 @@ NEWSBOAT_URLS := \
 	${XDG_CONFIG_HOME}/newsboat/urls.pub ${XDG_CONFIG_HOME}/newsboat/urls.secret
 
 .PHONY: all
-all: kak newsboat ssh
+all: kak newsboat
 
 .PHONY: kak
 kak: ${XDG_DATA_HOME}/kak/plugins/plug.kak
 
 .PHONY: newsboat
 newsboat: ${XDG_CONFIG_HOME}/newsboat/urls
-
-.PHONY: ssh
-ssh: .ssh/config
 
 ${XDG_DATA_HOME}/kak/plugins/plug.kak:
 	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ${XDG_DATA_HOME}/kak/plugins/plug.kak
@@ -41,10 +38,6 @@ catgirl-${IRC_HOST}:
 .PHONY: pull
 pull:
 	git --git-dir="${me_git}" --work-tree="${HOME}" pull
-
-.DELETE_ON_ERROR: .ssh/config
-.ssh/config: .ssh/config.in
-	pp $< > $@
 
 ${XDG_CONFIG_HOME}/%/:
 	mkdir -p ${XDG_CONFIG_HOME}/$*
