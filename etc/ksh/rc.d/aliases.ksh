@@ -1,7 +1,9 @@
 #!/bin/ksh
 # aliases - See ksh(1).
 
-alias ls='ls -aFlh --color'
+# LC_COLLATE=C sorts uppercase before lowercase.
+alias ls='LC_COLLATE=C ls -AFlh --color'
+
 alias vi='$EDITOR'
 
 alias gitolite='ssh git@rosa'
