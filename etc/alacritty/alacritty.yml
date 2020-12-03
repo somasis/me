@@ -48,6 +48,7 @@ bell:
 
 selection:
     save_to_clipboard: true
+    semantic_escape_chars: ",│`|:\"' ()[]{}<>\t¬"
 
 mouse_bindings:
     - { mouse: Middle, action: PasteSelection }
