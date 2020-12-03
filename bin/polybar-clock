@@ -1,9 +1,9 @@
 #!/bin/sh
 
 strftime='%I:%M %p'
-current_strftime="%a, ${strftime}"
-home_strftime="%a, ${strftime}"
-violet_strftime="%a, ${strftime}"
+current_strftime="${strftime}"
+home_strftime="${strftime}"
+violet_strftime="${strftime}"
 
 current_TZ="${TZ:-$(readlink -f /etc/localtime | sed 's:.*/zoneinfo/::')}"
 home_TZ=America/New_York
