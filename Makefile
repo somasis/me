@@ -44,3 +44,5 @@ ${XDG_CONFIG_HOME}/%/:
 
 ${XDG_CONFIG_HOME}/newsboat/urls: ${NEWSBOAT_URLS}
 	cat ${NEWSBOAT_URLS} > $@
+
+FRC:
