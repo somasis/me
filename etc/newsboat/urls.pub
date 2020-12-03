@@ -18,7 +18,8 @@ https://www.7596ff.com/rss.xml                      blog friend
 https://pikhq.com/index.xml                         blog friend
 https://www.uninformativ.de/blog/feeds/en.atom      blog computer
 https://maxice8.github.io/rss.xml                   blog computer
-https://www.somas.is/feed.xml                       blog me
+https://www.somas.is/notes.atom                     blog me
+https://www.somas.is/rhizome.atom                   blog me
 https://waldon.blog/feed                            "~Chris Waldon" blog computer friend
 https://dataswamp.org/~solene/rss.xml               blog computer
 https://www.landley.net/rss.xml                     "~Rob Landley" blog computer
@@ -64,6 +65,7 @@ https://us3.campaign-archive.com/feed?u=162692bfdedb78ec46fd108a3&id=801ce00e6d 
 # Comics
 https://www.webtoons.com/en/challenge/i-want-to-be-a-cute-anime-girl/rss?title_no=349416 comics trans
 https://xkcd.com/atom.xml comics
+https://rakhim.org/honestly-undefined/index.xml "~Honestly Undefined" comics
 
 # Journals
 https://www.cambridge.org/core/rss/product/id/F3D70AB528A9726BC052F1AEB771A611 "~Hypatia: Most Recent" journal philosophy
