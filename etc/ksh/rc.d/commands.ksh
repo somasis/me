@@ -13,3 +13,10 @@ alias mutiny='doas chroot /mnt/mutiny su -l somasis'
 alias exherbo='doas chroot /mnt/exherbo su -l somasis'
 
 alias 2048='TERM=xterm ssh play@ascii.town'
+
+alias scratch='kak *scratch*'
+
+new() (
+    nohup terminal "$@" >/dev/null 2>&1 &
+)
+
