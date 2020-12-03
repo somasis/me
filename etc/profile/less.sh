@@ -15,9 +15,10 @@ export LESS_TERMCAP_ue=$(printf "\e[0m")
 # -F - Quit if the whole thing can be viewed on one screen
 # -M - Show the lines and percentage of way through the input.
 # -R - "Like -r, but only ANSI "color" escape sequences are output in "raw" form."
+# -X - don't print the initialization screen- i.e, don't clear the terminal
 # --mouse - support mouse scrolling
 # --wheel-lines - only scroll 2 lines for each tick of the wheel
-export LESS='-isMFR --mouse --wheel-lines=2'
+export LESS='-isMFRX --mouse --wheel-lines=2'
 
 # XDG compliance
 export LESSHISTFILE="${XDG_CACHE_HOME}"/less/history
