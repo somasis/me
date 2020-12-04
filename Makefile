@@ -5,14 +5,19 @@ IRC_HOST = angela.somas.is
 NEWSBOAT_URLS := \
 	${XDG_CONFIG_HOME}/newsboat/urls.pub ${XDG_CONFIG_HOME}/newsboat/urls.secret
 
+DUNST := ${XDG_CONFIG_HOME}/dunst/dunstrc.pub ${XDG_CONFIG_HOME}/dunst/dunstrc.secret
+
 .PHONY: all
-all: kak newsboat
+all: kak dunst newsboat
 
 .PHONY: kak
 kak: ${XDG_DATA_HOME}/kak/plugins/plug.kak
 
 .PHONY: newsboat
 newsboat: ${XDG_CONFIG_HOME}/newsboat/urls
+
+.PHONY: dunst
+dunst: FRC ${XDG_CONFIG_HOME}/dunst/dunstrc
 
 ${XDG_DATA_HOME}/kak/plugins/plug.kak:
 	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ${XDG_DATA_HOME}/kak/plugins/plug.kak
@@ -44,5 +49,8 @@ ${XDG_CONFIG_HOME}/%/:
 
 ${XDG_CONFIG_HOME}/newsboat/urls: ${NEWSBOAT_URLS}
 	cat ${NEWSBOAT_URLS} > $@
+
+${XDG_CONFIG_HOME}/dunst/dunstrc: ${DUNST}
+	cat ${DUNST} > $@
 
 FRC:

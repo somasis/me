@@ -1,0 +1,90 @@
+# kak: ft=ini
+
+[global]
+    monitor = 0
+    follow = mouse
+
+    mouse_middle_click = do_action
+
+    geometry = "1920x16+960"
+    notification_height = 64
+    horizontal_padding = 0
+    padding = 0
+    icon_position = left
+    min_icon_size = 64
+    max_icon_size = 64
+
+    shrink = false
+
+    frame_color = "#ffffff"
+    frame_width = 0
+
+    indicate_hidden = true
+
+    transparency = 0
+
+    separator_color = auto
+    separator_height = 0
+
+    sort = true
+
+    idle_threshold = 120
+
+    font = "sans-serif 11"
+    line_height = 64
+    markup = full
+
+    format = "<span font="sans-serif Heavy 11">%s</span> %b %p"
+
+    alignment = center
+
+    # Show age of message if message is older than show_age_threshold seconds.
+    show_age_threshold = 30
+
+    word_wrap = false
+    ellipsize = end
+
+    ignore_newline = true
+    stack_duplicates = true
+    hide_duplicate_count = false
+
+    show_indicators = true
+
+    # dunst doesn't currently allow just specifying icon themes, which is why this madness is here.
+    icon_path = /usr/share/icons/Papirus/symbolic/actions:/usr/share/icons/Papirus/symbolic/apps:/usr/share/icons/Papirus/symbolic/categories:/usr/share/icons/Papirus/symbolic/devices:/usr/share/icons/Papirus/symbolic/emblems:/usr/share/icons/Papirus/symbolic/emotes:/usr/share/icons/Papirus/symbolic/mimetypes:/usr/share/icons/Papirus/symbolic/places:/usr/share/icons/Papirus/symbolic/status:/usr/share/icons/Papirus/64x64/apps:/usr/share/icons/Papirus/64x64/devices:/usr/share/icons/Papirus/64x64/mimetypes:/usr/share/icons/Papirus/64x64/places:/usr/share/icons/Papirus/48x48/apps:/usr/share/icons/Papirus/48x48/devices:/usr/share/icons/Papirus/48x48/emblems:/usr/share/icons/Papirus/48x48/emotes:/usr/share/icons/Papirus/48x48/mimetypes:/usr/share/icons/Papirus/48x48/places:/usr/share/icons/Papirus/48x48/status:/usr/share/icons/Papirus/32x32/actions:/usr/share/icons/Papirus/32x32/apps:/usr/share/icons/Papirus/32x32/devices:/usr/share/icons/Papirus/32x32/emblems:/usr/share/icons/Papirus/32x32/emotes:/usr/share/icons/Papirus/32x32/mimetypes:/usr/share/icons/Papirus/32x32/places:/usr/share/icons/Papirus/32x32/status:/usr/share/icons/Papirus/24x24/actions:/usr/share/icons/Papirus/24x24/animations:/usr/share/icons/Papirus/24x24/apps:/usr/share/icons/Papirus/24x24/devices:/usr/share/icons/Papirus/24x24/emblems:/usr/share/icons/Papirus/24x24/emotes:/usr/share/icons/Papirus/24x24/mimetypes:/usr/share/icons/Papirus/24x24/panel:/usr/share/icons/Papirus/24x24/places:/usr/share/icons/Papirus/24x24/status:/usr/share/icons/Papirus/22x22/actions:/usr/share/icons/Papirus/22x22/animations:/usr/share/icons/Papirus/22x22/apps:/usr/share/icons/Papirus/22x22/devices:/usr/share/icons/Papirus/22x22/emblems:/usr/share/icons/Papirus/22x22/emotes:/usr/share/icons/Papirus/22x22/mimetypes:/usr/share/icons/Papirus/22x22/panel:/usr/share/icons/Papirus/22x22/places:/usr/share/icons/Papirus/22x22/status:/usr/share/icons/Papirus/16x16/actions:/usr/share/icons/Papirus/16x16/apps:/usr/share/icons/Papirus/16x16/devices:/usr/share/icons/Papirus/16x16/emblems:/usr/share/icons/Papirus/16x16/emotes:/usr/share/icons/Papirus/16x16/mimetypes:/usr/share/icons/Papirus/16x16/panel:/usr/share/icons/Papirus/16x16/places:/usr/share/icons/Papirus/16x16/status:/usr/share/icons/Papirus/8x8/emblems:
+    sticky_history = true
+    history_length = 25
+
+    dmenu = rofi -dmenu -p 'notification'
+    browser = open
+
+    always_run_script = true
+
+[urgency_low]
+    background = "#2f343f"
+    foreground = "#afb8c5"
+
+[urgency_normal]
+    background = "#484e5b"
+    foreground = "#afb8c5"
+
+[urgency_critical]
+    background = "#ff336d"
+    foreground = "#e0eaf0"
+    timeout = 0s
+
+# Application-specific rules
+[android-messages]
+    appname = "android-messages-desktop"
+    background = "#185abc"
+    foreground = "#ffffff"
+
+[discord]
+    appname = "discord*"
+    background = "#7289da"
+    foreground = "#ffffff"
+
+[catgirl]
+    appname = "catgirl"
+    background = "#99cc99"
+    foreground = "#ffffff"
