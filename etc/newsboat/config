@@ -9,8 +9,11 @@ prepopulate-query-feeds yes     # without this query feeds are empty by default
 reload-threads 4
 refresh-on-startup yes
 
+# archiving settings
+keep-articles-days 60
+
 # article display settings
-html-renderer "~/lib/aerc/filters/html"
+html-renderer "rdrview -B elinks"
 show-keymap-hint no
 text-width 100
 
