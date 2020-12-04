@@ -32,7 +32,9 @@ plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching pare
 plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
 plug "https://github.com/occivink/kakoune-find"         # Find and replace across buffers.
 plug "https://github.com/caksoylar/kakoune-smooth-scroll" config %{
-    hook global WinCreate .* %{ hook -once window WinDisplay .* smooth-scroll-enable }
+    hook global -group user-smooth-scroll WinCreate .* %{
+        hook -once window -group user-smooth-scroll WinDisplay .* smooth-scroll-enable
+    }
 }
 
 ## Filetypes
@@ -54,7 +56,7 @@ plug "https://github.com/greenfork/active-window.kak" config %{
 
 # Integrate yank with Xorg clipboard.
 plug "https://github.com/lePerdu/kakboard" config %{
-    hook global WinCreate .* %{ kakboard-enable }
+    hook global -group user-kakboard WinCreate .* %{ kakboard-enable }
 }
 
 # Easier indentation style management.
@@ -93,7 +95,7 @@ hook -group user-bufwritepost global BufWritePost .* %{
 }
 
 ## Lightly enforce the 50/72 rule for git commit summaries.
-hook global WinSetOption filetype=git-commit %{
+hook global -group user-git-commit WinSetOption filetype=git-commit %{
     set-option buffer autowrap_column 72
 
     # <https://github.com/kakoune-editor/kakoune-extra-filetypes/blob/master/rc/git-commit-overflow.kak>
@@ -105,17 +107,17 @@ hook global WinSetOption filetype=git-commit %{
 }
 
 ## scdoc(1).
-hook global BufCreate .*\.scd %{
+hook global -group user-scd BufCreate .*\.scd %{
     set-option buffer filetype markdown
     set-option buffer autowrap_column 80
 }
 
 ## man(7) and mdoc(7).
-hook global WinSetOption filetype=troff %{
+hook global -group user-troff WinSetOption filetype=troff %{
     set-option buffer autowrap_column 72
 
     # Update all .Dd dates before saving the buffer.
-    hook buffer BufWritePre .* %{
+    hook buffer -group user-troff-update-date BufWritePre .* %{
         exec -draft \
             <esc>% \
             s^\.Dd<ret> \
@@ -125,28 +127,28 @@ hook global WinSetOption filetype=troff %{
 }
 
 ## pass(1) temporary files.
-hook global BufCreate /dev/shm/pass\..* %{
+hook global -group user-password-store BufCreate /dev/shm/pass\..* %{
     set-option buffer filetype yaml
     autowrap-disable
 }
 
 ## Used by aerc(1).
-hook global WinSetOption filetype=mail %{
+hook global -group user-aerc WinSetOption filetype=mail %{
     set-option buffer autowrap_column 72
     set-option buffer autoreload no
 }
 
 ## Use tab/shift-tab for completion.
-hook global InsertCompletionShow .* %{
+hook global -group user-completion InsertCompletionShow .* %{
     map window insert <tab> <c-n>; map window insert <s-tab> <c-p>
 }
 
-hook global InsertCompletionHide .* %{
+hook global -group user-completion InsertCompletionHide .* %{
     unmap window insert <tab> <c-n>; unmap window insert <s-tab> <c-p>
 }
 
 # Update autowrap column highlighter when it changes.
-hook global BufSetOption autowrap_column=.* %{
+hook global -group user-autowrap-highlight BufSetOption autowrap_column=.* %{
     add-highlighter -override global/wrap column %opt{autowrap_column} default,black
 }
 
@@ -173,7 +175,7 @@ add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:white,r
 declare-option -hidden regex curword
 set-face global CurWord default,black
 
-hook global NormalIdle .* %{
+hook global -group user-highlight-cursor-word NormalIdle .* %{
     eval -draft %{
         try %{
             exec <space><a-i>w <a-k>\A\S+\z<ret>
