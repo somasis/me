@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cols=$(tput cols)
+[ "${cols}" -gt 120 ] && cols=120
+
+rdrview -H \
+    | elinks -force-html -dump -dump-width "${cols}" -localhost 1 -no-home 1 -no-connect 1
+#    | html2text -b 0 --no-wrap-links --pad-tables | lowdown -T term
