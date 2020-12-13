@@ -2,7 +2,7 @@
 # aliases - See ksh(1).
 
 # LC_COLLATE=C sorts uppercase before lowercase.
-alias ls='LC_COLLATE=C ls -AFlh --color'
+alias ls='LC_COLLATE=C ls -AFlh'
 
 alias vi='$EDITOR'
 
