@@ -118,7 +118,7 @@ hook global -group user-troff WinSetOption filetype=troff %{
 
     # Update all .Dd dates before saving the buffer.
     hook buffer -group user-troff-update-date BufWritePre .* %{
-        exec -draft \
+        execute-keys -draft \
             <esc>% \
             s^\.Dd<ret> \
             x \
