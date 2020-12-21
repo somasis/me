@@ -71,8 +71,8 @@ cat /etc/resolv.conf > "${root}"/etc/resolv.conf
 
 if "${login}"; then
     call unshare -mpuif --mount-proc="$(readlink -f "${root}")/proc" \
-        s6-env -i TERM="${TERM}" \
-            s6-chroot "${root}" login ${USER:+"$USER"}
+        env -i TERM="${TERM}" \
+            chroot "${root}" login ${USER:+"$USER"}
 else
     HOME=$(grep -- "^${USER}:" "${root}"/etc/passwd | cut -d':' -f6 || printf '/')
     SHELL=$(grep -- "^${USER}:" "${root}"/etc/passwd | cut -d':' -f7 || printf '/bin/sh')
@@ -83,8 +83,8 @@ else
     fi
 
     call unshare -mpuif --mount-proc="$(readlink -f "${root}")/proc" \
-        s6-env -i HOME="${HOME}" USER="${USER}" TERM="${TERM}" SHELL="${SHELL}" \
-            s6-chroot "${root}" "$@"
+        env -i HOME="${HOME}" USER="${USER}" TERM="${TERM}" SHELL="${SHELL}" \
+            chroot "${root}" "$@"
 fi
 
 if "${mount}";then
