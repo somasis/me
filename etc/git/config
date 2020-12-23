@@ -48,7 +48,7 @@
 	amend = commit --amend
 	amendall = !git addall; EDITOR=cat git amend
 	com = commit
-	commits = log --reverse --oneline origin..HEAD
+	commits = log --branches --not --remotes --oneline --reverse
 	patches = format-patch -M -C -C --stdout origin..HEAD
 	rbc = rebase --continue
 	re = rebase
