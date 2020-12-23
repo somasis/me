@@ -24,21 +24,21 @@ color listfocus_unread black green bold
 color info white magenta bold
 
 # appearance settings
-datetime-format     "%b %d"                         # march 19
-feedlist-format     "%4i │ %t %> %?n?%u unread?"    # index │ title | feed title (aligned right)
-articlelist-format  "%4i │ %-12d │ %t%> %?a?%a?"    # index | date | title | author (aligned right)
+#datetime-format     "%b %d"                         # march 19
+#feedlist-format     "%4i │ %t %> %?n?%u unread?"    # index │ title | feed title (aligned right)
+#articlelist-format  "%4i │ %-12d │ %t%> %?a?%a?"    # index | date | title | author (aligned right)
 
-feedlist-title-format       "all feeds %?t? - tag `%t'&?%> %u unread, %t total"
-articlelist-title-format    "%t%> %u unread, %t total"
-searchresult-title-format   "search result %> %u unread, %t total"
-filebrowser-title-format    "%?o?open file&save file? - %f"
-dirbrowser-title-format     "%?o?open directory&save file? - %f"
-help-title-format           "help"
-selecttag-title-format      "select tag"
-selectfilter-title-format   "select filter"
-itemview-title-format       "%t %> %f - %u unread, %t total"
-urlview-title-format        "urls"
-dialogs-title-format        "dialogs"
+#feedlist-title-format       "all feeds %?t? - tag `%t'&?%> %u unread, %t total"
+#articlelist-title-format    "%t%> %u unread, %t total"
+#searchresult-title-format   "search result %> %u unread, %t total"
+#filebrowser-title-format    "%?o?open file&save file? - %f"
+#dirbrowser-title-format     "%?o?open directory&save file? - %f"
+#help-title-format           "help"
+#selecttag-title-format      "select tag"
+#selectfilter-title-format   "select filter"
+#itemview-title-format       "%t %> %f - %u unread, %t total"
+#urlview-title-format        "urls"
+#dialogs-title-format        "dialogs"
 
 # killfile
 ignore-mode "display"
