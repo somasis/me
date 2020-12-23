@@ -5,12 +5,6 @@
 [http]
 	followRedirects = true
 
-# Use password-store for git credentials.
-# <https://github.com/languitar/pass-git-helper>
-[credential]
-	helper = !pass-git-helper $@
-	useHttpPath = true
-
 # See msmtp(1) configuration for details.
 [sendemail]
 	smtpserver = /bin/msmtp
