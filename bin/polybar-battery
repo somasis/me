@@ -1,7 +1,7 @@
 #!/bin/sh
 
 while inotifywait -qqr /sys/class/power_supply/*/; do
-    percent=$(</sys/class/power_supply/BAT1/capacity)
+    percent=$(cat /sys/class/power_supply/BAT1/capacity)
 
     if [ "${percent}" -ge 90 ]; then
         icon=""
@@ -16,7 +16,7 @@ while inotifywait -qqr /sys/class/power_supply/*/; do
         icon=""
     fi
 
-    status=$(</sys/class/power_supply/ACAD/online)
+    status=$(cat /sys/class/power_supply/ACAD/online)
 
     case "${status}" in
         1)
