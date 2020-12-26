@@ -31,5 +31,5 @@ alias rebase='git rebase'
 alias reset='git reset'
 
 # Alias used for my `me` dotfiles repository.
-alias me='git --git-dir=~/git/me.git --work-tree=~'
+alias me='git --git-dir=~/src/me.git --work-tree=~'
 

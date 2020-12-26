@@ -17,9 +17,9 @@ alias 2048='TERM=xterm ssh play@ascii.town'
 alias scratch='kak *scratch*'
 
 # Quick aliases for posting to my site.
-if [ -d ~/git/www/somas.is ]; then
-    alias note='kak $(make -C ~/git/www/somas.is -s note)'
-    alias rhizome='kak $(make -C ~/git/www/somas.is -s rhizome)'
+if [ -d ~/src/www/somas.is ]; then
+    alias note='kak $(make -C ~/src/www/somas.is -s note)'
+    alias rhizome='kak $(make -C ~/src/www/somas.is -s rhizome)'
 fi
 
 # Spawn a new terminal, detached from the current one, inheriting environment and working directory.

@@ -56,7 +56,7 @@
 	unadd = reset HEAD --
 
 # Directory specific git configuration. See "Includes" in git-config(1).
-[includeIf "gitdir:~/git/exherbo/"]
+[includeIf "gitdir:~/src/exherbo/"]
 	path = ~/etc/git/exherbo-config
 
 # External utilities.

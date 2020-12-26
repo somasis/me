@@ -1,4 +1,4 @@
-me_git := ${HOME}/git/me.git
+me_git := ${HOME}/src/me.git
 
 IRC_HOST = angela.somas.is
 
