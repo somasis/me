@@ -37,7 +37,11 @@ while getopts :s arg >/dev/null 2>&1; do
     esac
 done
 
-current=$(date +%Y/%V)
+# Avoid weeks 00 and 53 in the week number, make it more like natural language.
+week=$(date +%W)
+case "${week}" in 00) week=01 ;; 53) week=52 ;; esac
+
+current=$(date +%Y/"${week}")
 current_link="${MESSDIR}/current"
 current_link_resolved=$(readlink -f "${current_link}")
 

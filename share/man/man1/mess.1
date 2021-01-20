@@ -1,4 +1,4 @@
-.Dd November 19, 2020
+.Dd January 04, 2021
 .Dt MESS 1
 .Os
 .
@@ -65,7 +65,12 @@ An example of doing so with
 .Bd -literal -offset indent
 0 * * * * mess
 .Ed
-.Ss
+.
+.Ss Week numbers
+.Nm
+avoids creating a mess directory for weeks 00 and 53, and instead
+changes them to weeks 01 and 52, to be more similar to a calendar view.
+.
 .Sh SEE ALSO
 .Xr mess 7
 .Rs
