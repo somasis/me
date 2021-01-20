@@ -1,0 +1,27 @@
+#!/bin/sh
+
+usage() {
+    printf 'usage: %s [-c] NETWORK\n' "${0##*/}" >&2
+    exit 69 # EX_USAGE
+}
+
+clean() {
+    rm -f "${cache}"/*
+}
+
+: "${XDG_CACHE_HOME:=${HOME}/.cache}"
+cache="${XDG_CACHE_HOME}"/catgirl-spoiler
+mkdir -p "${cache}"
+
+[ "$1" = '-c' ] && clean
+
+[ $# -lt 1 ] && usage
+
+# Provide black fg/black bg toggling as a "spoiler function"
+if [ -f "${cache}"/spoiler-"${1}" ]; then
+    tmux send-keys C-z c
+    exec rm -f "${cache}"/spoiler-"${1}"
+else
+    tmux send-keys C-z c 1,1
+    exec touch "${cache}"/spoiler-"${1}"
+fi

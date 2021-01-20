@@ -33,10 +33,10 @@ exec >/dev/null 2>&1
 # oh this is disgusting i LOVE IT
 case "${action}" in
     'default')
-        tmux find-window -t catgirls: -N "${server}" \; send-keys Down Enter
-        tmux send-keys -t catgirls: M-0 End C-u
-        tmux send-keys -t catgirls: -l "/window ${chat}"
-        tmux send-keys -t catgirls: Enter C-y
+        catgirls find-window -N "${server}" \; send-keys Down Enter
+        catgirls send-keys M-0 End C-u
+        catgirls send-keys -l "/window ${chat}"
+        catgirls send-keys Enter C-y
         ;;
 esac
 
