@@ -1,6 +1,35 @@
 #!/bin/sh
 
 : "${XDG_CONFIG_HOME:=${HOME}/.config}"
+
+while getopts :ct arg >/dev/null 2>&1; do
+    case "${arg}" in
+        c)
+            mode=catgirl
+            ;;
+        t)
+            mode=tmux
+            ;;
+        *)
+            printf 'unknown option -- %s\nusage: catgirls [-ct] [TMUX COMMANDS...]\n >&2' "${arg}"
+            exit 69
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
+: "${mode:=tmux}"
+
+case "${mode}" in
+    catgirl)
+        catgirl_host=$(hostname | cut -d. -f1)
+        exec catgirl \
+            -u "${catgirl_host}" \
+            -c "${XDG_CONFIG_HOME}/catgirl/client-${catgirl_host}.crt" \
+            -N "catgirl-notify" "$@"
+        ;;
+esac
+
 [ $# -eq 0 ] && set -- attach-session
 
 exec tmux -L catgirls -f "${XDG_CONFIG_HOME}"/tmux/catgirls.conf "$@"
