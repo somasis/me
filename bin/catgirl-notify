@@ -37,6 +37,7 @@ case "${action}" in
         catgirls send-keys M-0 End C-u
         catgirls send-keys -l "/window ${chat}"
         catgirls send-keys Enter C-y
+        raise "^catgirl - .+$" terminal catgirls
         ;;
 esac
 
