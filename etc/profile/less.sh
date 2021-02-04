@@ -2,13 +2,13 @@
 # less - See less(1) for details.
 
 # Colors for man pages
-export LESS_TERMCAP_us=$(printf "\e[3;32m") # italicized in asciidoctor
-export LESS_TERMCAP_mb=$(printf "\e[3m")
-export LESS_TERMCAP_md=$(printf "\e[1;33m") # sections, and bolded in asciidoctor
-export LESS_TERMCAP_me=$(printf "\e[0m")
-export LESS_TERMCAP_se=$(printf "\e[0m")
-export LESS_TERMCAP_so=$(printf "\e[0m")
-export LESS_TERMCAP_ue=$(printf "\e[0m")
+export LESS_TERMCAP_us=$(printf '%b' "\033[3;32m") # italicized in asciidoctor
+export LESS_TERMCAP_mb=$(printf '%b' "\033[3m")
+export LESS_TERMCAP_md=$(printf '%b' "\033[1;33m") # sections, and bolded in asciidoctor
+export LESS_TERMCAP_me=$(printf '%b' "\033[0m")
+export LESS_TERMCAP_se=$(printf '%b' "\033[0m")
+export LESS_TERMCAP_so=$(printf '%b' "\033[0m")
+export LESS_TERMCAP_ue=$(printf '%b' "\033[0m")
 
 # -i - Ignore case in searches if there's no uppercase characters in the pattern
 # -s - Combine multiple blank lines
