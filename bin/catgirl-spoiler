@@ -22,6 +22,6 @@ if [ -f "${cache}"/spoiler-"${1}" ]; then
     tmux send-keys C-z c
     exec rm -f "${cache}"/spoiler-"${1}"
 else
-    tmux send-keys C-z c 1,1
+    tmux send-keys C-z c 01,01
     exec touch "${cache}"/spoiler-"${1}"
 fi
