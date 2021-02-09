@@ -4,6 +4,9 @@ set-option global ui_options \
     ncurses_set_title=true \
     ncurses_status_on_top=true
 
+# Disable startup changelog unless development version.
+set-option global startup_info_version -1
+
 # Set default text-editing options
 set-option global tabstop 4
 set-option global indentwidth 4
