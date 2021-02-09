@@ -10,15 +10,13 @@ while inotifywait -qqr /sys/class/power_supply/*/; do
         icon=""
     elif [ "${percent}" -ge 50 ]; then
         icon=""
-    elif [ "${percent}" -ge 15 ]; then
+    elif [ "${percent}" -ge 25 ]; then
         icon=""
     else
         icon=""
     fi
 
-    status=$(cat /sys/class/power_supply/ACAD/online)
-
-    case "${status}" in
+    case "$(cat /sys/class/power_supply/ACAD/online)" in
         1)
             icon=""
             ;;
