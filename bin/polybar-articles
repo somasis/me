@@ -7,7 +7,8 @@ newsboat() {
 }
 
 unread() {
-    newsboat -x print-unread 2>/dev/null | sed -E "$(printf '/Error:/d; s/ .*//; s/^0$//; s/^[0-9]+/ &/')"
+    newsboat -x print-unread 2>/dev/null \
+        | sed -E "$(printf '/Error:/d; s/ .*//; s/^0$//; s/^[0-9]+/ &/')"
 }
 
 unread; sleep 1
