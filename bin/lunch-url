@@ -1,0 +1,32 @@
+#!/bin/sh
+
+set -eu
+
+url="${1}"
+
+case "${url}" in
+    https://youtube.com/watch\?v=*|https://youtu.be/*|https://soundcloud.com/*)
+        choices="media_player browser"
+        ;;
+    *)
+        choices="browser"
+        ;;
+esac
+
+set -- ${choices}
+
+url_trunc=$(printf '%s\n' "${url}" | cut -c1-16)
+
+choice="${choices}"
+[ $# -gt 1 ] && choice=$(printf '%s\n' "$@" | dmenu -p "lunch [$url_trunc]")
+
+case "${choice}" in
+    browser)
+        nohup firefox-esr "${url}" >/dev/null 2>&1 &
+        exit
+        ;;
+    *)
+        exec lunch -o "${choice}" "${url}"
+        ;;
+esac
+
