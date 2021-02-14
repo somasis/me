@@ -1,0 +1,4 @@
+#!/bin/sh
+
+notify-send -u critical "lunch" "No handler exists for '$1' ($2: '$3')"
+exit 96
