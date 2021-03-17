@@ -5,16 +5,11 @@ IRC_HOST = angela.somas.is
 NEWSBOAT := ${XDG_CONFIG_HOME}/newsboat/urls.pub ${XDG_CONFIG_HOME}/newsboat/urls.secret
 DUNST := ${XDG_CONFIG_HOME}/dunst/dunstrc.pub ${XDG_CONFIG_HOME}/dunst/dunstrc.secret
 
-all: FRC kak dunst newsboat
-
-kak: FRC ${XDG_DATA_HOME}/kak/plugins/plug.kak
+all: FRC dunst newsboat
 
 dunst: FRC ${XDG_CONFIG_HOME}/dunst/dunstrc
 
 newsboat: FRC ${XDG_CONFIG_HOME}/newsboat/urls
-
-${XDG_DATA_HOME}/kak/plugins/plug.kak:
-	git clone --depth=1 https://github.com/robertmeta/plug.kak.git ${XDG_DATA_HOME}/kak/plugins/plug.kak
 
 ${IRC_HOST}: FRC pounce-${IRC_HOST} litterbox-${IRC_HOST}
 

@@ -29,7 +29,14 @@ hook global WinSetOption filetype=(c|cpp) %{
     lsp-enable-window
 }
 
-source %sh{ echo "${XDG_DATA_HOME}"/kak/plugins/plug.kak/rc/plug.kak }  # Plugin manager.
+## Bootstrap plug.kak if it's not installed.
+evaluate-commands %sh{
+    plugin_dir="${XDG_DATA_HOME}/kak/plugins"
+    mkdir -p "${plugin_dir}"
+    [ -e "$plugin_dir/plug.kak" ] \
+        || git clone -q https://github.com/andreyorst/plug.kak "${plugin_dir}/plug.kak"
+    printf "%s\n" "source '${plugin_dir}/plug.kak/rc/plug.kak'"
+}
 
 plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching parenthesis.
 plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
