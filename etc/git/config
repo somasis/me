@@ -13,14 +13,13 @@
 # Command defaults.
 # See git-{command}(1) for details on each section.
 
+## Use git templates in order to make default branch name "main".
+[init]
+	defaultBranch = main
+
 [add "interactive"]
 	# Use the built-in version of `add -p` rather than the Perl script.
 	useBuiltin = true
-
-## Use git templates in order to make default branch name "main".
-[init]
-	templateDir = ~/etc/git/template/
-	defaultBranch = main
 
 [commit]
 	gpgsign = false
