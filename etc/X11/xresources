@@ -8,3 +8,101 @@ Xft.lcdfilter:  lcddefault
 
 Xcursor.theme:  Hackneyed
 Xcursor.size:   48
+
+! xterm(1) settings
+xterm*termName:             xterm-256color
+xterm*utf8:                 true
+
+!! Input settings
+
+!!! Send as Alt as expected in other terminals
+xterm*metaSendsEscape:      true
+
+!!! Send ^? on backspace instead of ^H
+xterm*backarrowKey:         false
+xterm.ttyModes:             erase ^?
+
+!! Behavior settings
+
+!!! Translations (keybinds, mouse behavior)
+xterm.vt100.translations: #override \n\
+    Ctrl <Key>minus: smaller-vt-font()\n\
+    Ctrl <Key>plus: larger-vt-font()\n\
+    Ctrl <Key>0: set-vt-font(d)\n\
+    Ctrl Shift <Key>C: copy-selection(CLIPBOARD)\n\
+    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)\n\
+    Ctrl <Btn1Up>: exec-formatted("printf '%%s\n' %s | xterm-open", SELECT)\n\
+    Ctrl Shift <Key>O: print-everything(noAttrs, noNewLine)
+
+xterm*printerCommand: /home/somasis/bin/xterm-open
+
+!!! Mouse selection behavior
+
+xterm*on2Clicks:            word
+xterm*on3Clicks:            line
+xterm*on4Clicks:            regex ([[:alpha:]]+://)?([[:alnum:]!#+,./=?@_~-]|(%[[:xdigit:]][[:xdigit:]]))+
+
+!!!! Understand URLs as words <https://pbrisbin.com/posts/selecting_urls_via_keyboard_in_xterm/>
+xterm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
+
+!!! Clipboard behavior
+
+xterm*selectToClipboard:    true    /* Use CLIPBOARD, not PRIMARY */
+
+!!! Disable popup menus entirely
+xterm*omitTranslation:      popup-menu
+
+!!! Translate terminal bells as window urgency
+xterm*bellIsUrgent:         true
+
+!! Graphical settings
+xterm*renderFont:           true
+xterm*faceName:             monospace:size=11
+xterm*faceNameDoublesize:   emoji:size=11
+
+xterm*pointerShape:         left_ptr
+
+xterm*fullscreen:           never
+
+!!! SIXEL support
+xterm*decGraphicsID: vt340
+xterm*numColorRegisters: 256
+xterm*sixelScrolling: true
+
+xterm*internalBorder:       0
+xterm*showMissingGlyphs:    true
+
+!!! Scrolling settings
+xterm*scrollBar:            false
+xterm*scrollTtyOutput:      false
+xterm*scrollKey:            true
+
+!!! Cursor (as in, the prompt cursor) display settings
+xterm*cursorUnderLine:      false
+xterm*cursorBlink:          true
+xterm*cursorOnTime:         500
+xterm*cursorOffTime:        500
+
+!!! Do not display boldness with a color
+xterm*boldColors:           false
+
+!!! Colors
+xterm*foreground:   #ffffff
+xterm*background:   #17181a
+xterm*cursorColor:  #ffffff
+xterm*color0:       #4b4b4b
+xterm*color1:       #cf4342
+xterm*color2:       #bdcd6a
+xterm*color3:       #ef9324
+xterm*color4:       #438dc5
+xterm*color5:       #c54d7a
+xterm*color6:       #499baf
+xterm*color7:       #d8c7c7
+xterm*color8:       #777777
+xterm*color9:       #fe6262
+xterm*color10:      #d7f0a4
+xterm*color11:      #fae56d
+xterm*color12:      #96c7ec
+xterm*color13:      #f97cac
+xterm*color14:      #30d0f2
+xterm*color15:      #e0d6d6

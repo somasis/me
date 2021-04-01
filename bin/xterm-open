@@ -1,0 +1,10 @@
+#!/bin/sh
+
+contents=$(urls | sed '1!G;h;$!d')
+
+if [ $(printf '%s\n' "${contents}" | wc -l) -gt 1 ]; then
+    printf '%s\n' "${contents}" | dmenu -p "xterm" | xe -v lunch
+else
+    exec lunch "${contents}"
+fi
+
