@@ -1,35 +1,82 @@
 #!/bin/sh
 # xinput-toggle - toggle a device on/off with xinput
 
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} [-n] DEVICE...
+EOF
+    exit 69
+}
+
 notify=false
 
-until [ "$#" -le 1 ];do
-    case "${1}" in
-        -n)
+while getopts :n arg >/dev/null 2>&1; do
+    case "${arg}" in
+        n)
             notify=true
-        ;;
+            ;;
+        ?)
+            usage
+            ;;
     esac
+done
+shift $(( OPTIND - 1 ))
+
+[ $# -gt 0 ] || usage
+
+while [ $# -gt 0 ]; do
+    [ "$(xinput list --name-only | grep -Fc "${1}")" -eq 0 ] \
+        && printf 'error: no device named "%s"\n' "${1}" >&2 \
+        && exit 2
+
+    name="${1}"
+    case "$(printf '%s\n' "${1}" | tr '[:upper:]' '[:lower:]')" in
+        *touchpad*)
+            icon=input-touchpad
+            type=Touchpad
+            name=${name% Touchpad}
+            ;;
+        *pen*)
+            icon=input-tablet
+            type=Pen
+            name=${name% Pen}
+            ;;
+        *tablet*)
+            icon=input-tablet
+            type=Tablet
+            name=${name% Tablet}
+            ;;
+        *finger*)
+            icon=tablet
+            type=Touchscreen
+            name=${name% Finger}
+            ;;
+        *keyboard*)
+            icon=input-keyboard
+            type=Keyboard
+            name=${name% Keyboard}
+            ;;
+        *mouse*)
+            icon=input-mouse
+            type=Mouse
+            name=${name% Mouse}
+            ;;
+        *pointer*)
+            icon=input-mouse
+            type=Pointer
+            name=${name% Pointer}
+            ;;
+    esac
+
+    if [ "$(xinput list-props "${1}" | sed '/Device Enabled/!d; s/.*:[\t ]*//')" -eq 1 ];then
+        xinput disable "${1}" \
+            && "${notify}" \
+            && notification xinput-toggle -i "${icon}" -u low "xinput-toggle" "${type} \"${name}\" disabled"
+    else
+        xinput enable "${1}" \
+            && "${notify}" \
+            && notification xinput-toggle -i "${icon}" -u low "xinput-toggle" "${type} \"${name}\" enabled"
+    fi
+
     shift
 done
-
-device="${1}"
-
-[ -z "${device}" ] && printf 'usage: %s %s\n' "${0##*/}" "[--notify] <device>" && exit 1
-
-[ $(xinput list --name-only | grep -Fc "${device}") -eq 0 ] && printf 'error: %s\n' "no device named '${device}'" >&2 && exit 2
-
-case "$(printf '%s\n' "${device}" | tr '[A-Z]' '[a-z]')" in
-    *touchpad*) type=Touchpad       ;;
-    *pen*)      type=Pen            ;;
-    *tablet*)   type=Tablet         ;;
-    *finger*)   type=Touchscreen    ;;
-    *keyboard*) type=Keyboard       ;;
-    *pointer*)  type=Pointer        ;;
-esac
-
-if [ $(xinput list-props "${1}" | sed '/Device Enabled/!d; s/.*:[\t ]*//') -eq 1 ];then 
-    xinput disable "${1}" && "${notify}" && notify-send -u low -a xinput-toggle "${type} \"${device}\" disabled"
-else
-    xinput enable "${1}" && "${notify}" && notify-send -u low -a xinput-toggle "${type} \"${device}\" enabled"
-fi
-
