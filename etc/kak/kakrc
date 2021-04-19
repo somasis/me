@@ -185,7 +185,7 @@ add-highlighter global/ regex "^[^\n]{%opt{autowrap_column}}([^\n]+)$" 1:white,r
 
 ## Highlight word under the cursor.
 declare-option -hidden regex curword
-set-face global CurWord default,black
+set-face global CurWord PrimarySelection
 
 hook global -group user-highlight-cursor-word NormalIdle .* %{
     eval -draft %{
