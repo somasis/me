@@ -7,8 +7,19 @@ newsboat() {
 }
 
 unread() {
-    newsboat -x print-unread 2>/dev/null \
-        | sed -E "$(printf '/Error:/d; s/ .*//; s/^0$//; s/^[0-9]+/ &/')"
+    pgrep newsboat && printf '\n' && return
+    unread=$(newsboat -x print-unread 2>/dev/null | cut -d' ' -f1)
+    case "${unread}" in
+        0)
+            printf '\n'
+            ;;
+        Error:*)
+            :
+            ;;
+        *)
+            printf '\n'
+            ;;
+    esac
 }
 
 unread; sleep 1
