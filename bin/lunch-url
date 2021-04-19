@@ -1,29 +1,88 @@
 #!/bin/sh
 
-set -eu
+set -u
+
+# ytdata JQ_ARGS...
+ytdata() {
+    [ -s "${ytdata}" ] || youtube-dl -j "${url}" > "${ytdata}"
+    jq "$@" < "${ytdata}"
+}
+
+if [ "$#" -gt 1 ]; then
+    while [ $# -gt 0 ]; do
+        lunch-url "$1"
+        e=$?
+        case "$e" in
+            0|55)   : ;;
+            *)      exit $e ;;
+        esac
+        shift
+    done
+    exit
+elif [ "$#" -eq 0 ]; then
+    printf 'usage: %s URL...\n' "${0##*/}" >&2
+    exit 69 # EX_USAGE
+fi
+
+ytdata=$(mktemp)
 
 url="${1}"
+url_unique=$(printf '%s\n' "${url}" | sed -E '/https?:\/\// { s|https?://||; s/www\.// }')
+url_pretty="${url_unique}"
+url_stream=false
 
-case "${url}" in
-    https://youtube.com/watch\?v=*|https://youtu.be/*|https://soundcloud.com/*)
+case "${url_unique}" in
+    youtube.com/watch\?*v=*|youtu.be/*)
         choices="media_player browser"
+        url_stream=true
+        url_pretty=$(ytdata "\"youtube: \" + .title")
         ;;
-    *)
-        choices="browser"
+
+    twitch.tv/*)
+        choices="media_player browser"
+        url_pretty=$(ytdata "\"twitch: \" + .title")
         ;;
+
+    *.bandcamp.com/album/*)
+        choices="media_player browser"
+        url_pretty=$(ytdata -r "\"bandcamp: \" + .title")
+        ;;
+
+    *.bandcamp.com/track/*)
+        choices="media_player browser"
+        url_stream=true
+        url_pretty=$(ytdata -r "\"bandcamp: \" + .title + \" (from '\" + .album + \"')\"")
+        ;;
+
+    soundcloud.com/*)
+        choices="media_player browser"
+        url_pretty=$(ytdata -r "\"soundcloud: \" + .uploader + \" - \" + .title")
+        ;;
+
+    *) choices="browser" ;;
 esac
+
+rm -f "${ytdata}"
 
 set -- ${choices}
 
-url_trunc=$(printf '%s\n' "${url}" | cut -c1-16)
-
 choice="${choices}"
-[ $# -gt 1 ] && choice=$(printf '%s\n' "$@" | dmenu -p "lunch [$url_trunc]")
+[ $# -gt 1 ] && choice=$(printf '%s\n' "$@" | dmenu -p "lunch[${url_pretty}]" || exit 55)
 
 case "${choice}" in
     browser)
         nohup firefox-esr "${url}" >/dev/null 2>&1 &
         exit
+        ;;
+    '')
+        exit 55
+        ;;
+    media_player)
+        if [ "${url_stream}" = true ]; then
+            youtube-dl -o - "${url}" | $(lunch -g media_player) --title="${url_pretty}" -
+        else
+            lunch -o media_player "${url}"
+        fi
         ;;
     *)
         exec lunch -o "${choice}" "${url}"
