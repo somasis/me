@@ -21,8 +21,8 @@
     wm-restack          = bspwm
 
     modules-left        = bspwm title
-    modules-center      = clock
-    modules-right       = mpd-tail next-event article-count mail-count pacman battery
+    ; modules-center      = clock
+    modules-right       = player events articles mail updates power
 
     font-0              = "forkawesome:style=regular:size=11;2"
     font-1              = "forkawesome:style=solid:size=11;2"
@@ -39,14 +39,16 @@
     tray-padding        = 4
     tray-maxsize        = 32
 
-[module/pacman]
+[module/updates]
     type        = custom/script
-    exec        = polybar-pacman
+    exec        = polybar-updates
     tail        = true
 
-[module/battery]
+    click-left  = terminal yay -Su &
+
+[module/power]
     type        = custom/script
-    exec        = polybar-battery
+    exec        = polybar-power
     tail        = true
 
 [module/bspwm]
@@ -59,7 +61,6 @@
     ws-icon-3 = "4"
     ws-icon-4 = "5"
 
-    format-padding = 0
     format = "<label-state> <label-mode> "
 
     label-monocle = 
@@ -70,10 +71,11 @@
     label-locked = 
     label-sticky = 
     label-private = 
-    label-locked-foreground = #bd2c40
-    label-sticky-foreground = #fba922
-    label-private-foreground = #bd2c40
-    label-focused-overline = #438dc5
+    label-locked-foreground = #654ea7
+    label-sticky-foreground = #654ea7
+    label-private-foreground = #654ea7
+    label-focused-foreground = #ffffff
+    label-focused-background = #4084d6
 
 [module/clock]
     type = custom/script
@@ -85,36 +87,36 @@
     label = %output%
     label-font = 5
 
-[module/next-event]
+[module/events]
     type            = custom/script
-    exec            = polybar-next-event --notstarted -a Calendar -a Classes -a "Violet & Kylie" -a Facebook | sed 's/ - .*//' | ellipsis 45
+    exec            = polybar-events --notstarted -a Calendar -a University -a "Violet & Kylie" -a "Google Calendar (kylie@somas.is)" -a "Jonesers" -a "Holidays - North Carolina" | sed 's/ - .*//' | ellipsis 45
     click-left      = raise '^ikhal$' terminal tkhal &
 
     interval        = 50
 
-[module/mpd-tail]
+[module/player]
     type            = custom/script
-    exec            = polybar-mpd-tail | ellipsis 60
+    exec            = polybar-player | ellipsis 60
     click-left      = mpc toggle
     click-middle    = mpc stop
     click-right     = mpc next
     enable-scroll   = true
-    scroll-down     = mpc volume -5
     scroll-up       = mpc volume +5
+    scroll-down     = mpc volume -5
 
     tail            = true
 
-[module/article-count]
+[module/articles]
     type            = custom/script
-    exec            = polybar-new-articles
+    exec            = polybar-articles
     click-left      = raise '^newsboat$' terminal newsboat &
 
     tail            = true
 
-[module/mail-count]
+[module/mail]
     type            = custom/script
-    exec            = polybar-mail-count
-    click-left      = raise '^aerc$' terminal aerc &
+    exec            = polybar-mail
+    click-left      = raise '^aerc$' aerc &
 
     # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
     tail            = true
@@ -131,4 +133,6 @@
     tail            = true
 
     label-font      = 5
-    label-overline = #438dc5
+    label-padding   = 4
+    label-foreground = #ffffff
+    label-background = #4084d6
