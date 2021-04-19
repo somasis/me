@@ -10,7 +10,7 @@
     height              = 64
     fixed-center        = true
 
-    background          = #002f343f
+    background          = #ff2f343f
     foreground          = #ffffff
 
     module-margin-left  = 8
