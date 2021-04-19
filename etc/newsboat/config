@@ -23,6 +23,8 @@ color listnormal_unread green black bold
 color listfocus_unread black green bold
 color info white magenta bold
 
+bind-key ^O open-in-browser-and-mark-read
+
 # appearance settings
 #datetime-format     "%b %d"                         # march 19
 #feedlist-format     "%4i │ %t %> %?n?%u unread?"    # index │ title | feed title (aligned right)

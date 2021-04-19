@@ -25,12 +25,14 @@ https://dataswamp.org/~solene/rss.xml               blog computer
 https://www.landley.net/rss.xml                     "~Rob Landley" blog computer
 https://flak.tedunangst.com/rss                     "~Ted Unangst: flak" blog computer
 https://www.cogitri.dev/posts/index.xml             "~Cogitri's blog" blog computer
-https://phidica.tumblr.com/rss                      "~Phidica" blog friend
+https://phidica.tumblr.com/rss                      "~Phidica" blog friend tumblr
 https://emeliacleveland.net/feed/                   blog friend
 https://apenwarr.ca/log/rss.php                     blog computer
 https://blog.knightsofthelambdacalcul.us/index.xml  blog computer
-https://nitter.net/oilshellblog/rss                 "~Oil Shell" blog computer scripting shell
+http://createfeed.fivefilters.org/extract.php?url=https%3A%2F%2Fwww.oilshell.org%2Fblog%2F&item=table%23all-posts+tr&item_title=td+a&item_url=td+a&item_date=td.date&item_date_format=Y-m-d&max=5 "~Oil Shell" blog computer scripting shell
 https://one-button.org/feeds/articles.atom.xml      blog
+https://feeds.feedburner.com/MayContainTracesOfBolts blog computer
+https://control--panel.com/rss                      blog computer tumblr
 
 # Aggregators
 https://tilde.news/rss                          aggregators
@@ -51,7 +53,8 @@ https://latacora.micro.blog/feed.xml            computer
 https://sanctum.geek.nz/arabesque/feed/         computer
 https://ewontfix.com/feed.rss                   computer friend
 https://beepb00p.xyz/atom.xml                   computer
-https://onethingwell.org/rss                    computer
+https://onethingwell.org/rss                    computer tumblr
+https://www.srcbeat.com/index.xml               computer
 
 # OpenStreetMap
 https://www.weeklyosm.eu/feed                   "~weeklyOSM" news map osm
@@ -61,6 +64,7 @@ https://www.openstreetmap.org/api/0.6/notes/feed?bbox=-80.7872772,35.1850329,-80
 https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-81.918076,36.111477,-81.455917,36.391293 "~OpenStreetMap: Changes to be reviewed in Watauga County" map notifications osm
 https://resultmaps.neis-one.org/osm-suspicious-feed-bbox?hours=96&mappingdays=-1&tsearch=review_requested%3Dyes&anyobj=t&bbox=-80.7872772,35.1850329,-80.2963257,35.5093128 "~OpenStreetMap: Changes to be reviewed in Cabarrus County" map notifications osm
 https://us3.campaign-archive.com/feed?u=162692bfdedb78ec46fd108a3&id=801ce00e6d "~OpenStreetMap US Newsletter" osm
+https://osmand.net/rss.xml osm
 
 # Comics
 https://www.webtoons.com/en/challenge/i-want-to-be-a-cute-anime-girl/rss?title_no=349416 comics trans
