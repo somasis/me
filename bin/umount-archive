@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for f in "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/mnt/archive/*/; do
+    mountpoint -q "${f}" && umount "${f}" && rmdir "${f}"
+done

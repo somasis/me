@@ -1,6 +1,1 @@
-#!/bin/sh
-
-dir=~/mnt/archive/"${1##*/}"
-mkdir -p "${dir}"
-mountpoint "${dir}" >/dev/null 2>&1 || archivemount "${1}" "${dir}"
-exec lunch -- "${dir}"
+mount-archive
