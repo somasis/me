@@ -58,7 +58,7 @@ fi
 rating="${1:-0}"
 mpc_rating=$(expr "${rating}" + "${rating}")
 mpc sticker "$(mpc current -f '%file%')" set rating "${mpc_rating}"
-song=$(mpc current -f "[%artist% - ]%title%[ (%album%)]")
+song=$(mpc current -f "[%artist% - ]%title%")
 
 if [ "${rating}" -gt 0 ];then
     stars=
