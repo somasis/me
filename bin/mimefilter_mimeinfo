@@ -17,9 +17,11 @@ my %opt;
 getopts('!0M', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
 
 if ($opt{'M'}) {
-    use File::MimeInfo ();
-} else {
+    print STDERR "using magic\n";
     use File::MimeInfo::Magic ();
+} else {
+    print STDERR "using extensions\n";
+    use File::MimeInfo ();
 }
 
 my $types       = File::MimeInfo->new;

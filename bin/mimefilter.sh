@@ -4,7 +4,7 @@ set -eu
 
 usage() {
     cat >&2 <<EOF
-usage: ${0##*/} [-0] MIME FILES...
+usage: ${0##*/} [-0!M] TYPE FILES...
 EOF
     exit 69
 }
@@ -14,7 +14,7 @@ false() { return 1; }
 
 not=false
 printf='%s\n'
-while getopts ':0!' arg >/dev/null 2>&1; do
+while getopts ':0!M' arg >/dev/null 2>&1; do
     case "${arg}" in
         0)
             printf='%s\0'
@@ -22,6 +22,7 @@ while getopts ':0!' arg >/dev/null 2>&1; do
         '!')
             not=true
             ;;
+        M) exclude=soft ;;
         ?)
             usage
             ;;
@@ -35,7 +36,7 @@ mime="$1"; shift
 
 ls -- "$@" >/dev/null 2>&1 || exit 1
 for f; do
-    case "$(file -iL "${f}" | sed -E 's|.*: ([^/]+/[^/]+); [^=]+=[^=]+$|\1|')" in
+    case "$(file ${exclude:+-e $exclude} -Lb --mime-type "${f}")" in
         ${mime}) ! "${not}" && printf "${printf}" "${f}" ;;
         *) "${not}" && printf "${printf}" "${f}" || : ;;
     esac

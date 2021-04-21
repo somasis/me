@@ -5,6 +5,7 @@ use warnings;
 
 use File::Basename;
 use Getopt::Std;
+use MIME::Types;
 
 sub HELP_MESSAGE {
     print STDERR "usage: ", (fileparse($0))[0], " [-!0M] TYPE FILES...\n";
@@ -16,13 +17,7 @@ sub VERSION_MESSAGE { HELP_MESSAGE; }
 my %opt;
 getopts('!0M', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
 
-if ($opt{'M'}) {
-    use File::MimeInfo ();
-} else {
-    use File::MimeInfo::Magic ();
-}
-
-my $types       = File::MimeInfo->new;
+my $types       = MIME::Types->new;
 my $filter      = $ARGV[0];
 my $filter_type = 0;                  # 0: parent/child, 1: parent
 
@@ -30,7 +25,7 @@ if ($filter =~ /^[^\/]+\/\*$/) {
     $filter_type = 1;
     $filter =~ s#/\*$##;
 } else {
-    if (not $filter = $types->mimetype_canon($filter)) { HELP_MESSAGE; }
+    if (not $filter = MIME::Type->new(type => $filter)) { HELP_MESSAGE; }
 }
 
 shift @ARGV;
@@ -47,12 +42,12 @@ foreach my $file (@ARGV) {
         exit 2;
     }
 
-    if (not $filetype = $types->mimetype($file)) {
+    if (not $filetype = $types->mimeTypeOf($file)) {
         warn "warning: couldn't get type for '$file', so it won't be printed\n";
         next;
     }
 
-    $filetype =~ s#/.*## if $filter_type == 1;
+    $filetype = $filetype->mediaType if $filter_type == 1;
 
     if ($filter eq $filetype) {
         print "$file" unless $opt{'!'};
