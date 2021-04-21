@@ -1,42 +1,57 @@
-#!/bin/sh
+#!/usr/bin/env perl
 
-set -eu
+use strict;
+use warnings;
 
-usage() {
-    cat >&2 <<EOF
-usage: ${0##*/} [-0] MIME FILES...
-EOF
-    exit 69
+use File::Basename;
+use Getopt::Std;
+use MIME::Types;
+
+sub HELP_MESSAGE {
+    print STDERR "usage: ", (fileparse($0))[0], " [-!0] TYPE FILES...\n";
+    exit 69;
 }
 
-true() { return 0; }
-false() { return 1; }
+sub VERSION_MESSAGE { HELP_MESSAGE; }
 
-not=false
-printf='%s\n'
-while getopts ':0!' arg >/dev/null 2>&1; do
-    case "${arg}" in
-        0)
-            printf='%s\0'
-            ;;
-        '!')
-            not=true
-            ;;
-        ?)
-            usage
-            ;;
-    esac
-done
-shift $(( OPTIND - 1 ))
+my %opt;
+getopts('!0', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
 
-[ $# -ge 2 ] || usage
+my $types       = MIME::Types->new;
+my $filter      = $ARGV[0];
+my $filter_type = 0;                  # 0: parent/child, 1: parent
 
-mime="$1"; shift
+if ($filter =~ /^[^\/]+\/\*$/) {
+    $filter_type = 1;
+    $filter =~ s#/\*$##;
+} else {
+    if (not $filter = MIME::Type->new(type => $filter)) { HELP_MESSAGE; }
+}
 
-ls -- "$@" >/dev/null 2>&1 || exit 1
-for f; do
-    case "$(file -iL "${f}" | sed -E 's|.*: ([^/]+/[^/]+); [^=]+=[^=]+$|\1|')" in
-        ${mime}) ! "${not}" && printf "${printf}" "${f}" ;;
-        *) "${not}" && printf "${printf}" "${f}" || : ;;
-    esac
-done
+shift @ARGV;
+
+my $filetype;
+my $match;
+
+$\ = "\n";
+$\ = "\0" if $opt{'0'};
+
+foreach my $file (@ARGV) {
+    if (not -e $file) {
+        print STDERR "error: file '$file' does not exist\n";
+        exit 2;
+    }
+
+    if (not $filetype = $types->mimeTypeOf($file)) {
+        warn "warning: couldn't get type for '$file', so it won't be printed\n";
+        next;
+    }
+
+    $filetype = $filetype->mediaType if $filter_type == 1;
+
+    if ($filter eq $filetype) {
+        print "$file" unless $opt{'!'};
+    } else {
+        print "$file" if $opt{'!'};
+    }
+}
