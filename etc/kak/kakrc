@@ -87,9 +87,9 @@ plug "https://github.com/andreyorst/smarttab.kak" defer smarttab %{
 }
 
 # Hooks
-hook -group user-wincreate global WinCreate ^[^*]+$ %{
-    autowrap-enable
-}
+#hook -group user-wincreate global WinCreate ^[^*]+$ %{
+#    autowrap-enable
+#}
 
 hook -group user-bufcreate global BufCreate .* %{
     modeline-parse
