@@ -40,7 +40,6 @@ evaluate-commands %sh{
 
 plug "https://github.com/matthias-margush/tug"          # File management commands.
 plug "https://github.com/alexherbo2/auto-pairs.kak"     # Auto-add matching parenthesis.
-plug "https://github.com/whereswaldon/shellcheck.kak"   # Automatically lint shell scripts.
 plug "https://github.com/occivink/kakoune-find"         # Find and replace across buffers.
 plug "https://gitlab.com/Screwtapello/kakoune-inc-dec"  # Increment/decrement numbers with <c-[ax]>
 plug "https://github.com/caksoylar/kakoune-smooth-scroll" config %{
@@ -150,6 +149,12 @@ hook global -group user-troff WinSetOption filetype=troff %{
 hook global -group user-password-store BufCreate /dev/shm/pass\..* %{
     set-option buffer filetype yaml
     autowrap-disable
+}
+
+## Shell scripts.
+hook global -group user-perl WinSetOption filetype=sh %{
+    set-option buffer formatcmd "shfmt"
+    set-option buffer lintcmd   "shellcheck -f gcc -x -a"
 }
 
 ## Used by aerc(1).
