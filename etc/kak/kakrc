@@ -151,6 +151,12 @@ hook global -group user-password-store BufCreate /dev/shm/pass\..* %{
     autowrap-disable
 }
 
+## Perl scripts.
+hook global -group user-perl WinSetOption filetype=perl %{
+    set-option buffer formatcmd "perltidy -st -se"
+    set-option buffer lintcmd   "perlcritic --verbose '%%f:%%l:%%c: severity %%s: %%m [%%p]\n'"
+}
+
 ## Shell scripts.
 hook global -group user-perl WinSetOption filetype=sh %{
     set-option buffer formatcmd "shfmt"
