@@ -93,7 +93,7 @@ hook -group user-wincreate global WinCreate ^[^*]+$ %{
 
 hook -group user-bufcreate global BufCreate .* %{
     modeline-parse
-    git show-diff
+    evaluate-commands %sh{ git rev-parse >/dev/null 2>&1 && echo git show-diff }
 }
 
 hook -group user-bufwritepre global BufWritePre .* %{
