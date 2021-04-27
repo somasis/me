@@ -106,6 +106,14 @@ hook -group user-bufwritepost global BufWritePost .* %{
     git show-diff
 }
 
+hook -group user-autolint global BufWritePre .* %{
+    evaluate-commands %sh{ [ -n "$kak_opt_lintcmd" ] && echo lint }
+}
+
+hook -group user-autoformat global BufWritePre .* %{
+    evaluate-commands %sh{ [ -n "$kak_opt_formatcmd" ] && echo format }
+}
+
 ## Lightly enforce the 50/72 rule for git commit summaries.
 hook global -group user-git-commit WinSetOption filetype=git-commit %{
     set-option buffer autowrap_column 72
