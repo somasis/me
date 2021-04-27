@@ -2,31 +2,27 @@
 
 use strict;
 use warnings;
+use utf8;
 
 use File::Basename;
+use File::MimeInfo::Magic ();
 use Getopt::Std;
 
 sub HELP_MESSAGE {
-    print STDERR "usage: ", (fileparse($0))[0], " [-!0M] TYPE FILES...\n";
+    print STDERR "usage: " . (fileparse($0))[0] . " [-!0] TYPE FILES...\n";
     exit 69;
 }
 
 sub VERSION_MESSAGE { HELP_MESSAGE; }
 
 my %opt;
-getopts('!0M', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
-
-if ($opt{'M'}) {
-    use File::MimeInfo ();
-} else {
-    use File::MimeInfo::Magic ();
-}
+getopts('!0', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
 
 my $types       = File::MimeInfo->new;
 my $filter      = $ARGV[0];
-my $filter_type = 0;                  # 0: parent/child, 1: parent
+my $filter_type = 0;                     # 0: parent/child, 1: parent
 
-if ($filter =~ /^[^\/]+\/\*$/) {
+if ($filter =~ m/^[^\/]+\/\*$/) {
     $filter_type = 1;
     $filter =~ s#/\*$##;
 } else {
@@ -43,12 +39,12 @@ $\ = "\0" if $opt{'0'};
 
 foreach my $file (@ARGV) {
     if (not -e $file) {
-        print STDERR "error: file '$file' does not exist\n";
+        print STDERR "error: file '" . $file . "' does not exist\n";
         exit 2;
     }
 
     if (not $filetype = $types->mimetype($file)) {
-        warn "warning: couldn't get type for '$file', so it won't be printed\n";
+        warn "warning: couldn't get type for '" . $file . "', so it won't be printed\n";
         next;
     }
 
