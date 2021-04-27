@@ -64,6 +64,9 @@ xterm*pointerShape:         left_ptr
 
 xterm*fullscreen:           never
 
+!!! Fix lag with things that shift the entire terminal contents
+xterm*fastScroll:           true
+
 !!! SIXEL support
 xterm*decGraphicsID: vt340
 xterm*numColorRegisters: 256
