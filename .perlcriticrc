@@ -1,0 +1,1 @@
+verbose = %f:%l:%c: severity %s: %m [%p]\n

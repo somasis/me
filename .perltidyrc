@@ -1,0 +1,15 @@
+# See perltidy(1) for options.
+
+-pbp
+-i=4        # Indent by 4 spaces.
+-l=100      # 100 lines max.
+-pt=2       # No extra whitespace around parentheses,
+-sbt=2      # square brackets,
+-bt=2       # or curly braces.
+-nolq       # Don't remove indentation on quoted strings when they're longer than max line length.
+-ce         # } else {
+-bar        # Always put opening braces on a line with their statements.
+-sot        # Stack opening tokens.
+-ci=4       # Indent continued lines by 4 spaces.
+-xci        # Extend continuation indentation into things like qw(lists)
+-boc        # Keep lines delimited by commas (ex. function arguments put across multiple lines)
