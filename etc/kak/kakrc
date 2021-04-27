@@ -151,6 +151,11 @@ hook global -group user-password-store BufCreate /dev/shm/pass\..* %{
     autowrap-disable
 }
 
+## ledger(1).
+hook global -group user-ledger WinSetOption filetype=ledger %{
+    autowrap-disable
+}
+
 ## Perl scripts.
 hook global -group user-perl WinSetOption filetype=perl %{
     set-option buffer formatcmd "perltidy -st -se"
