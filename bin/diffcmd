@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} COMMAND COMMAND
+EOF
+    exit 69
+}
+
+if [ -z "${DIFF:-}" ]; then
+    DIFF="${0##*/}"
+    DIFF="${DIFF%cmd}"
+fi
+
+case "${DIFF}" in
+    diff) DIFF='diff -u' ;;
+esac
+
+[ $# -ge 2 ] || usage
+
+d=$(mktemp -d)
+mkdir "${d}"/a "${d}"/b
+mkfifo "${d}"/a/output "${d}"/b/output
+eval "$1" >"${d}"/a/output &
+eval "$2" >"${d}"/b/output &
+(cd "${d}" && ${DIFF} -- a/output b/output)
+wait
+rm -rf "${d}"
