@@ -1,13 +1,15 @@
-#!/bin/sh -e
+#!/bin/sh
 # upload - client for uploading files
 #
 # for 0x0.st and workalikes
+
+set -e
 
 usage() { printf 'usage: %s [-cnsuv] [-h HOST] [-p POST_VARIABLE] [FILE/URL ...]\n' "${0##*/}"; }
 
 output() {
     printf '%s\n' "$1"
-    [ -n "${clip}" ] && printf '%s' "$1" | xsel -b
+    [ -n "${clip}" ] && printf '%s' "$1" | xsel -bi
     "${notification}" && \
         notification upload -i upload-media "upload" "Uploaded to $1.${clip:+ Copied to clipboard.}"
 }
