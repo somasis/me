@@ -1,0 +1,110 @@
+#!/bin/sh
+
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} [-fqI] [-a adapter] [-b battery] [-0 icon] [-1 icon] [-2 icon] [-3 icon] [-4 icon]
+EOF
+    exit 69
+}
+
+get() {
+    percent=$(cat "${battery}"/capacity)
+
+    if [ "${percent}" -ge 90 ]; then
+        icon="${icon_battery_4}"
+        percent=
+    elif [ "${percent}" -ge 75 ]; then
+        icon="${icon_battery_3}"
+    elif [ "${percent}" -ge 50 ]; then
+        icon="${icon_battery_2}"
+    elif [ "${percent}" -ge 25 ]; then
+        icon="${icon_battery_1}"
+    else
+        icon="${icon_battery_0}"
+    fi
+
+    case "$(cat "${adapter}"/online)" in
+        1)
+            icon="${icon_adapter_online}"
+            ;;
+
+    esac
+
+    if [ -n "${quiet}" ]; then
+        icon=
+    else
+        [ -n "${icon}" ] && percent="${percent:+${percent}%}"
+    fi
+
+    printf '%s%s\n' "${icon:+${icon}}" "${percent:+${percent}}"
+}
+
+adapter=$(
+    set -- /sys/class/power_supply/AC*
+    [ -d "${1}" ] && echo "${1##*/}"
+)
+battery=$(
+    set -- /sys/class/power_supply/BAT*
+    [ -d "${1}" ] && echo "${1##*/}"
+)
+
+icon_adapter_online=""
+icon_battery_0=""
+icon_battery_1=""
+icon_battery_2=""
+icon_battery_3=""
+icon_battery_4=""
+
+follow=
+quiet=
+
+while getopts :a:b:0:1:2:3:4:A:fqI arg >/dev/null 2>&1; do
+    case "${arg}" in
+        a)  adapter="${OPTARG}" ;;
+        b)  battery="${OPTARG}" ;;
+
+        A)  icon_adapter_online="${OPTARG}" ;;
+        0)  icon_battery_0="${OPTARG}" ;;
+        1)  icon_battery_1="${OPTARG}" ;;
+        2)  icon_battery_2="${OPTARG}" ;;
+        3)  icon_battery_3="${OPTARG}" ;;
+        4)  icon_battery_4="${OPTARG}" ;;
+
+        q) quiet=true ;;
+
+        I)
+            unset -v \
+                icon_adapter_online \
+                icon_battery_0 \
+                icon_battery_1 \
+                icon_battery_2 \
+                icon_battery_3 \
+                icon_battery_4
+            ;;
+
+        f)
+            follow=true
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+adapter=/sys/class/power_supply/"${adapter}"
+battery=/sys/class/power_supply/"${battery}"
+
+if ! [ -e "${adapter}" ]; then
+    printf 'error: %s\n' "no adapter found" >&2
+    usage
+elif ! [ -e "${battery}" ]; then
+    printf 'error: %s\n' "no battery found" >&2
+    usage
+fi
+
+get
+[ -n "${follow}" ] || exit
+
+while inotifywait -qqr "${battery}" "${adapter}"; do
+    get
+done
