@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH=/opt/sbase/bin:"${PATH}"
+
 mpc current >/dev/null 2>&1 || exit 127
 
 current_rating() {
@@ -8,15 +10,15 @@ current_rating() {
 
 convert_rating_to_stars() {
     [ -n "$1" ] || set -- 0
-    if [ "${1}" -gt 0 ];then
+    if [ "${1}" -gt 0 ]; then
         stars=
-        for i in $(seq 1 "${1}");do
+        for i in $(seq 1 "${1}"); do
             stars="${stars}★"
         done
     fi
 
-    if [ "${#stars}" -ne 5 ];then
-        while [ $(printf '%s' "${stars}" | wc -m) -le 6 ];do
+    if [ "${#stars}" -ne 5 ]; then
+        while [ $(printf '%s' "${stars}" | wc -m) -le 6 ]; do
             stars="${stars}☆"
         done
         stars="${stars:0:5}"
@@ -71,9 +73,10 @@ if [ "${#stars}" -ne 5 ]; then
     while [ $(printf '%s' "${stars}" | wc -m) -le 6 ]; do
         stars="${stars}☆"
     done
-    stars="${stars:0:5}"
+    stars=$(printf '%s' "${stars}" | cut -c 1-5)
 fi
 
+echo "${stars}"
 echo "${rating}"
 
 notification mpc-star -u low -i multimedia-audio-player "mpc-star" "${song} ${stars}"
