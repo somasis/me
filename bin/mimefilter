@@ -2,6 +2,8 @@
 
 use strict;
 use warnings;
+use autodie;
+use feature qw(say);
 use utf8;
 
 use File::Basename;
@@ -9,7 +11,7 @@ use File::MimeInfo::Magic ();
 use Getopt::Std;
 
 sub HELP_MESSAGE {
-    print STDERR "usage: " . (fileparse($0))[0] . " [-!0] TYPE FILES...\n";
+    say STDERR "usage: " . (fileparse($0))[0] . " [-!0] TYPE FILES...";
     exit 69;
 }
 
@@ -39,12 +41,12 @@ $\ = "\0" if $opt{'0'};
 
 foreach my $file (@ARGV) {
     if (not -e $file) {
-        print STDERR "error: file '" . $file . "' does not exist\n";
+        say STDERR "error: file '$file' does not exist";
         exit 2;
     }
 
     if (not $filetype = $types->mimetype($file)) {
-        warn "warning: couldn't get type for '" . $file . "', so it won't be printed\n";
+        say STDERR "warning: couldn't get type for '$file', so it won't be printed";
         next;
     }
 
