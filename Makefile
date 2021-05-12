@@ -32,6 +32,7 @@ ${XDG_CONFIG_HOME}/dunst/dunstrc: ${DUNST}
 	cat ${DUNST} > $@
 
 ${XDG_CONFIG_HOME}/newsboat/urls: ${NEWSBOAT}
+	sed '/^#/d' ${NEWSBOAT} | urls | xe -N0 -Fv urlck
 	cat ${NEWSBOAT} > $@
 
 FRC:
