@@ -1,0 +1,23 @@
+#!/bin/sh
+# Search upward for a filename until it is found, exiting unsuccessfully if it never is.
+
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} FILE
+EOF
+    exit 69
+}
+
+[ $# -gt 0 ] || usage
+
+e=0
+while [ $# -gt 0 ]; do
+    while [ "${PWD}" != / ]; do
+        [ -f "$1" ] && printf '%s\n' "$(readlink -f "$1")" && break
+        e=$((e + 1))
+        cd ../
+    done
+    shift
+done
+
+[ "${e}" -gt 0 ] && exit 1
