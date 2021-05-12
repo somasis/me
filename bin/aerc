@@ -1,10 +1,6 @@
-#!/bin/execlineb
+#!/bin/sh
 
-elgetpositionals
-
-background { mbsync -aq }
-foreground { settitle aerc }
-if { /bin/aerc $@ }
-background { mbsync -aq }
-
-exit
+mbsync -aq &
+settitle aerc
+terminal /bin/aerc "$@"
+mbsync -aq &
