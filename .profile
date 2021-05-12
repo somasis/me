@@ -28,13 +28,7 @@ for f in "${XDG_CONFIG_HOME}"/profile/*.sh; do
     [ -f "${f}" ] && . "${f}"
 done
 
-_sh="${0##*/}"
-_sh="${_sh#-}"
-
-[ -f "${XDG_CONFIG_HOME}/${_sh}/rc" ] && export ENV="${XDG_CONFIG_HOME}/${_sh}/rc"
-[ -f "${HOME}/.${_sh}rc" ] && export ENV="${HOME}/.${_sh}rc"
-
-unset _sh
+export ENV="${XDG_CONFIG_HOME}/${0##-}/rc"
 
 if [ "$(tty)" = /dev/tty1 ] && [ -z "${DISPLAY}" ]; then
     eval $(dbus-launch --sh-syntax)
