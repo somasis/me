@@ -1,5 +1,5 @@
 #!/bin/ksh
-# git - aliases to amke working with git(1) smoother
+# git - aliases to make working with git(1) smoother
 
 alias am='git am'
 alias add='git add -v'
