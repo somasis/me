@@ -11,14 +11,14 @@ use File::MimeInfo::Magic ();
 use Getopt::Std;
 
 sub HELP_MESSAGE {
-    say STDERR "usage: " . (fileparse($0))[0] . " [-!0] TYPE FILES...";
+    say STDERR "usage: " . (fileparse($0))[0] . " [-!0v] TYPE FILES...";
     exit 69;
 }
 
 sub VERSION_MESSAGE { HELP_MESSAGE; }
 
 my %opt;
-getopts('!0', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
+getopts('!0v', \%opt) && scalar @ARGV >= 2 or HELP_MESSAGE;
 
 my $types       = File::MimeInfo->new;
 my $filter      = $ARGV[0];
@@ -45,7 +45,11 @@ foreach my $file (@ARGV) {
         exit 2;
     }
 
-    if (not $filetype = $types->mimetype($file)) {
+    my $mimetype = $types->mimetype($file);
+
+    say "$file: $mimetype" if $opt{'v'};
+
+    if (not $filetype = $mimetype) {
         say STDERR "warning: couldn't get type for '$file', so it won't be printed";
         next;
     }
