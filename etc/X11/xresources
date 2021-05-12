@@ -38,15 +38,14 @@ xterm*printerCommand: /home/somasis/bin/xterm-open
 
 !!! Mouse selection behavior
 
-xterm*on2Clicks:            word
-xterm*on3Clicks:            line
-xterm*on4Clicks:            regex ([[:alpha:]]+://)?([[:alnum:]!#+,./=?@_~-]|(%[[:xdigit:]][[:xdigit:]]))+
+xterm*on2Clicks: word
+xterm*on3Clicks: line
+xterm*on4Clicks: regex ([[:alpha:]]+://)?([[:alnum:]!#+,./=?@_~-]|(%[[:xdigit:]][[:xdigit:]]))+
 
 !!!! Understand URLs as words <https://pbrisbin.com/posts/selecting_urls_via_keyboard_in_xterm/>
-xterm*charClass: 33:48,37-38:48,45-47:48,64:48,58:48,126:48,61:48,63:48,43:48,35:48
+xterm*charClass: 33:48,37-38:48,45-47:48,64:48,126:48,61:48,63:48,43:48,35:48
 
 !!! Clipboard behavior
-
 xterm*selectToClipboard:    true    /* Use CLIPBOARD, not PRIMARY */
 
 !!! Disable popup menus entirely
@@ -58,7 +57,6 @@ xterm*bellIsUrgent:         true
 !! Graphical settings
 xterm*renderFont:           true
 xterm*faceName:             monospace:size=11
-xterm*faceNameDoublesize:   emoji:size=11
 
 xterm*pointerShape:         left_ptr
 
