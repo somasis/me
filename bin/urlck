@@ -1,0 +1,11 @@
+#!/bin/sh
+
+e=0
+while [ $# -gt 0 ]; do
+    if ! curl -Lfs --compressed -o /dev/null "$1"; then
+        printf "%s\n" "$1"
+        e=$((e + 1))
+    fi
+    shift
+done
+exit $e
