@@ -35,17 +35,27 @@ case "${url_unique}" in
     youtube.com/watch\?*v=* | youtu.be/*)
         choices="media_player browser"
         url_stream=true
-        url_pretty=$(ytdata "\"youtube: \" + .title")
+        url_pretty=$(ytdata -r "\"youtube: \" + .title")
         ;;
 
     twitch.tv/*)
         choices="media_player browser"
-        url_pretty=$(ytdata "\"twitch: \" + .title")
+        url_pretty=$(ytdata -r "\"twitch: \" + .title")
         ;;
 
     *.bandcamp.com/album/*)
         choices="media_player browser"
-        url_pretty=$(ytdata -r "\"bandcamp: \" + .title")
+
+        # TODO: this would be a nice solution, but youtube-dl's bandcamp extractor doesn't seem to
+        #       include release artists (vs. track artists) in the JSON?
+        # url_pretty=$(ytdata -r "\"bandcamp: \" + .releasetitle")
+        url_pretty=$(
+            curl -Lsf "${url}" \
+                | pup 'script[type=application/ld+json]' \
+                | tr -d '\n' \
+                | sed -E 's|<script[^>]+>(.*)</script>|\1|' \
+                | jq -r "\"bandcamp: \" + .byArtist.name + \" - \" + .albumRelease[].name"
+        )
         ;;
 
     *.bandcamp.com/track/*)
@@ -88,4 +98,3 @@ case "${choice}" in
         exec lunch -o "${choice}" "${url}"
         ;;
 esac
-
