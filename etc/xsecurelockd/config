@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# XSECURELOCK_AUTH_BACKGROUND_COLOR
+# XSECURELOCK_AUTH_FOREGROUND_COLOR
+# XSECURELOCK_BLANK_TIMEOUT     - blank the screen after `x` seconds
+# XSECURELOCK_FONT
+# XSECURELOCK_PASSWORD_PROMPT   - style of password prompt to display
+# XSECURELOCK_SHOW_DATETIME     - show DATETIME_FORMAT on auth dialog
+# XSECURELOCK_DATETIME_FORMAT
+# XSECURELOCK_SHOW_HOSTNAME     - show FQDN on auth dialog
+export \
+    XSECURELOCK_BLANK_TIMEOUT=5 \
+    XSECURELOCK_AUTH_BACKGROUND_COLOR="#000000" \
+    XSECURELOCK_AUTH_FOREGROUND_COLOR="#ffffff" \
+    XSECURELOCK_FONT="Iosevka Term:heavy" \
+    XSECURELOCK_SHOW_DATETIME=1 \
+    XSECURELOCK_DATETIME_FORMAT="%A, %B %d, %I:%M %p" \
+    XSECURELOCK_PASSWORD_PROMPT="asterisks" \
+    XSECURELOCK_SHOW_HOSTNAME=2 \
+    XSECURELOCK_DIM_TIME_MS=1000 \
+    XSECURELOCK_WAIT_TIME_MS=5000
+
+autolock_timeout=300
+autolock_cycle=10
+
+before_lock() {
+    dunstctl set-paused true
+    catsit-xorg stop picom
+}
+
+after_unlock() {
+    catsit-xorg start picom
+    dunstctl set-paused false
+}
+
+# shellcheck source=~/bin/xsecurelockd

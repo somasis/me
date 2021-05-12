@@ -1,27 +1,91 @@
-#!/bin/execlineb
+#!/bin/sh
 
-elgetopt l
-elgetpositionals
-importas -i -u 0 0
-importas -D 0 -u ELGETOPT_l ELGETOPT_l
-
-importas -u HOME HOME
-importas -D ${HOME}/.config -u XDG_CONFIG_HOME XDG_CONFIG_HOME
-importas DISPLAY DISPLAY
-importas PATH PATH
-importas USER USER
-
-s6-envdir ${XDG_CONFIG_HOME}/xsecurelockd
-
-# Hold back `dunst` notifications until after screen is unlocked again.
-ifelse { test $ELGETOPT_l -eq 1 } {
-    foreground { dunstctl set-paused true }
-    foreground { catsit-xorg stop picom }
-    foreground { xsecurelock }
-    foreground { catsit-xorg start picom }
-    foreground { dunstctl set-paused false }
-    exit
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} [-lu]
+EOF
+    exit 69
 }
 
-importas -D 600 -u TIMEOUT TIMEOUT if { xset s ${TIMEOUT} }
-xss-lock -n "/usr/lib/xsecurelock/dimmer" -l -- ${0} -l
+default_before_lock() { :; }
+default_after_lock() { :; }
+default_after_unlock() { :; }
+
+before_lock() { default_before_lock; }
+after_lock() { default_after_lock; }
+after_unlock() { default_after_unlock; }
+
+# shellcheck source=/dev/null
+[ -f "${XDG_CONFIG_HOME:=${HOME}/.config}"/xsecurelockd/config ] \
+    && . "${XDG_CONFIG_HOME}"/xsecurelockd/config
+
+# `xset s ${timeout} ${cycle}`.
+#
+# Quoting xset(1):
+# > The length and period parameters for the screen saver function determines
+# > how long the server must be inactive for screen saving to activate,
+# > and the period to change the background pattern to avoid burn in.
+# > The arguments are specified in seconds.
+if [ -n "${XSECURELOCK_WAIT_TIME_MS}" ]; then
+    autolock_cycle="${autolock_cycle:=$((XSECURELOCK_WAIT_TIME_MS / 1000))}"
+elif [ -n "${autolock_cycle}" ]; then
+    export XSECURELOCK_WAIT_TIME_MS=$((autolock_cycle * 1000))
+fi
+
+: "${autolock_timeout:=60}"
+: "${autolock_cycle:=15}"
+
+mode=daemon
+while getopts :hluIXA arg >/dev/null 2>&1; do
+    case "${arg}" in
+        h) mode=heartbeat ;;
+        l) mode=lock ;;
+        u) mode=unlock ;;
+
+        # Internal modes.
+        I) mode=idle ;;         # Ran by xss-lock once there's no activity for ${autolock_timeout} seconds.
+        X) mode=real_lock ;;    # Ran by xss-lock to actually lock the screen with xsecurelock.
+        A)                      # Ran by xsecurelockd once it locks the screen successfully.
+            after_lock
+            exit $?
+            ;;
+        *) usage ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+case "${mode}" in
+    daemon)
+        xset s noblank
+        xset s reset
+        xset s on
+        xset s "${autolock_timeout}" "${autolock_cycle}"
+        exec xss-lock --verbose -l -n "${0} -I" -- "${0}" -X
+        ;;
+    heartbeat)  pkill -u "$(id -u)" -x -HUP xss-lock ;;
+    lock)       xset s activate ;;
+    unlock)
+        pkill -u "$(id -u)" -x xsecurelock
+        after_unlock
+        ;;
+
+    idle)
+        # Lock the screen with xsecurelockd -l once the timeout finishes.
+        # until_nonidle returns 0 when there's activity, and exits after
+        # a timeout (specified with $XSECURELOCK_IDLE_TIMERS) says that there
+        # is no user at the computer/the session is idle.
+        #
+        # The default state of $XSECURELOCK_IDLE_TIMERS is to use whatever
+        # `xset s LENGTH PERIOD` was given.
+        /usr/lib/xsecurelock/until_nonidle /usr/lib/xsecurelock/dimmer || "${0}" -X
+        ;;
+    real_lock)
+        before_lock
+
+        # Pass xsecurelockd -L as the command for xsecurelock to run after successfully locking
+        # the screen. We can't just pass after_lock(), we need an external interface.
+        xsecurelock -- "${0}" -A && after_unlock
+        ;;
+esac
+
+exit $?
