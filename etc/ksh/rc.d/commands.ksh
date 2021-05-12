@@ -31,7 +31,6 @@ news() {
     ${SHELL:-/bin/sh -i} "$@"
 }
 
-
 alias beet="sshchain fort beet"
 
 alias bc='bc -q'

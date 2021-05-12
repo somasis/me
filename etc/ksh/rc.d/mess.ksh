@@ -10,5 +10,5 @@ if command -v mess >/dev/null 2>&1;then
         CDPATH=~/mess/current/src:~/src cd "${@:-}"
     }
 
-    CDPATH="${CDPATH:+$CDPATH:}"~/mess:~/mess/$(date +%Y):~/mess/current
+    CDPATH="${CDPATH:+$CDPATH:}"~/mess:~/mess/current
 fi
