@@ -16,8 +16,8 @@ bspc config split_ratio 0.50            # Split newly created windows 50% by def
 
 # Window appearance
 bspc config normal_border_color     '#17181a'
-bspc config active_border_color     '#ef9324'
-bspc config focused_border_color    '#ef9324'
+bspc config active_border_color     '#dd2e4b'
+bspc config focused_border_color    '#dd2e4b'
 bspc config border_width 8
 bspc config window_gap 24
 
