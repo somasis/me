@@ -3,41 +3,48 @@
 [settings]
     screenchange-reload = true
 
-[bar/default]
-    dpi                 = ${xrdb:Xft.dpi:96}
+[defaults]
+    width = 100%
+    height = 32
+    fixed-center = true
 
-    width               = 100%
-    height              = 64
-    fixed-center        = true
-
-    background          = #ff2f343f
-    foreground          = #ffffff
+    background = #ff2f343f
+    foreground = #ffffff
 
     module-margin-left  = 8
-    margin-top          = 64
+    margin-top = 32
 
-    line-size           = 4
+    line-size = 4
 
-    wm-restack          = bspwm
+    wm-restack = bspwm
 
-    modules-left        = bspwm title
-    ; modules-center      = clock
-    modules-right       = player events articles mail updates power
+    font-0 = "forkawesome:style=regular:size=11;2"
+    font-1 = "forkawesome:style=solid:size=11;2"
+    font-2 = "sans-serif:style=regular:size=11;4"
+    font-3 = "sans-serif:style=bold:size=11;4"
+    font-4 = "sans-serif:style=black:size=11;4"
+    font-5 = "monospace:style=regular:size=11;4"
+    font-6 = "monospace:style=bold:size=11;4"
+    font-7 = "emoji:style=regular:scale=5;5"
+    font-8 = "Noto Sans CJK JP:style=regular:size=10;4"
 
-    font-0              = "forkawesome:style=regular:size=11;2"
-    font-1              = "forkawesome:style=solid:size=11;2"
-    font-2              = "sans-serif:style=regular:size=11;4"
-    font-3              = "sans-serif:style=bold:size=11;4"
-    font-4              = "sans-serif:style=black:size=11;4"
-    font-5              = "monospace:style=regular:size=11;4"
-    font-6              = "monospace:style=bold:size=11;4"
-    font-7              = "emoji:style=regular:scale=5;5"
-    font-8              = "Noto Sans CJK JP:style=regular:size=10;4"
+[bar/primary]
+    inherit = defaults
 
-    tray-detatched      = false
-    tray-position       = right
-    tray-padding        = 4
-    tray-maxsize        = 32
+    modules-left = bspwm title
+    modules-right = player events articles mail updates power
+
+    tray-detatched = false
+    tray-position = right
+    tray-padding = 4
+    tray-maxsize = 16
+
+[bar/secondary]
+    inherit = defaults
+    monitor = ${env:POLYBAR_MONITOR:}
+
+    modules-left = bspwm title
+    modules-right = player
 
 [module/updates]
     type        = custom/script
@@ -48,7 +55,7 @@
 
 [module/power]
     type        = custom/script
-    exec        = polybar-power
+    exec        = power -f
     tail        = true
 
 [module/bspwm]
@@ -61,31 +68,10 @@
     ws-icon-3 = "4"
     ws-icon-4 = "5"
 
-    format = "<label-state> <label-mode> "
+    format = "<label-state>"
 
-    label-monocle = 
-    label-tiled = t
-    label-fullscreen = 
-    label-floating = 
-    label-pseudotiled = t
-    label-locked = 
-    label-sticky = 
-    label-private = 
-    label-locked-foreground = #654ea7
-    label-sticky-foreground = #654ea7
-    label-private-foreground = #654ea7
-    label-focused-foreground = #ffffff
     label-focused-background = #4084d6
-
-[module/clock]
-    type = custom/script
-    tail = true
-    exec = polybar-clock
-    click-left = raise '^ikhal$' terminal tkhal &
-
-    format = <label>
-    label = %output%
-    label-font = 5
+    label-urgent-background = #cf4342
 
 [module/events]
     type            = custom/script
@@ -110,7 +96,6 @@
     type            = custom/script
     exec            = polybar-articles
     click-left      = raise '^newsboat$' terminal newsboat &
-
     tail            = true
 
 [module/mail]
@@ -118,7 +103,7 @@
     exec            = polybar-mail
     click-left      = raise '^aerc$' aerc &
 
-    # FIXME: this interval shouldn't be needed, does `polybar-mail-count` not react properly?
+    # FIXME: this interval shouldn't be needed, does `polybar-mail` not react properly?
     tail            = true
     interval        = 900
 
