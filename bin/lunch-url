@@ -4,8 +4,8 @@ set -u
 
 # ytdata JQ_ARGS...
 ytdata() {
-    [ -s "${ytdata}" ] || youtube-dl -j "${url}" > "${ytdata}"
-    jq "$@" < "${ytdata}"
+    [ -s "${ytdata}" ] || youtube-dl -j "${url}" >"${ytdata}"
+    jq "$@" <"${ytdata}"
 }
 
 if [ "$#" -gt 1 ]; then
@@ -13,7 +13,7 @@ if [ "$#" -gt 1 ]; then
         lunch-url "$1"
         e=$?
         case "$e" in
-            0|55)   : ;;
+            0 | 55) : ;;
             *)      exit $e ;;
         esac
         shift
@@ -32,7 +32,7 @@ url_pretty="${url_unique}"
 url_stream=false
 
 case "${url_unique}" in
-    youtube.com/watch\?*v=*|youtu.be/*)
+    youtube.com/watch\?*v=* | youtu.be/*)
         choices="media_player browser"
         url_stream=true
         url_pretty=$(ytdata "\"youtube: \" + .title")

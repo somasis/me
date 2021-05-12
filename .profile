@@ -18,7 +18,7 @@ export XDG_LIB_HOME=~/lib
 # path - Set PATH variables.
 
 case "${PATH}" in
-    "${XDG_BIN_HOME}":|*:"${XDG_BIN_HOME}"|*:"${XDG_BIN_HOME}":*) : ;;
+    "${XDG_BIN_HOME}": | *:"${XDG_BIN_HOME}" | *:"${XDG_BIN_HOME}":*) : ;;
     *)
         export PATH="${XDG_BIN_HOME}":"${PATH}"
         ;;
@@ -36,8 +36,7 @@ _sh="${_sh#-}"
 
 unset _sh
 
-if [ "$(tty)" = /dev/tty1 ] && [ -z "${DISPLAY}" ];then
+if [ "$(tty)" = /dev/tty1 ] && [ -z "${DISPLAY}" ]; then
     eval $(dbus-launch --sh-syntax)
     exec sx
 fi
-

@@ -5,21 +5,21 @@ xset q | grep -q 'DPMS is Enabled' && screensaver=Disable
 
 if [ $# -eq 0 ]; then
     printf '%s\0icon\x1f%s\n' \
-        "Sleep"                         "system-suspend"        \
-        "Lock screen"                   "system-lock-screen"    \
-        "Logout"                        "system-log-out"        \
-        "Power off"                     "system-shutdown"       \
-        "Reboot"                        "system-reboot"         \
+        "Sleep"                         "system-suspend" \
+        "Lock screen"                   "system-lock-screen" \
+        "Logout"                        "system-log-out" \
+        "Power off"                     "system-shutdown" \
+        "Reboot"                        "system-reboot" \
         "${screensaver} screensaver"    ""
     exit
 fi
 
 exec >/dev/null 2>&1
 case "${1}" in
-    "Sleep"*)               systemctl suspend ;;
-    "Lock screen"*)         xsecurelockd -l ;;
-    "Logout"*)              kill $(cat "${XDG_RUNTIME_DIR}"/catsitd-xorg-somasis.pid) ;;
-    "Power off"*)           doas poweroff ;;
-    "Reboot"*)              doas reboot ;;
-    "${screensaver} screensaver"*) xset-dpms-toggle ;;
+    "Sleep"*)                       systemctl suspend ;;
+    "Lock screen"*)                 xsecurelockd -l ;;
+    "Logout"*)                      kill $(cat "${XDG_RUNTIME_DIR}"/catsitd-xorg-somasis.pid) ;;
+    "Power off"*)                   doas poweroff ;;
+    "Reboot"*)                      doas reboot ;;
+    "${screensaver} screensaver"*)  xset-dpms-toggle ;;
 esac

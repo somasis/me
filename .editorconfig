@@ -11,3 +11,4 @@ max_line_length         = 100
 # <https://github.com/mvdan/sh/issues/664>
 binary_next_line        = true
 switch_case_indent      = true
+keep_padding            = true

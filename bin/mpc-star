@@ -37,7 +37,7 @@ convert_rating_to_num() {
         3)      rating=1.5    ;;
         2)      rating=1      ;;
         1)      rating=0.5    ;;
-        0|'')   rating=0      ;;
+        0 | '') rating=0      ;;
     esac
 
     printf '%s\n' "${rating}"
@@ -56,19 +56,19 @@ else
 fi
 
 rating="${1:-0}"
-mpc_rating=$(expr "${rating}" + "${rating}")
+mpc_rating=$((rating * 2))
 mpc sticker "$(mpc current -f '%file%')" set rating "${mpc_rating}"
 song=$(mpc current -f "[%artist% - ]%title%")
 
-if [ "${rating}" -gt 0 ];then
+if [ "${rating}" -gt 0 ]; then
     stars=
-    for i in $(seq 1 "${rating}");do
+    for i in $(seq 1 "${rating}"); do
         stars="${stars}★"
     done
 fi
 
-if [ "${#stars}" -ne 5 ];then
-    while [ $(printf '%s' "${stars}" | wc -m) -le 6 ];do
+if [ "${#stars}" -ne 5 ]; then
+    while [ $(printf '%s' "${stars}" | wc -m) -le 6 ]; do
         stars="${stars}☆"
     done
     stars="${stars:0:5}"
