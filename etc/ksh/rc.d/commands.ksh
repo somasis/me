@@ -39,7 +39,11 @@ alias ascii.town='ssh play@ascii.town'
 alias 2048='ssh -t play@ascii.town 2048'
 alias snake='ssh -t play@ascii.town snake'
 
-alias grep='grep --color=auto'
+command -v yay >/dev/null 2>&1 && alias yaync='yay --noconfirm'
 
-alias g='grep -Er --exclude-dir=".*"'
+alias g='find ./ -type f \! -path "*/.*/*" -print0 | xe -0 -N0 grep'
 
+if command -v colordiff >/dev/null 2>&1; then
+    alias diff='colordiff'
+    command -v dwdiff >/dev/null 2>&1 && wdiff() { command dwdiff "$@" | colordiff --difftype=wdiff; }
+fi
