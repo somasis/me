@@ -4,17 +4,28 @@
     monitor = 0
     follow = mouse
 
+    notification_height = 32
+
     mouse_middle_click = do_action
 
-    geometry = "1920x16+960"
-    notification_height = 64
+    alignment = left
+
     horizontal_padding = 0
     padding = 0
     icon_position = left
-    min_icon_size = 64
-    max_icon_size = 64
+    min_icon_size = 32
+    max_icon_size = 32
 
     shrink = false
+    horizontal_padding = 0
+    padding = 0
+    text_icon_padding = 8
+
+    progress_bar = false
+    progress_bar_height = 2
+    progress_bar_min_width = 960
+    progress_bar_max_width = 960
+    progress_bar_frame_width = 1
 
     frame_color = "#ffffff"
     frame_width = 0
@@ -35,8 +46,6 @@
     markup = full
 
     format = "<span font="sans-serif Heavy 11">%s</span> %b %p"
-
-    alignment = center
 
     # Show age of message if message is older than show_age_threshold seconds.
     show_age_threshold = 30

@@ -1,4 +1,4 @@
-Xft.dpi:        192
+Xft.dpi:        96
 Xft.antialias:  1
 Xft.rgba:       none
 Xft.hinting:    1
@@ -7,7 +7,7 @@ Xft.autohint:   0
 Xft.lcdfilter:  lcddefault
 
 Xcursor.theme:  Hackneyed
-Xcursor.size:   48
+Xcursor.size:   24
 
 ! xterm(1) settings
 xterm*termName:             xterm-256color

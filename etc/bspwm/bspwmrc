@@ -3,7 +3,14 @@
 # Fix the fallback `X` cursor on root window
 xsetroot -cursor_name left_ptr
 
-bspc monitor -d 1 2 3 4 5
+for monitor in $(xrandr -q | grep " connected" | cut -d ' ' -f1); do
+    bspc monitor "${monitor}" -d 1 2 3 4 5
+done
+
+# Multihead settings
+bspc config remove_disabled_monitors true
+bspc config remove_unplugged_monitors true
+bspc config merge_overlapping_monitors true
 
 # Layout specific settings
 bspc config borderless_monocle true     # Remove borders of windows in the monocle layout
@@ -18,8 +25,8 @@ bspc config split_ratio 0.50            # Split newly created windows 50% by def
 bspc config normal_border_color     '#17181a'
 bspc config active_border_color     '#dd2e4b'
 bspc config focused_border_color    '#dd2e4b'
-bspc config border_width 8
-bspc config window_gap 24
+bspc config border_width 4
+bspc config window_gap 16
 
 bspc config automatic_scheme alternate
 

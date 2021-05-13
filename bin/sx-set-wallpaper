@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec xwallpaper --output all --zoom "${XDG_CONFIG_HOME:-${HOME}/.config}"/X11/wallpaper-zoom

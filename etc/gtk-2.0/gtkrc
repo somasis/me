@@ -6,9 +6,6 @@ gtk-menu-images = 1
 gtk-button-images = 0
 gtk-toolbar-style = GTK_TOOLBAR_BOTH_HORIZ
 
-gtk-cursor-theme-name = "Hackneyed"
-gtk-cursor-theme-size = 48
-
 gtk-can-change-accels = 0
 gtk-enable-primary-paste = false
 

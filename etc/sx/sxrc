@@ -11,19 +11,15 @@ importas -D ${HOME}/.cache XDG_CACHE_HOME XDG_CACHE_HOME
 export XDG_SESSION_TYPE x11
 export DESKTOP_SESSION bspwm
 
+foreground { autorandr -c }
+
 # Read in Xresources.
-foreground {
-    xrdb -merge ${XDG_CONFIG_HOME}/X11/xresources
-}
+foreground { xrdb -merge ${XDG_CONFIG_HOME}/X11/xresources }
 
 # Set wallpaper.
-foreground {
-    xwallpaper --zoom ${XDG_CONFIG_HOME}/X11/wallpaper-zoom
-}
+foreground { sx-set-wallpaper }
 
 # Disable touchscreen.
-foreground {
-    xinput-toggle -d "Wacom HID 50FD Finger touch"
-}
+foreground { xinput disable "Wacom HID 50FD Finger" }
 
 catsitd-xorg -d
