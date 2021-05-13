@@ -1,0 +1,181 @@
+# Window management: change to desktop {1-10} on focused monitor
+super + {1-9,0}
+    bspc desktop -f focused:'^{1-9,10}'
+
+# Window management: send focused node to desktop {1-10} on focused monitor
+super + shift + {1-9,0}
+    bspc node -d focused:'^{1-9,10}'
+
+# Window management: send focused node to focused desktop on monitor {1-10}
+super + ctrl + {1-9,0}
+    bspc node -d ^{1-9,10}:focused
+
+# Utility: locate mouse - ctrl + super + esc
+super + Delete
+    ratelimit 1 xlocatemouse
+
+# Command: open launcher - super + grave, super + return
+{super + grave, super + Return}
+    rofi -show combi
+
+# Command: open interpreter - alt + f2, super + shift + return
+{alt + F2, super + shift + Return}
+    rofi -show run
+
+# Window management: switch to {next,previous} window - super + {_,shift} + a
+super + {_,shift} + a
+    bspc node -f {next,prev}.!hidden.window
+
+# Window management: rotate desktop layout - super + r
+super + {_,shift} + r
+    bspc node @/ -R {90,-90}
+
+# Utility: color picker - super + g
+super + g
+    grabc-clip
+
+# Utility: emoji picker - super + e
+super + e
+    rofi-emoji -c
+
+# Utility: ssh host picker - super + s
+super + s
+    rofi -show ssh
+
+# Shortcut: discord - super + d
+super + d
+    raise -v "^(.+ - Discord|Discord)$" discord
+
+# Shortcut: irc - super + c
+super + c
+    raise "^catgirl - .+$" terminal catgirls
+
+# Shortcut: file manager - super + p
+super + p
+    lunch -o file_manager
+
+# Shortcut: copy password - super + shift + p
+super + shift + p
+    passmenu
+
+# Command: terminal emulator - super + b
+super + b
+    terminal
+
+# Command: terminal emulator in working directory of focused window - super + shift + b
+super + shift + b
+    cd "$(readlink /proc/$(pgrep -P $(xdotool getactivewindow getwindowpid) | tail -n1)/cwd)"; exec terminal
+
+# Command: terminal emulator (chroot in mutiny) - super + alt + b
+super + alt + b
+    terminal doas chroot /mnt/mutiny su - somasis
+
+## Window management: manually position new window {north,east,south,west,cancel} - super + n: {a,s,d,f,g}
+#super + n: {a,s,d,f,g}
+#    exec bspc node -p {north,east,south,west,cancel}
+
+# Command: task manager - super + alt + delete
+super + alt + Delete
+    terminal htop
+
+# Music: toggle, stop, previous, next, toggle random, toggle consume - ctrl + alt + {down,up,left,right,r,c}
+ctrl + alt + {Down,Up,Left,Right,r,c}
+    mpc{-toggle, stop, cdprev, next, random, consume}
+    #audtool playback-playpause,playback-stop,playlist-reverse,playlist-advance,playlist-shuffle-toggle
+
+# Music: set rating - ctrl + alt + {0,1,2,3,4,5}
+ctrl + alt + {0,1,2,3,4,5}
+    mpc-star {0,1,2,3,4,5}
+
+# Hardware: screen invert toggle - super + i
+super + i
+    ratelimit -e sxhkd 1 xrandr-invert-colors
+
+# Hardware: screen backlight {increase, decrease} - brightness{up,down}
+XF86MonBrightness{Up,Down}
+    adjbacklight -a -s {+,-}5%
+super + {F12,F11}
+    adjbacklight -a -s {+,-}5%
+
+# Hardware: {raise, lower, mute, mute microphone} audio - audio{volumeup,volumedown,mute,micmute}
+XF86Audio{Mute,LowerVolume,RaiseVolume,MicMute}
+    ponymix -N {--output toggle,--output decrease 5,--output increase 5,--input toggle}
+
+super + {F1,F2,F3,F4}
+    ponymix -N {--output toggle,--output decrease 5,--output increase 5,--input toggle}
+
+# Session: lock screen - super + l
+super + l
+    xsecurelockd -l
+
+# Session: toggle screensaver on/off - super + shift + l
+super + shift + l
+    xset-dpms-toggle
+
+# Session: logout menu - super + shift + escape
+super + shift + Escape
+    rofi -show session
+
+# Session: reload environment - super + escape
+super + Escape
+    sxhkd-restart
+
+# Screenshot: take screenshot of desktop - print
+Print
+    mkdir -p ~/mess/current/screenshots \
+        && maim -u -m 8 ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
+
+# Screenshot: take screenshot of window/selection - super + print
+super + Print
+    mkdir -p ~/mess/current/screenshots \
+        && date=$(date +%Y%m%d_%H%M%S) \
+        && maim -u -s -l -c 0.3,0.4,0.6,0.4 -m 8 ~/mess/current/screenshots/${date}.png
+
+# Screenshot: take screenshot of region - super + shift + print
+super + shift + Print
+    mkdir -p ~/mess/current/screenshots \
+        && date=$(date +%Y%m%d_%H%M%S) \
+        && maim -u -s -l -c 0.3,0.4,0.6,0.4 -m 8 ~/mess/current/screenshots/${date}.png
+
+# Window management: {close, kill} window - super + w, super + shift + w
+super + {_,shift} + w
+    bspc node -{c,k}
+
+# Window management: set desktop layout to {tiled, monocle} - super + m
+super + m
+    bspc desktop -l next
+
+# Window management: set window state to {tiled, pseudo-tiled, floating, fullscreen} - super + {t,shift + t,f,m}
+super + {t,shift + t,f,m}
+    bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# Window management: move window to window {left, down, up, right} of current window - super + shift + {left,down,up,right}
+super + shift + {Left,Down,Up,Right}
+    bspc node -s {west,south,north,east}
+
+# Window management: focus {previous, next} window on the current desktop - super + {left,right}
+super + {Left,Right}
+    bspc node -f {prev,next}.local.!hidden.window
+
+# Notifications: close most recent notification - super + /
+super + slash
+    dunstctl close
+
+# Notifications: redisplay last closed notification - super + shift + /
+super + shift + slash
+    dunstctl history-pop
+
+# Notifications: show actions for notification - super + ctrl + return
+super + ctrl + slash
+    dunstctl context
+
+super + {button4,button5}
+    bspc node -f {prev,next}.!hidden.window
+
+# Hardware: touchpad enable/disable - super + f6
+super + F6
+    xinput-notify "ELAN0651:00 04F3:3052 Touchpad"
+
+# Hardware: touchscreen enable/disable - super + shift + f6
+super + shift + F6
+    xinput-notify "Wacom HID 50FD Finger"
