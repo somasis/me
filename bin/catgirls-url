@@ -1,0 +1,14 @@
+#!/bin/sh
+
+url="${1}"
+protocol="${url%%://*}"
+host="${url##$protocol://}"; host="${host%%/*}"; host="${host%:*}"
+channel="${url#$protocol://$host/}"
+
+case "${channel}" in
+    [#&]*) : ;;
+    *) channel="#${channel}" ;;
+esac
+
+catgirls new-window -- catgirls -c -h "${host}"
+catgirls
