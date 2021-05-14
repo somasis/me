@@ -17,6 +17,9 @@
 [init]
 	defaultBranch = main
 
+[interactive]
+	singlekey = true
+
 [add "interactive"]
 	# Use the built-in version of `add -p` rather than the Perl script.
 	useBuiltin = true
