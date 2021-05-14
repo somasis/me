@@ -120,22 +120,27 @@ super + shift + Escape
 super + Escape
     sxhkd-restart
 
-# Screenshot: take screenshot of desktop - print
+# Screenshot: take screenshot of current monitor - print
 Print
     mkdir -p ~/mess/current/screenshots \
-        && maim -u -m 8 ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
+        && maim -g $(current-monitor-dimensions) ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
+
+# Screenshot: take screenshot of all monitors - print
+alt + Print
+    mkdir -p ~/mess/current/screenshots \
+        && maim ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
 
 # Screenshot: take screenshot of window/selection - super + print
 super + Print
     mkdir -p ~/mess/current/screenshots \
         && date=$(date +%Y%m%d_%H%M%S) \
-        && maim -u -s -l -c 0.3,0.4,0.6,0.4 -m 8 ~/mess/current/screenshots/${date}.png
+        && maim -s -b 4 -p -4 -l -c 0.2,0.45,0.7,0.25 ~/mess/current/screenshots/${date}.png
 
 # Screenshot: take screenshot of region - super + shift + print
 super + shift + Print
     mkdir -p ~/mess/current/screenshots \
         && date=$(date +%Y%m%d_%H%M%S) \
-        && maim -u -s -l -c 0.3,0.4,0.6,0.4 -m 8 ~/mess/current/screenshots/${date}.png
+        && maim -s -b 4 -p -4 -l -c 0.2,0.45,0.7,0.25 ~/mess/current/screenshots/${date}.png
 
 # Window management: {close, kill} window - super + w, super + shift + w
 super + {_,shift} + w
