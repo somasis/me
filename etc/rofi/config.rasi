@@ -1,0 +1,32 @@
+configuration {
+    modi: "combi,window,run,ssh,session:rofi-session";
+    width: 100;
+    lines: 24;
+    columns: 3;
+    font: "monospace 11";
+    bw: 0;
+    location: 2;
+    padding: 0;
+    fixed-num-lines: false;
+    show-icons: true;
+    terminal: "terminal";
+    case-sensitive: false;
+    eh: 1;
+    auto-select: false;
+    combi-modi: "window,run,ssh,session";
+    click-to-exit: true;
+    show-match: true;
+    theme: "Arc";
+    display-window: "window";
+    display-run: "run";
+    display-drun: "applications";
+    display-combi: "rofi";
+    kb-accept-entry: "Return,KP_Enter";
+    kb-move-char-back: "Left";
+    kb-move-char-forward: "Right";
+    kb-move-end: "Alt+End";
+    kb-move-front: "Alt+Home";
+    kb-move-word-back: "Control+Left";
+    kb-move-word-forward: "Control+Right";
+    kb-remove-word-back: "Alt+BackSpace";
+}
