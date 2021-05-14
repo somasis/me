@@ -8,7 +8,7 @@
     height = 32
     fixed-center = true
 
-    background = #ff2f343f
+    background = #2f343f
     foreground = #ffffff
 
     margin-top = 32
@@ -78,7 +78,7 @@
     label-urgent-padding = 2
     label-empty-padding = 2
 
-    label-focused-background = #4084d6
+    label-focused-background = #5294e2
     label-urgent-background = #cf4342
 
 [module/events]
@@ -133,4 +133,4 @@
     label-font      = 5
     label-padding   = 4
     label-foreground = #ffffff
-    label-background = #4084d6
+    label-background = #5294e2
