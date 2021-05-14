@@ -11,7 +11,6 @@
     background = #ff2f343f
     foreground = #ffffff
 
-    module-margin-left  = 8
     margin-top = 32
 
     line-size = 4
@@ -20,13 +19,13 @@
 
     font-0 = "forkawesome:style=regular:size=11;2"
     font-1 = "forkawesome:style=solid:size=11;2"
-    font-2 = "sans-serif:style=regular:size=11;4"
-    font-3 = "sans-serif:style=bold:size=11;4"
-    font-4 = "sans-serif:style=black:size=11;4"
-    font-5 = "monospace:style=regular:size=11;4"
-    font-6 = "monospace:style=bold:size=11;4"
-    font-7 = "emoji:style=regular:scale=5;5"
-    font-8 = "Noto Sans CJK JP:style=regular:size=10;4"
+    font-2 = "sans-serif:style=regular:size=11;3"
+    font-3 = "sans-serif:style=bold:size=11;3"
+    font-4 = "sans-serif:style=black:size=11;3"
+    font-5 = "monospace:style=regular:size=11;3"
+    font-6 = "monospace:style=bold:size=11;3"
+    font-7 = "emoji:style=regular:scale=5;4"
+    font-8 = "Noto Sans CJK JP:style=regular:size=10;2"
 
 [bar/primary]
     inherit = defaults
@@ -44,7 +43,6 @@
     monitor = ${env:POLYBAR_MONITOR:}
 
     modules-left = bspwm title
-    modules-right = player
 
 [module/updates]
     type        = custom/script
@@ -62,13 +60,22 @@
     type = internal/bspwm
     enable-scroll = true
 
-    ws-icon-0 = "1"
-    ws-icon-1 = "2"
-    ws-icon-2 = "3"
-    ws-icon-3 = "4"
-    ws-icon-4 = "5"
+    ws-icon-0 = 1;
+    ws-icon-1 = 2;
+    ws-icon-2 = 3;
+    ws-icon-3 = 4;
+    ws-icon-4 = 5;
 
-    format = "<label-state>"
+    format = <label-state>
+
+    label-focused = "%name%"
+    label-occupied = "%name%"
+    label-urgent = "%name%"
+    label-empty = "%name%"
+    label-focused-padding = 2
+    label-occupied-padding = 2
+    label-urgent-padding = 2
+    label-empty-padding = 2
 
     label-focused-background = #4084d6
     label-urgent-background = #cf4342
@@ -89,6 +96,8 @@
     enable-scroll   = true
     scroll-up       = mpc volume +5
     scroll-down     = mpc volume -5
+
+    format-padding = 4
 
     tail            = true
 
