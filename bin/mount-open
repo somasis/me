@@ -4,17 +4,19 @@
 
 usage() {
     cat >&2 <<EOF
-usage: ${0##*/} [-b base] [-m mount_program] [-t] SOURCE...
+usage: ${0##*/} [-b base] [-m mount_program] [-u umount_program] [-t] SOURCE...
 EOF
 }
 
 base="${PWD}"
 mount="mount"
+umount="umount"
 toggle=false
-while getopts :b:m:t arg >/dev/null 2>&1; do
+while getopts :b:m:u:t arg >/dev/null 2>&1; do
     case "${arg}" in
         b) base="${OPTARG}" ;;
         m) mount="${OPTARG}" ;;
+        u) umount="${OPTARG}" ;;
         t) toggle=true ;;
         *) usage ;;
     esac
@@ -26,7 +28,7 @@ while [ "$#" -gt 0 ]; do
     dir="${XDG_RUNTIME_DIR}"/mnt/"${base}"/"${1##*/}"
 
     if [ "${toggle}" = true ] && mountpoint -q "${dir}" >/dev/null 2>&1; then
-        if umount "${dir}"; then
+        if ${umount} "${dir}"; then
             notify-send -u low "mount" "Unmounted '$1' successfully."
         else
             notify-send -u critical "mount" "Failed to unmount '$1', is it busy?"
@@ -47,4 +49,4 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
-[ "${e}" -gt 0 ] && exit $?
+[ "${e}" -eq 0 ] || exit $e

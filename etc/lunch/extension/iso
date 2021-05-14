@@ -1,0 +1,1 @@
+mount-open -b iso -m "doas mount -o loop" -u "doas umount"
