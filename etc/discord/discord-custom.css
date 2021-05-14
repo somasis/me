@@ -1,0 +1,199 @@
+/* Square everything */
+*, *::-webkit-scrollbar-thumb, *::-webkit-scrollbar-track {
+    border-radius: 0px !important;
+}
+
+/* Use system fonts */
+::placeholder, body, button, input, select, textarea {
+    font-family: sans;
+}
+
+/* Disable animations */
+*, :before, :after {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* IRC-style username display */
+.compact-T3H92H .username-1A8OIy::before, .compact-2zYMSo.container-3-pyIM .anchor-3Z-8Bb::before { content: '<'; }
+.compact-T3H92H .username-1A8OIy::after, .compact-2zYMSo.container-3-pyIM .anchor-3Z-8Bb::after { content: '>'; }
+.compact-T3H92H .username-1A8OIy:hover, .compact-2zYMSo.container-3-pyIM > .anchor-3Z-8Bb:hover { text-decoration: none !important; }
+.compact-T3H92H .headerText-3Uvj1Y, .cozy-3raOZG .headerText-3Uvj1Y { margin-right: .25rem; }
+
+/* Align compact timestamps */
+.compact-T3H92H .contents-2mQqc9 {
+    text-indent: 0px !important;
+    margin-left: 0px !important;
+    padding-left: 4.25rem !important;
+    text-indent: -4.25rem !important;
+}
+
+.compact-T3H92H.wrapper-2a6GCs {
+    padding-left: 1rem !important;
+    margin-left: 0rem !important;
+}
+
+/* Always show timestamps */
+.compact-T3H92H .header-23xsNx .timestampVisibleOnHover-2bQeI4 {
+    opacity: 1 !important;
+}
+
+.compact-T3H92H .header-23xsNx .timestamp-3ZCmNB {
+    font-size: 1rem !important;
+    width: 4rem !important;
+    margin: 0px !important;
+    text-align: initial;
+}
+
+/* Align join message icons with timestamps */
+.compact-2zYMSo.container-3-pyIM .iconContainer-3GkGRf {
+    margin-right: 7.5px;
+    margin-left: 11px;
+}
+
+.compact-2zYMSo.container-3-pyIM .timestamp-3ZCmNB {
+    display: none;
+}
+
+/* Monospace chat font */
+.chat-3bRxxu .compact-T3H92H,
+.form-2fGMdU {
+    font-family: monospace !important;
+}
+
+/* Chat box styling */
+.form-2fGMdU {
+    padding: 0px;
+    min-height: 48px;
+    background: #40444b;
+    background: var(--background-primary);
+}
+
+.form-2fGMdU .channelTextArea-rNsIhG {
+    margin-bottom: 0px;
+}
+
+.form-2fGMdU .inner-MADQqc {
+    margin: 0px;
+    margin-top: 4.5px;
+    margin-bottom: 4.5px;
+}
+
+.theme-dark .form-2fGMdU:before {
+    display: none;
+}
+
+.typing-2GQL18 {
+    margin-left: -.25rem;
+    margin-bottom: -.25rem;
+    font-size: .65rem;
+}
+
+.ellipsis-19qdx6 {
+    display: none !important;
+}
+
+.compact-T3H92H .container-1ov-mD {
+    padding-left: 4.25rem;
+    font-size: 1rem;
+    padding-bottom: 0;
+}
+
+.scroller-2LSbBU {
+    margin-bottom: -4px;
+}
+
+.scrollerSpacer-avRLaA {
+    height: 12px;
+}
+
+.compact-T3H92H.wrapper-2a6GCs, .cozy-3raOZG.wrapper-2a6GCs {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.scrollableContainer-2NUZem {
+    background: var(--background-primary);
+}
+
+/* Jumbo emojis in compact mode */
+.compact-T3H92H .messageContent-2qWWxC .emoji.jumboable {
+    width: 3rem;
+    height: 3rem;
+    min-height: 3rem;
+    vertical-align: text-top;
+}
+
+/* Hide Nitro gift button */
+.buttons-3JBrkn > button:first-child {
+    display: none;
+}
+
+.webkit-HjD9Er .buttons-3JBrkn {
+    margin-right: .5rem;
+}
+
+.tooltip-2QfLtc {
+    max-width: 400px;
+}
+
+/* Minimal divider (remove "NEW") */
+.unreadPill-2HyYtt {
+    display: none;
+}
+
+/* Make code blocks match chat text. */
+.markup-2BOw-j pre {
+    max-width: initial;
+}
+
+.markup-2BOw-j code, .codeView-1JPDeA {
+    font-size: initial;
+    line-height: 1.25;
+}
+
+/* Hide reply dash */
+.compact-T3H92H .repliedMessage-VokQwo:before {
+    display: none;
+}
+
+/* Brighten messages on hover */
+.message-2qnXI6:hover {
+    background-color: rgba(255,255,255, .05);
+}
+
+/* Color-code mentions, brighten on hover */
+.message-2qnXI6.mentioned-xhSam7:hover {
+    background-color: rgba(250,166,26,.1);
+}
+
+/* Color-code replies, brighten on hover */
+.message-2qnXI6.hasReply-34In-r {
+    background-color: rgba(114,137,218,.05);
+}
+
+.message-2qnXI6.hasReply-34In-r:hover {
+    background-color: rgba(114,137,218,.1);
+}
+
+/* Color-code reply+mention, brighten on hover */
+.message-2qnXI6.hasReply-34In-r.mentioned-xhSam7 {
+    background-color: rgba(250,166,26,.05);
+}
+
+.message-2qnXI6.hasReply-34In-r.mentioned-xhSam7:hover {
+    background-color: rgba(250,166,26,.1);
+}
+
+/* Make reaction buttons appear against chat background */
+.reaction-1hd86g,
+.reaction-1hd86g:hover {
+    background: rgba(0,0,0,0);
+    border: 0px;
+    border-bottom: 2px solid rgba(0,0,0,0);
+}
+
+.reaction-1hd86g.reactionMe-wv5HKu {
+    background: rgba(0,0,0,0);
+    border-bottom: 2px solid rgba(114,137,218,1);
+}
