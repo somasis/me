@@ -1,0 +1,50 @@
+#!/bin/sh
+
+: "${XDG_RUNTIME_DIR:=/run/user/$(id -un)}"
+
+usage() {
+    cat >&2 <<EOF
+usage: ${0##*/} [-b base] [-m mount_program] [-t] SOURCE...
+EOF
+}
+
+base="${PWD}"
+mount="mount"
+toggle=false
+while getopts :b:m:t arg >/dev/null 2>&1; do
+    case "${arg}" in
+        b) base="${OPTARG}" ;;
+        m) mount="${OPTARG}" ;;
+        t) toggle=true ;;
+        *) usage ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+e=0
+while [ "$#" -gt 0 ]; do
+    dir="${XDG_RUNTIME_DIR}"/mnt/"${base}"/"${1##*/}"
+
+    if [ "${toggle}" = true ] && mountpoint -q "${dir}" >/dev/null 2>&1; then
+        if umount "${dir}"; then
+            notify-send -u low "mount" "Unmounted '$1' successfully."
+        else
+            notify-send -u critical "mount" "Failed to unmount '$1', is it busy?"
+            e=2
+        fi
+    elif mountpoint -q "${dir}" >/dev/null 2>&1; then
+        lunch -- "${dir}"
+    else
+        mkdir -p "${dir}"
+        if ${mount} "$1" "${dir}"; then
+            notify-send -u low "mount" "Mounted '$1' successfully."
+            lunch -- "${dir}"
+        else
+            notify-send -u critical "mount" "Failed to mount '$1'."
+            e=3
+        fi
+    fi
+    shift
+done
+
+[ "${e}" -gt 0 ] && exit $?
