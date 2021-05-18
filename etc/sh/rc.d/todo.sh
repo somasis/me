@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 
 # Personal todo.txt aliases.
 alias todo-add='list-add -f ~/sync/todo/todo.txt'
@@ -48,3 +48,8 @@ alias trip='trip-query -U'
 alias moving-query='todo-query -l moving'
 alias moving-add='todo-add -l moving'
 alias moving='moving-query -U'
+
+# Queue list.
+alias queue-query='todo-query -l queue'
+alias queue-add='todo-add -l queue'
+alias queue='queue-query -U'
