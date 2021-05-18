@@ -10,7 +10,7 @@ current
 
 while mpc >/dev/null 2>&1; do
     mpc idle player >/dev/null 2>&1
-    if [ $(mpc status | wc -l) -eq 3 ];then
+    if [ $(mpc status | wc -l) -eq 3 ]; then
         current
     else # stopped, print an empty line and clear the module text
         printf '\n'

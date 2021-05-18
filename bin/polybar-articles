@@ -17,13 +17,14 @@ unread() {
             :
             ;;
         *)
-            printf '\n'
+            printf '\n'
             ;;
     esac
 }
 
-unread; sleep 1
+unread
+sleep 1
 while rwc -e "${XDG_CACHE_HOME:-~/.cache}"/newsboat/cache.db >/dev/null; do
-    unread; sleep 1
+    unread
+    sleep 1
 done
-
