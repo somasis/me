@@ -137,18 +137,18 @@
     format-padding  = 1
 
     # FIXME: this interval shouldn't be needed, does `polybar-mail` not react properly?
-    tail            = true
-    interval        = 900
+    tail     = true
+    interval = 900
 
 [module/title]
-    type            = custom/script
-    exec            = xtitle -is -t 90
-    click-right     = bspc node -c
-    enable-scroll   = true
-    scroll-down     = bspc node -f next.local.!hidden.window
-    scroll-up       = bspc node -f prev.local.!hidden.window
+    type             = custom/script
+    exec             = xtitle -is -t 90
+    click-right      = bspc node -c
+    enable-scroll    = true
+    scroll-down      = bspc node -f next.local.!hidden.window
+    scroll-up        = bspc node -f prev.local.!hidden.window
 
-    tail            = true
+    tail             = true
 
     label-padding    = 1
     label-foreground = #ffffff
