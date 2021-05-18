@@ -10,6 +10,13 @@
 	smtpserver = /bin/msmtp
 	annotate = true
 
+[url "https://github.com/"]
+	insteadOf = "gh:"
+[url "https://gitlab.com/"]
+	insteadOf = "gl:"
+[url "https://git.sr.ht/~"]
+	insteadOf = "srht:"
+
 # Command defaults.
 # See git-{command}(1) for details on each section.
 
