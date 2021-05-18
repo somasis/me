@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 # git - aliases to make working with git(1) smoother
 
 alias am='git am'
@@ -31,5 +31,5 @@ alias rebase='git rebase'
 alias reset='git reset'
 
 # Alias used for my `me` dotfiles repository.
-alias me='git --git-dir=~/src/me.git --work-tree=~'
+alias me='git --git-dir="${HOME}"/src/me.git --work-tree="${HOME}"'
 
