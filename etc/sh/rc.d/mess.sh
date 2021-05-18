@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 # mess - Set up `mess` integration.
 
 if command -v mess >/dev/null 2>&1;then
