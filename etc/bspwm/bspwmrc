@@ -36,3 +36,7 @@ bspc config pointer_action3 resize_corner   # Resize windows from corner during 
 
 # Window rules
 bspc rule -r '*'
+
+bspc rule -a Steam border=off
+bspc rule -a fl.exe border=off
+bspc rule -a "fl.exe:*:FL Studio 20" border=off
