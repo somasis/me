@@ -76,7 +76,4 @@ if [ "${#stars}" -ne 5 ]; then
     stars=$(printf '%s' "${stars}" | cut -c 1-5)
 fi
 
-echo "${stars}"
-echo "${rating}"
-
 notification mpc-star -u low -i multimedia-audio-player "mpc-star" "${song} ${stars}"
