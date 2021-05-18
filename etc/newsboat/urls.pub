@@ -20,7 +20,7 @@ https://www.uninformativ.de/blog/feeds/en.atom      blog computer
 https://maxice8.github.io/rss.xml                   blog computer
 https://www.somas.is/notes.atom                     blog me
 https://www.somas.is/rhizome.atom                   blog me
-https://waldon.blog/feed                            "~Chris Waldon" blog computer friend
+https://waldon.blog/feed                            "~Chris Waldon" blog computer
 https://dataswamp.org/~solene/rss.xml               blog computer
 https://www.landley.net/rss.xml                     "~Rob Landley" blog computer
 https://flak.tedunangst.com/rss                     "~Ted Unangst: flak" blog computer
@@ -61,6 +61,7 @@ https://ewontfix.com/feed.rss                   computer friend
 https://beepb00p.xyz/atom.xml                   computer
 https://onethingwell.org/rss                    computer tumblr
 https://www.srcbeat.com/index.xml               computer
+https://www.dgsiegel.net/rss                    computer
 
 # OpenStreetMap
 https://www.weeklyosm.eu/feed                   "~weeklyOSM" news map osm
