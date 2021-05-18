@@ -1,5 +1,5 @@
-#!/bin/ksh
-# aliases - See ksh(1).
+#!/bin/sh
+# aliases - See sh(1).
 
 # LC_COLLATE=C sorts uppercase before lowercase.
 alias ls='LC_COLLATE=C ls -AFlh'
