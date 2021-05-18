@@ -1,7 +1,0 @@
-#!/bin/ksh
-
-alias rsrc='. ~/.profile; . "${XDG_CONFIG_HOME}"/ksh/rc'
-
-for f in "${XDG_CONFIG_HOME}"/ksh/rc.d/*.ksh; do
-    [ -f "${f}" ] && . "${f}"
-done
