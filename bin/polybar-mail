@@ -2,7 +2,7 @@
 
 count() {
     count=$(mdirs ~/mail/*/INBOX | mlist -s | wc -l)
-    [ "${count}" -gt 0 ] && printf '\n' && return
+    [ "${count}" -gt 0 ] && printf '\n' && return
     printf '\n'
 }
 

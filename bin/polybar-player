@@ -1,6 +1,6 @@
 #!/bin/sh
 
-format=' [%artist% - ]%title%'
+format=' [%artist% - ]%title%'
 
 current() {
     mpc current ${format:+ -f "$format"} 2>/dev/null

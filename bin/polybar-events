@@ -2,6 +2,6 @@
 
 khal list \
     --day-format '' \
-    --format "$(printf '  {start-style}: {title}\n')" \
+    --format "$(printf ' {start-style}: {title}\n')" \
     now eod "$@" \
     | sed '/^  |->:.*/d; s/^No events$//; 1q'
