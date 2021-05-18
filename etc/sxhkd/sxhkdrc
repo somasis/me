@@ -80,7 +80,7 @@ super + alt + Delete
 
 # Music: toggle, stop, previous, next, toggle random, toggle consume - ctrl + alt + {down,up,left,right,r,c}
 ctrl + alt + {Down,Up,Left,Right,r,c}
-    mpc{-toggle, stop, cdprev, next, random, consume}
+    mpc{-toggle, stop, cdprev, next, random, consume} >/dev/null
     #audtool playback-playpause,playback-stop,playlist-reverse,playlist-advance,playlist-shuffle-toggle
 
 # Music: set rating - ctrl + alt + {0,1,2,3,4,5}
@@ -93,9 +93,10 @@ super + i
 
 # Hardware: screen backlight {increase, decrease} - brightness{up,down}
 XF86MonBrightness{Up,Down}
-    adjbacklight -a -s {+,-}5%
+    backlight {-a,-s} 5% >/dev/null
+
 super + {F12,F11}
-    adjbacklight -a -s {+,-}5%
+    backlight {-a,-s} 5% >/dev/null
 
 # Hardware: {raise, lower, mute, mute microphone} audio - audio{volumeup,volumedown,mute,micmute}
 XF86Audio{Mute,LowerVolume,RaiseVolume,MicMute}
