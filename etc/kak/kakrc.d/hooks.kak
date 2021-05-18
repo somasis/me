@@ -92,6 +92,11 @@ hook global -group user-write-sh WinSetOption filetype=sh %{
 
 }
 
+# roff(7).
+hook global -group user-write-troff WinSetOption filetype=troff %{
+    set-option window lintcmd %{ run() { mandoc -T lint -W warning "$1" | cut -d' ' -f1-; } && run }
+}
+
 # JSON.
 hook global -group user-write-json WinSetOption filetype=json %{
     set-option window formatcmd "jq --indent %opt{tabstop} ."

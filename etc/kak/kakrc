@@ -8,7 +8,7 @@ evaluate-commands %sh{
 plug "https://github.com/andreyorst/plug.kak"
 
 evaluate-commands %sh{
-    for f in "${XDG_CONFIG_HOME:-${HOME}/.config}"/kak/rc.d/*.kak; do
+    for f in "${XDG_CONFIG_HOME:-${HOME}/.config}"/kak/kakrc.d/*.kak; do
         [ -f "${f}" ] && printf 'source "%s"\n' "${f}"
     done
 }
