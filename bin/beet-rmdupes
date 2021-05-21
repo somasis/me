@@ -1,0 +1,23 @@
+#!/bin/sh
+
+n=
+while getopts :n arg >/dev/null 2>&1; do
+    case "${arg}" in
+        n)
+            n=n
+            ;;
+        ?)
+            :
+            ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
+find ~/audio/library// -type f -exec mimefilter -0 'audio/*' {} + \
+    | xe -j0 -0s ' \
+        f="${1}"; \
+        s="${f#*//}"; s="${s%.*}"; \
+        set -- ~/audio/lossless/"${s}".*; \
+        [ -e "$1" ] || printf "%s\0" "${f}" \
+    ' \
+    | xe -0 -N0 -v${n} rm
