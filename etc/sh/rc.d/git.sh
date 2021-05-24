@@ -13,7 +13,7 @@ alias amend='git commit -v --amend'
 alias clone='git clone -vv'
 alias push='git push -vv'
 alias pull='git pull --rebase -vv'
-alias status='git status --show-stash'
+alias status='git status --show-stash -sb'
 alias log='git log --patch-with-stat --summary -M -C -C'
 
 alias rbc='git rbc'
