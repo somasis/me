@@ -88,22 +88,29 @@ xterm*cursorOffTime:        500
 xterm*boldColors:           false
 
 !!! Colors
-xterm*foreground:   #ffffff
-xterm*background:   #17181a
-xterm*cursorColor:  #ffffff
-xterm*color0:       #4b4b4b
+xterm*color0:       #755f5f
 xterm*color1:       #cf4342
-xterm*color2:       #bdcd6a
+xterm*color2:       #acc044
 xterm*color3:       #ef9324
 xterm*color4:       #438dc5
 xterm*color5:       #c54d7a
 xterm*color6:       #499baf
 xterm*color7:       #d8c7c7
-xterm*color8:       #777777
+xterm*color8:       #937474
 xterm*color9:       #fe6262
-xterm*color10:      #d7f0a4
-xterm*color11:      #fae56d
+xterm*color10:      #c4e978
+xterm*color11:      #f8dc3c
 xterm*color12:      #96c7ec
 xterm*color13:      #f97cac
 xterm*color14:      #30d0f2
 xterm*color15:      #e0d6d6
+
+! dark
+! xterm*foreground:   #e0eaf0
+! xterm*background:   #2f343f
+! xterm*cursorColor:  #ffffff
+
+! light
+xterm*foreground:   #2f343f
+xterm*background:   #e0eaf0
+xterm*cursorColor:  #2f343f
