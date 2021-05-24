@@ -27,7 +27,7 @@ hook -group user-autoformat global BufWritePre .* %{
 
 # Lightly enforce the 50/72 rule for git commit summaries.
 hook global -group user-git-commit WinSetOption filetype=git-commit %{
-    set-option buffer autowrap_column 72
+    set-option window autowrap_column 72
 
     # <https://github.com/kakoune-editor/kakoune-extra-filetypes/blob/master/rc/git-commit-overflow.kak>
     # Commit title; everything over 50 is yellow.
@@ -40,12 +40,12 @@ hook global -group user-git-commit WinSetOption filetype=git-commit %{
 # scdoc(1).
 hook global -group user-scd BufCreate .*\.scd %{
     set-option buffer filetype markdown
-    set-option buffer autowrap_column 80
+    set-option window autowrap_column 80
 }
 
 # man(7) and mdoc(7).
 hook global -group user-troff WinSetOption filetype=troff %{
-    set-option buffer autowrap_column 72
+    set-option window autowrap_column 72
 
     # Update all .Dd dates before saving the buffer.
     hook buffer -group user-troff-update-date BufWritePre .* %{
@@ -79,13 +79,22 @@ hook global -group user-write-perl WinSetOption filetype=perl %{
     }
 }
 
+# Markup languages.
+hook global -group user-write-markdown WinSetOption filetype=markdown %{
+    set-option window lintcmd "proselint"
+}
+
+hook global -group user-write-asciidoc WinSetOption filetype=asciidoc %{
+    set-option window lintcmd "proselint"
+}
+
 # Shell scripts.
 hook global -group user-write-sh WinSetOption filetype=sh %{
     set-option window formatcmd "shfmt"
     set-option window lintcmd "shlint"
 
     # PKGBUILDS.
-    hook global -group user-write-pkgbuilds WinCreate ^(?:.*/)?PKGBUILD$ %{
+    hook window -group user-write-pkgbuilds WinCreate ^(?:.*/)?PKGBUILD$ %{
         set-option window formatcmd "shfmt"
         set-option window lintcmd "shellcheck-pkgbuild"
     }
@@ -94,7 +103,7 @@ hook global -group user-write-sh WinSetOption filetype=sh %{
 
 # roff(7).
 hook global -group user-write-troff WinSetOption filetype=troff %{
-    set-option window lintcmd %{ run() { mandoc -T lint -W warning "$1" | cut -d' ' -f1-; } && run }
+    set-option window lintcmd %{ run() { mandoc -T lint -W warning "$1" | cut -d\  -f1-; } && run }
 }
 
 # JSON.
@@ -104,11 +113,13 @@ hook global -group user-write-json WinSetOption filetype=json %{
 
 # aerc(1).
 hook global -group user-aerc WinSetOption filetype=mail %{
-    set-option buffer autowrap_column 72
+    set-option window autowrap_column 72
     set-option buffer autoreload no
 }
 
 # Update autowrap column highlighter when it changes.
-hook global -group user-autowrap-highlight BufSetOption autowrap_column=.* %{
-    add-highlighter -override global/wrap column %opt{autowrap_column} default,black
+hook global -group user-autowrap-highlight WinCreate .* %{
+    hook window -group user-autowrap-highlight WinSetOption autowrap_column=.* %{
+        add-highlighter -override buffer/wrap column %opt{autowrap_column} default,black
+    }
 }
