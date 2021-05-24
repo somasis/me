@@ -33,3 +33,8 @@ alias reset='git reset'
 # Alias used for my `me` dotfiles repository.
 alias me='git --git-dir="${HOME}"/src/me.git --work-tree="${HOME}"'
 
+_git_prompt() {
+    [ -n "${_git_prompt:=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)}" ] \
+        && printf '%s ' "${_git_prompt}"
+    _git_prompt=
+}
