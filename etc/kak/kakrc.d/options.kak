@@ -3,6 +3,7 @@ set-option global grepcmd 'kakgrep'
 # Set default interface options
 set-option global ui_options \
     ncurses_assistant=cat \
+    ncurses_change_colors=false \
     ncurses_set_title=true \
     ncurses_status_on_top=true
 
