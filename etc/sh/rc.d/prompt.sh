@@ -10,7 +10,7 @@ case "$(id -un)" in
 esac
 
 # Set terminal title.
-PS1="${PS1}"'\[$(echo -e "\033]0;${SSH_CONNECTION:+ssh [${USER}@${HOSTNAME}]: }${PWD}\007")\]'
+PS1="${PS1}"'\[$(printf %b "\e]0;${SSH_CONNECTION:+ssh [${USER}@${HOSTNAME}]: }${PWD}\a")\]'
 
 # Show hostname only over ssh(1) connections.
 [ -n "${SSH_CONNECTION}" ] && PS1="${PS1}"'@\[\e[0;35m\]\h\[\e[0m\]'
@@ -25,4 +25,4 @@ PS1="${PS1}"'\[$([ "$?" -eq 0 ] && printf %b "\e[32m" || printf %b "\e[31m")\]â—
 
 # Change the cursor to an I-beam in xterm(1).
 # It would be nice if xterm(1) had a resource for this.
-#case "${TERM}" in xterm|xterm-*) PS1="${PS1}""\[$(echo "[6 q")\]"; ;; esac
+#case "${TERM}" in xterm|xterm-*) PS1="${PS1}\[$(printf %b "\e[6 q")\]"; ;; esac
