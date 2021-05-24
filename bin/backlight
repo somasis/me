@@ -1,7 +1,0 @@
-#!/bin/sh
-lux -c intel_backlight -m 60 -M 534 "$@" &
-cd /sys/class/backlight \
-    && printf '%s\n' ddcci* \
-    | xe -j0 -s 'test -f "$1" && printf "%s\n" "$1"' \
-    | xe -j0 -L lux -c \{\} -m 0 -M 99 "$@" &
-wait
