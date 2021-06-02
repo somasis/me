@@ -42,13 +42,13 @@ week=$(date +%W)
 case "${week}" in 00) week=01 ;; 53) week=52 ;; esac
 
 current=$(date +%Y/"${week}")
-current_link="${MESSDIR}/current"
-current_link_resolved=$(readlink -f "${current_link}")
 
 if ! [ -d "${MESSDIR}/${current}" ]; then
     mkdir -p "${MESSDIR}/${current}"
     printf "Created messdir '%s'.\n" "${current}" >&2
 fi
 
-[ "${MESSDIR}/${current}" = "${current_link_resolved}" ] || ln -fns "${current}" "${current_link}"
-printf '%s\n' "${current_link}"
+[ "$(readlink -f "${MESSDIR}/current")" = "${MESSDIR}/${current}" ] \
+    || ln -sfn "${current}" "${MESSDIR}/current"
+
+printf '%s\n' "${MESSDIR}/current"
