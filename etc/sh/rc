@@ -1,5 +1,7 @@
 #!/bin/sh
 
+HISTFILE=/dev/null
+
 alias rsrc='. ~/.profile; . "${XDG_CONFIG_HOME}"/sh/rc'
 
 for f in "${XDG_CONFIG_HOME}"/sh/rc.d/*.sh; do
