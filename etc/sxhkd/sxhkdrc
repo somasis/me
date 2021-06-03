@@ -112,6 +112,10 @@ super + shift + l
 super + shift + Escape
     rofi -show session
 
+# Clipboard: show clipboard history - super + shift + c
+super + shift + c
+    rofi -show clipboard -run-command '{cmd}'
+
 # Session: reload environment - super + escape
 super + Escape
     sxhkd-restart
