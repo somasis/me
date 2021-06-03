@@ -17,14 +17,6 @@ hook -group user-bufwritepost global BufWritePost .* %{
     git show-diff
 }
 
-hook -group user-autolint global BufWritePre .* %{
-    evaluate-commands %sh{ [ -n "${kak_opt_lintcmd}" ] && echo lint }
-}
-
-hook -group user-autoformat global BufWritePre .* %{
-    evaluate-commands %sh{ [ -n "${kak_opt_formatcmd}" ] && echo format }
-}
-
 # Lightly enforce the 50/72 rule for git commit summaries.
 hook global -group user-git-commit WinSetOption filetype=git-commit %{
     set-option window autowrap_column 72
@@ -61,54 +53,6 @@ hook global -group user-troff WinSetOption filetype=troff %{
 hook global -group user-password-store BufCreate /dev/shm/pass\..* %{
     set-option buffer filetype yaml
     autowrap-disable
-}
-
-# Perl scripts.
-hook global -group user-write-perl WinSetOption filetype=perl %{
-    set-option window formatcmd "perltidy -pro=.../.perltidyrc -st -se"
-    set-option window lintcmd %{ \
-        run() { \
-            profile=; \
-            profile=$(upward .perlcriticrc); \
-            perlcritic --quiet --profile "$(upward .perlcriticrc)" \
-                --verbose '%f:%l:%c: severity %s: %m [%p]\n' "$1" \
-                | sed \
-                    -e '/: severity 5:/ s/: severity 5:/: error:/' \
-                    -e '/: severity [0-4]:/ s/: severity [0-4]:/: warning:/'; \
-        } && run \
-    }
-}
-
-# Markup languages.
-hook global -group user-write-markdown WinSetOption filetype=markdown %{
-    set-option window lintcmd "proselint"
-}
-
-hook global -group user-write-asciidoc WinSetOption filetype=asciidoc %{
-    set-option window lintcmd "proselint"
-}
-
-# Shell scripts.
-hook global -group user-write-sh WinSetOption filetype=sh %{
-    set-option window formatcmd "shfmt"
-    set-option window lintcmd "shlint"
-
-    # PKGBUILDS.
-    hook window -group user-write-pkgbuilds WinCreate ^(?:.*/)?PKGBUILD$ %{
-        set-option window formatcmd "shfmt"
-        set-option window lintcmd "shellcheck-pkgbuild"
-    }
-
-}
-
-# roff(7).
-hook global -group user-write-troff WinSetOption filetype=troff %{
-    set-option window lintcmd %{ run() { mandoc -T lint -W warning "$1" | cut -d\  -f1-; } && run }
-}
-
-# JSON.
-hook global -group user-write-json WinSetOption filetype=json %{
-    set-option window formatcmd "jq --indent %opt{tabstop} ."
 }
 
 # aerc(1).

@@ -39,6 +39,8 @@ alias ascii.town='ssh play@ascii.town'
 alias 2048='ssh -t play@ascii.town 2048'
 alias snake='ssh -t play@ascii.town snake'
 
+alias rubydoc='\ri'
+
 command -v yay >/dev/null 2>&1 && alias yaync='yay --noconfirm'
 
 alias g='find ./ -type f \! -path "*/.*/*" -print0 | xe -0 -N0 grep'
