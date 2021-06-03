@@ -9,8 +9,8 @@ Xft.lcdfilter:  lcddefault
 Xcursor.theme:  Hackneyed
 Xcursor.size:   24
 
-*font:                 -uw-ttyp0-medium-r-normal--16-*-*-*-*-*-*-*
-*boldFont:             -uw-ttyp0-bold-r-normal--16-*-*-*-*-*-*-*
+*font:                 -uw-ttyp0-medium-r-normal--18-*-*-*-*-*-*-*
+*boldFont:             -uw-ttyp0-bold-r-normal--18-*-*-*-*-*-*-*
 
 ! xterm(1) settings
 xterm*termName:             xterm-256color
@@ -58,7 +58,7 @@ xterm*omitTranslation:      popup-menu
 xterm*bellIsUrgent:         true
 
 !! Graphical settings
-xterm*renderFont:           true
+xterm*renderFont:           false
 xterm*faceName:             monospace:size=11
 
 xterm*pointerShape:         left_ptr
