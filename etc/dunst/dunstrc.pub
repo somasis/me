@@ -10,6 +10,8 @@
 
     alignment = left
 
+    geometry = 960x0+0+0
+
     horizontal_padding = 0
     padding = 0
     icon_position = left
