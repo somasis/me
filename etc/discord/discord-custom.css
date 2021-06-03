@@ -19,6 +19,13 @@
     animation: none !important;
 }
 
+/* Hide crap. */
+.sidebar-2K8pFh a[href="/discovery"],
+.iconWrapper-2OrFZ1[aria-label="Inbox"],
+.iconWrapper-2OrFZ1[aria-label="Help"] {
+    display: none;
+}
+
 /* Shrink sidebar. (thank you wifey) */
 .sidebar-2K8pFh {
     width: 64px;
