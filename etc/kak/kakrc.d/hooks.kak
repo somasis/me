@@ -61,9 +61,17 @@ hook global -group user-aerc WinSetOption filetype=mail %{
     set-option buffer autoreload no
 }
 
-# Update autowrap column highlighter when it changes.
-hook global -group user-autowrap-highlight WinCreate .* %{
-    hook window -group user-autowrap-highlight WinSetOption autowrap_column=.* %{
-        add-highlighter -override buffer/wrap column %opt{autowrap_column} default,black
+# Set autowrap highlighters, and update autowrap highlighters when the option changes.
+hook global -group user-highlight-autowrap-update WinSetOption autowrap_column=.* %{
+    # Column highlighter.
+    add-highlighter -override window/user-highlight-autowrap-column \
+        column %opt{autowrap_column} +r
+
+    add-highlighter -override window/user-highlight-autowrap wrap -word
+
+    hook window -group user-highlight-autowrap-readonly WinSetOption readonly=true %{
+        # Always wrap readonly buffers to the autowrap width, for nicer reading.
+        add-highlighter -override window/user-highlight-autowrap \
+            wrap -word -width %opt{autowrap_column}
     }
 }
