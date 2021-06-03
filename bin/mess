@@ -1,9 +1,5 @@
 #!/bin/sh
 # mess - manage a mess(7) directory structure
-# Ported from the original Ruby written by Leah Neukirchen.
-#
-# See concept here:
-#   https://leahneukirchen.org/blog/archive/2006/01/keeping-your-home-clean-with-mess.html
 
 usage() {
     printf 'usage: %s [-s]\n' "${0##*/}" >&2
