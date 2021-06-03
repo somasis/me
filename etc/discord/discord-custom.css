@@ -19,6 +19,39 @@
     animation: none !important;
 }
 
+/* Shrink sidebar. (thank you wifey) */
+.sidebar-2K8pFh {
+    width: 64px;
+    opacity: .5;
+}
+
+.sidebar-2K8pFh .content-3QAtGj {
+    display: none;
+}
+
+.sidebar-2K8pFh:hover,
+.sidebar-2K8pFh:focus {
+    width: 240px;
+    opacity: 1;
+}
+
+.sidebar-2K8pFh:hover .content-3QAtGj,
+.sidebar-2K8pFh:focus .content-3QAtGj {
+    display: unset;
+}
+
+.privateChannels-1nO12o,
+.container-3w7J-x {
+    display: grid;
+    justify-content: stretch;
+    align-content: flex-start;
+}
+
+/* Align user avatar in the sidebar to the users in the list. */
+.sidebar-2K8pFh .avatarWrapper-2yR4wp {
+    margin-left: 8px;
+}
+
 /* IRC-style username display */
 .compact-T3H92H .username-1A8OIy::before, .compact-2zYMSo.container-3-pyIM .anchor-3Z-8Bb::before { content: '<'; }
 .compact-T3H92H .username-1A8OIy::after, .compact-2zYMSo.container-3-pyIM .anchor-3Z-8Bb::after { content: '>'; }
