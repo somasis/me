@@ -1,0 +1,48 @@
+.Dd September 25, 2020
+.Dt MESS 7
+.Os
+.
+.Sh NAME
+.Nm mess
+.Nd a directory structure for keeping your ~ organized
+.
+.Sh DESCRIPTION
+.Nm
+is an organizational system for keeping your home directory free of
+clutter.
+.
+.Sh FILES
+Assuming the current year is 2020, and the current week is the 42nd week
+of the year...
+.Bl -tag -width 6n
+.It Pa ~/mess
+The root of the mess directory structure.
+If
+.Ev MESSDIR
+is set in the environment, that will be the root location.
+.Bl -tag -width 6n
+.It Pa 2020/
+A directory containing all the week directories for the year 2020.
+.Bl -tag -width 6n
+.It Pa 41/
+The mess directory for the 41st week of 2020.
+.It Pa 42/
+The mess directory for the 42nd week of 2020.
+.El
+.It Pa current -> 2020/42
+A symbolic link pointing to the most recent mess directory.
+.El
+.El
+.
+.Sh SEE ALSO
+.Xr mess 1
+.Rs
+.%A Leah Neukirchen
+.%T Keeping your home clean with "mess"
+.%D January 6, 2006
+.%U https://leahneukirchen.org/blog/archive/2006/01/keeping-your-home-clean-with-mess.html
+.Re
+.\" .Xr mess 1
+.
+.Sh AUTHORS
+.An Kylie McClain Aq Mt kylie@somas.is
