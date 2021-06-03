@@ -18,9 +18,7 @@ if [ -d ~/src/www/somas.is ]; then
     alias rhizome='kak $(make -C ~/src/www/somas.is -s rhizome-new)'
 fi
 
-if [ -d ~/diary ]; then
-    alias diary='kak ~/diary/$(date +%Y/%m/%d.txt)'
-fi
+[ -d ~/diary ] && alias diary='kak ~/diary/$(date +%Y/%m/%d.txt)'
 
 # Spawn a new terminal, detached from the current one, inheriting environment and working directory.
 newt() (
