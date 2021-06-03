@@ -20,6 +20,9 @@ fi
 
 [ -d ~/diary ] && alias diary='kak ~/diary/$(date +%Y/%m/%d.txt)'
 
+# For quick testing of different coreutils abilities.
+[ -d /opt/sbase ] && alias sbase='PATH=/opt/sbase/bin:"${PATH}" MANPATH=/opt/sbase/man:'
+
 # Spawn a new terminal, detached from the current one, inheriting environment and working directory.
 newt() (
     nohup terminal "$@" >/dev/null 2>&1 &
