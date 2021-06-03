@@ -1,12 +1,21 @@
 #!/bin/sh
 # 00-defaults - Default application variables
 
-# Defaults for if lunch isn't on the system.
-export EDITOR=vi PAGER=less
-command -v kak >/dev/null 2>&1 && export EDITOR=kak
+if command -v lunch >/dev/null 2>&1; then
+    eval "$(lunch -s)" \
 
-# Expand PAGER when taking in lunch(1) variables,
-# to fix stuff like mandoc doing special things for less(1).
-command -v lunch >/dev/null 2>&1 \
-    && eval "$(lunch -s)" \
-    && export PAGER="$(lunch -g pager | cut -d' ' -f1)"
+    # Expand PAGER when taking in lunch(1) variables,
+    # to fix stuff like mandoc doing special things for less(1).
+    export PAGER="$(lunch -g pager | cut -d' ' -f1)"
+else
+    # Defaults for if lunch isn't on the system.
+    export EDITOR=vi
+    if command -v kak >/dev/null 2>&1; then
+        export EDITOR=kak
+    elif command -v busybox >/dev/null 2>&1 && busybox --list | grep -q "^vi$"; then
+        export EDITOR='busybox vi'
+    else
+        export EDITOR=vi
+    fi
+    export PAGER=less
+fi
