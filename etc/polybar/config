@@ -29,6 +29,7 @@
     inherit = defaults
 
     modules-left = bspwm title
+    modules-center = clock
     modules-right = player events articles mail updates network power
 
     tray-detatched = false
@@ -41,34 +42,6 @@
     monitor = ${env:POLYBAR_MONITOR:}
 
     modules-left = bspwm title
-
-[module/updates]
-    type        = custom/script
-    exec        = polybar-updates
-    tail        = true
-
-    click-left  = terminal yay -Su &
-
-[module/network]
-    type        = internal/network
-    interface   = wlp2s0
-
-    ramp-signal-0 = 
-    ramp-signal-1 = 
-    ramp-signal-2 = 
-    ramp-signal-3 = 
-    ramp-signal-4 = 
-    ramp-signal-5 = 
-
-    format-padding = 1
-    format-connected = <ramp-signal>
-    format-disconnected = 
-
-[module/power]
-    type            = custom/script
-    exec            = power -f -A "" -0 "" -1 "" -2 "" -3 "" -4 ""
-    tail            = true
-    format-padding  = 1
 
 [module/bspwm]
     type = internal/bspwm
@@ -101,17 +74,30 @@
     label-urgent-padding        = 1
     label-empty-padding         = 1
 
-[module/events]
+[module/title]
+    type             = custom/script
+    exec             = xtitle -is -t 90
+    click-right      = bspc node -c
+    enable-scroll    = true
+    scroll-down      = bspc node -f next.local.!hidden.window
+    scroll-up        = bspc node -f prev.local.!hidden.window
+
+    tail             = true
+
+    label-padding    = 1
+    label-foreground = #ffffff
+    label-background = #5294e2
+
+[module/clock]
     type            = custom/script
-    exec            = polybar-events --notstarted -a Calendar -a University -a "Violet & Kylie" -a "Google Calendar (kylie@somas.is)" -a "Jonesers" -a "Holidays - North Carolina" | sed 's/ - .*//' | ellipsis 45
+    exec            = polybar-clock
     click-left      = raise '^ikhal$' terminal tkhal &
     format-padding  = 1
-
-    interval        = 50
+    interval        = 59
 
 [module/player]
     type            = custom/script
-    exec            = polybar-player | ellipsis 60
+    exec            = polybar-player | ellipsis 50
     tail            = true
 
     click-left      = mpc toggle
@@ -122,6 +108,14 @@
     scroll-down     = mpc volume -5
 
     format-padding  = 1
+
+[module/events]
+    type            = custom/script
+    exec            = polybar-events --notstarted -a Calendar -a University -a "Violet & Kylie" -a "Google Calendar (kylie@somas.is)" -a "Jonesers" -a "Holidays - North Carolina" | sed 's/ - .*//' | ellipsis 40
+    click-left      = raise '^ikhal$' terminal tkhal &
+    format-padding  = 1
+
+    interval        = 50
 
 [module/articles]
     type            = custom/script
@@ -140,16 +134,31 @@
     tail     = true
     interval = 900
 
-[module/title]
-    type             = custom/script
-    exec             = xtitle -is -t 90
-    click-right      = bspc node -c
-    enable-scroll    = true
-    scroll-down      = bspc node -f next.local.!hidden.window
-    scroll-up        = bspc node -f prev.local.!hidden.window
+[module/updates]
+    type        = custom/script
+    exec        = polybar-updates
+    tail        = true
 
-    tail             = true
+    click-left  = terminal yay -Su &
 
-    label-padding    = 1
-    label-foreground = #ffffff
-    label-background = #5294e2
+[module/network]
+    type        = internal/network
+    interface   = wlp2s0
+
+    ramp-signal-0 = 
+    ramp-signal-1 = 
+    ramp-signal-2 = 
+    ramp-signal-3 = 
+    ramp-signal-4 = 
+    ramp-signal-5 = 
+
+    format-padding = 1
+    format-connected = <ramp-signal>
+    format-disconnected = 
+
+[module/power]
+    type            = custom/script
+    exec            = power -f -A "" -0 "" -1 "" -2 "" -3 "" -4 ""
+    tail            = true
+    format-padding  = 1
+
