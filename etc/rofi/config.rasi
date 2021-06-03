@@ -1,5 +1,5 @@
 configuration {
-    modi: "combi,window,run,ssh,session:rofi-session";
+    modi: "combi,window,run,ssh,session:rofi-session,clipboard:greenclip print";
     width: 100;
     lines: 24;
     columns: 3;
