@@ -46,7 +46,7 @@ super + s
 super + d
     raise -v "^(.+ - Discord|Discord)$" discord
 
-# Shortcut: irc - super + c
+# Shortcut: IRC - super + c
 super + c
     raise "^catgirl - .+$" terminal catgirls
 
@@ -70,10 +70,6 @@ super + shift + b
 super + alt + b
     terminal doas chroot /mnt/mutiny su - somasis
 
-## Window management: manually position new window {north,east,south,west,cancel} - super + n: {a,s,d,f,g}
-#super + n: {a,s,d,f,g}
-#    exec bspc node -p {north,east,south,west,cancel}
-
 # Command: task manager - super + alt + delete
 super + alt + Delete
     terminal htop
@@ -81,7 +77,6 @@ super + alt + Delete
 # Music: toggle, stop, previous, next, toggle random, toggle consume - ctrl + alt + {down,up,left,right,r,c}
 ctrl + alt + {Down,Up,Left,Right,r,c}
     mpc{-toggle, stop, cdprev, next, random, consume} >/dev/null
-    #audtool playback-playpause,playback-stop,playlist-reverse,playlist-advance,playlist-shuffle-toggle
 
 # Music: set rating - ctrl + alt + {0,1,2,3,4,5}
 ctrl + alt + {0,1,2,3,4,5}
