@@ -37,6 +37,17 @@ bspc config pointer_action3 resize_corner   # Resize windows from corner during 
 # Window rules
 bspc rule -r '*'
 
+# Workarounds for programs drawing their own decorations.
 bspc rule -a Steam border=off
+
+# Main FL Studio workspace.
 bspc rule -a fl.exe border=off
+bspc rule -a fl.exe state=tiling
+
+# Dialogs produced by FL itself.
 bspc rule -a "fl.exe:*:FL Studio 20" border=off
+
+# Xmascot.
+for r in layer=below sticky=on manage=off; do
+    bspc rule -a "*:*:xmascot" "${r}"
+done
