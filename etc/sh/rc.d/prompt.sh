@@ -21,7 +21,7 @@ PS1="${PS1}"' \[\e[1;39m\]\w\[\e[0m\]'
 PS1="${PS1}"' \[\e[1;33m\]$(_git_prompt)\[\e[0m\]'
 
 # Show exit status of last ran command.
-PS1="${PS1}"'\[$([ "$?" -eq 0 ] && printf %b "\e[32m" || printf %b "\e[31m")\]●\[\e[0m\] '
+PS1="${PS1}"'\[$([ "$?" -eq 0 ] && printf %b "\e[32m" || printf %b "\e[31m")\]%\[\e[0m\] '
 
 # Change the cursor to an I-beam in xterm(1).
 # It would be nice if xterm(1) had a resource for this.
