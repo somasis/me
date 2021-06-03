@@ -9,6 +9,9 @@ Xft.lcdfilter:  lcddefault
 Xcursor.theme:  Hackneyed
 Xcursor.size:   24
 
+*font:                 -uw-ttyp0-medium-r-normal--16-*-*-*-*-*-*-*
+*boldFont:             -uw-ttyp0-bold-r-normal--16-*-*-*-*-*-*-*
+
 ! xterm(1) settings
 xterm*termName:             xterm-256color
 xterm*utf8:                 true
@@ -106,11 +109,11 @@ xterm*color14:      #30d0f2
 xterm*color15:      #e0d6d6
 
 ! dark
-! xterm*foreground:   #e0eaf0
-! xterm*background:   #2f343f
-! xterm*cursorColor:  #ffffff
+*foreground:   #e0eaf0
+*background:   #2f343f
+xterm*cursorColor:  #ffffff
 
 ! light
-xterm*foreground:   #2f343f
-xterm*background:   #e0eaf0
-xterm*cursorColor:  #2f343f
+! xterm*foreground:   #2f343f
+! xterm*background:   #e0eaf0
+! xterm*cursorColor:  #2f343f
