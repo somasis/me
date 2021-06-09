@@ -16,7 +16,15 @@ ${XDG_CONFIG_HOME}/dunst/dunstrc: ${DUNST}
 	cat ${DUNST} > $@
 
 ${XDG_CONFIG_HOME}/newsboat/urls: ${NEWSBOAT}
-	sed '/^#/d' ${NEWSBOAT} | urls | xe -N0 -Fv urlck
+	sed '/^#/d' ${NEWSBOAT} | urls | xe -v -N1 -j4 -F urlck
 	cat ${NEWSBOAT} > $@
+
+qutebrowser-prune: FRC qutebrowser-quickmarks-prune qutebrowser-bookmarks-prune
+
+qutebrowser-quickmarks-prune: FRC
+	sed -E 's|.* ||' "${XDG_CONFIG_HOME}/qutebrowser/quickmarks" | xe -v -N1 -j 4 -F urlck
+
+qutebrowser-bookmarks-prune: FRC
+	cut -d ' ' -f1 <"${XDG_CONFIG_HOME}/qutebrowser/bookmarks/urls" | xe -v -N1 -j 4 -F urlck
 
 FRC:
