@@ -1,12 +1,6 @@
 #!/bin/sh
 
-set -u
-
-# ytdata JQ_ARGS...
-ytdata() {
-    [ -s "${ytdata}" ] || youtube-dl -j "${url}" >"${ytdata}"
-    jq "$@" <"${ytdata}"
-}
+real_browser="qutebrowser"
 
 if [ "$#" -gt 1 ]; then
     while [ $# -gt 0 ]; do
@@ -20,9 +14,19 @@ if [ "$#" -gt 1 ]; then
     done
     exit
 elif [ "$#" -eq 0 ]; then
-    printf 'usage: %s URL...\n' "${0##*/}" >&2
-    exit 69 # EX_USAGE
+    nohup "${real_browser}" "${url}" >/dev/null 2>&1 &
+    exit
+    # printf 'usage: %s [URL...]\n' "${0##*/}" >&2
+    # exit 69 # EX_USAGE
 fi
+
+set -u
+
+# ytdata JQ_ARGS...
+ytdata() {
+    [ -s "${ytdata}" ] || youtube-dl -j "${url}" >"${ytdata}"
+    jq "$@" <"${ytdata}"
+}
 
 ytdata=$(mktemp)
 
@@ -81,7 +85,7 @@ choice="${choices}"
 
 case "${choice}" in
     browser)
-        nohup firefox-esr "${url}" >/dev/null 2>&1 &
+        nohup "${real_browser}" "${url}" >/dev/null 2>&1 &
         exit
         ;;
     '')
