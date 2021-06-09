@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Personal todo.txt aliases.
-alias todo-add='list-add -f ~/sync/todo/todo.txt'
-alias todo-query='list-query -f ~/sync/todo/todo.txt'
-alias todo-edit='${EDITOR} ~/sync/todo/todo.txt'
+alias todo-add='list-add -f ~/todo/todo.txt'
+alias todo-query='list-query -f ~/todo/todo.txt'
+alias todo-edit='${EDITOR} ~/todo/todo.txt'
 alias todo='todo-query -U'
 
 # Task list.
