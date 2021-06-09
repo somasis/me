@@ -25,7 +25,7 @@ hook global -group user-git-commit WinSetOption filetype=git-commit %{
     # Commit title; everything over 50 is yellow.
     add-highlighter window/ regex \A\n*[^#\n]{50}([^\n]+) 1:black,yellow+f
 
-    # Line following the title should be empty
+    # Line following the title should be empty.
     add-highlighter window/ regex \A[^\n]*\n([^#\n]+) 1:white,red+b
 }
 
