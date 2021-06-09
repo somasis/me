@@ -41,10 +41,10 @@
 
     sort = true
 
-    idle_threshold = 120
+    idle_threshold = 5
 
     font = "sans-serif 11"
-    line_height = 64
+    line_height = 32
     markup = full
 
     format = "<span font="sans-serif Heavy 11">%s</span> %b %p"
