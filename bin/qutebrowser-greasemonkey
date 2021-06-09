@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -eu
+
+edo() { printf '+ %s\n' "$*" >&2; "$@" || exit $?; }
+
+version() {
+    sed -E '/\/\/+\s+@version\s+/ { !d; s|^//+\s+@version\s+||; q }; d' "$@"
+}
+
+: "${XDG_CONFIG_HOME:=${HOME}/.config}"
+: "${XDG_DATA_HOME:=${HOME}/.local/share}"
+
+config=$(mktemp)
+sed '/^#/d;/^$/d' "${XDG_CONFIG_HOME}"/qutebrowser/greasemonkey.conf > "${config}"
+
+while read -r name url; do
+    dest="${XDG_DATA_HOME}"/qutebrowser/greasemonkey/"${name}"
+
+    mkdir -p "${dest%/*}"
+    printf '%s\0%s\0' "${dest}" "${url}"
+done < "${config}" | xe "$@" -0 -N2 -FLv curl --retry 4 -sS -Lf -o {}
+
+installed_scripts=$( (cd "${XDG_DATA_HOME}"/qutebrowser/greasemonkey/ && printf '%s ' *.js) )
+configured_scripts=$(sed 's/\s.*//' "${config}" | tr '\n' ' ')
+
+for script in ${installed_scripts}; do
+    case " ${configured_scripts} " in
+        *" ${script} "*) : ;;
+        *) rm -v "${XDG_DATA_HOME}"/qutebrowser/greasemonkey/"${script}" ;;
+    esac
+done
+
+
+rm -f "${config}"
