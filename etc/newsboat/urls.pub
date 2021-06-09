@@ -45,7 +45,6 @@ https://tilde.news/rss                          aggregators
 
 # News
 https://www.currentaffairs.org/feed             news usa
-https://redflag.org.au/rss                      news australia
 https://lwn.net/headlines/newrss                news computer
 "query:Watauga Democrat:tags # \"wataugademocrat\"" "~Watauga Democrat"
 https://theappalachianonline.com/feed/ "~The Appalachian" news asu
