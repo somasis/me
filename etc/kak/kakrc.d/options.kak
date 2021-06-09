@@ -1,4 +1,5 @@
 set-option global grepcmd 'kakgrep'
+set-option global makecmd 'make -j12'
 
 # Set default interface options
 set-option global ui_options \
@@ -16,4 +17,3 @@ set-option global indentwidth 4
 
 # Set options for default plugins
 set-option global autowrap_column 100
-set-option global makecmd 'make -j12'
