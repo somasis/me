@@ -11,6 +11,9 @@ Xcursor.size:   24
 
 *font:         -uw-ttyp0-medium-r-normal--16-*-*-*-*-*-*-*
 *boldFont:     -uw-ttyp0-bold-r-normal--16-*-*-*-*-*-*-*
+
+*foreground:   #e0eaf0
+*background:   #2f343f
 *colorAccent:  #5294e2
 *color0:       #755f5f
 *color1:       #cf4342
@@ -108,8 +111,6 @@ xterm*cursorOffTime:        500
 xterm*boldColors:           false
 
 ! dark
-*foreground:   #e0eaf0
-*background:   #2f343f
 xterm*cursorColor:  #ffffff
 
 ! light
