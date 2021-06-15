@@ -135,11 +135,6 @@ super + Print
     mkdir -p ~/mess/current/screenshots \
         && maim -us -b 4 -p -4 -l -c 0.2,0.45,0.7,0.25 ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
 
-# Screenshot: take screenshot of region - super + shift + print
-super + shift + Print
-    mkdir -p ~/mess/current/screenshots \
-        && maim -us -b 4 -p -4 -l -c 0.2,0.45,0.7,0.25 ~/mess/current/screenshots/$(date +%Y%m%d_%H%M%S).png
-
 # Window management: {close, kill} window - super + w, super + shift + w
 super + {_,shift} + w
     bspc node -{c,k}
