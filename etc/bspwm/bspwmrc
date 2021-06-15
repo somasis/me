@@ -28,6 +28,8 @@ bspc config focused_border_color    '#5294e2'   # Active on the focused monitor.
 bspc config border_width 4
 bspc config window_gap 16
 
+bspc config top_padding 32
+
 bspc config automatic_scheme alternate
 
 bspc config pointer_modifier mod4           # Super key
