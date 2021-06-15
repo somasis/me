@@ -41,6 +41,7 @@ current=$(date +%Y/"${week}")
 
 if ! [ -d "${MESSDIR}/${current}" ]; then
     mkdir -p "${MESSDIR}/${current}"
+    mkdir -p "${MESSDIR}/${current}/incoming" "${MESSDIR}/${current}/src"
     printf "Created messdir '%s'.\n" "${current}" >&2
 fi
 
