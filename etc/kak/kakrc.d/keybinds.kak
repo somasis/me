@@ -4,6 +4,9 @@ map global normal <a-A> ': buffer-next<ret>'
 map global normal <c-w> ': delete-buffer<ret>'
 map global normal <a-d> ': buffer *debug*<ret>'
 
+# Window controls
+map global normal <c-n> ': new<ret>'
+
 # Selections
 map global normal <c-a> '%'
 
