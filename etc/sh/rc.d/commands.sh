@@ -50,3 +50,8 @@ if command -v colordiff >/dev/null 2>&1; then
     alias diff='colordiff'
     command -v dwdiff >/dev/null 2>&1 && wdiff() { command dwdiff "$@" | colordiff --difftype=wdiff; }
 fi
+
+alias xz='xz -T0 -9 -e'
+alias zstd='zstd -T0 -19'
+alias gzip='gzip -9'
+command -v pigz >/dev/null 2>&1 && alias gzip='pigz -p $(( $(nproc) / 2 )) -9'
