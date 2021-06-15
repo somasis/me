@@ -1,6 +1,6 @@
 #!/bin/sh
 
-real_browser="qutebrowser"
+real_browser="/usr/share/qutebrowser/scripts/open_url_in_instance.sh"
 
 if [ "$#" -gt 1 ]; then
     while [ $# -gt 0 ]; do
