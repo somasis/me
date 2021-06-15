@@ -73,14 +73,14 @@
 
 [urgency_low]
     background = "#2f343f"
-    foreground = "#afb8c5"
+    foreground = "#e0eaf0"
 
 [urgency_normal]
-    background = "#484e5b"
-    foreground = "#afb8c5"
+    background = "#5294e2"
+    foreground = "#e0eaf0"
 
 [urgency_critical]
-    background = "#ff336d"
+    background = "#2f343f"
     foreground = "#e0eaf0"
     timeout = 0s
 
@@ -88,14 +88,11 @@
 [android-messages]
     appname = "android-messages-desktop"
     background = "#185abc"
-    foreground = "#ffffff"
 
 [discord]
     appname = "discord*"
     background = "#7289da"
-    foreground = "#ffffff"
 
 [catgirl]
     appname = "catgirl"
-    background = "#99cc99"
-    foreground = "#ffffff"
+    background = "#acc044"
