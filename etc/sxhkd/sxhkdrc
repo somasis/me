@@ -94,11 +94,11 @@ super + {F12,F11}
     xbacklight {-inc,-dec} 5
 
 # Hardware: {raise, lower, mute, mute microphone} audio - audio{volumeup,volumedown,mute,micmute}
-XF86Audio{Mute,LowerVolume,RaiseVolume,MicMute}
-    ponymix -N {--output toggle,--output decrease 5,--output increase 5,--input toggle}
+XF86Audio{RaiseVolume,LowerVolume,Mute}
+    pamixer {-i 5,-d 5,-t}
 
-super + {F1,F2,F3,F4}
-    ponymix -N {--output toggle,--output decrease 5,--output increase 5,--input toggle}
+super + {F3,F2,F1}
+    pamixer {-i 5,-d 5,-t}
 
 # Session: lock screen - super + l
 super + l
