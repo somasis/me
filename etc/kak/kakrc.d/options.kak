@@ -1,6 +1,10 @@
 set-option global grepcmd 'kakgrep'
 set-option global makecmd 'make -j12'
 
+# NOTE This has to be conditional since termcmd is only declared
+# conditionally in rc/windowing/x11.kak.
+try %{ set-option global termcmd 'terminal' }
+
 # Set default interface options
 set-option global ui_options \
     ncurses_assistant=cat \
