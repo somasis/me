@@ -50,6 +50,6 @@ bspc rule -a fl.exe state=tiling
 bspc rule -a "fl.exe:*:FL Studio 20" border=off
 
 # Xmascot.
-for r in layer=below sticky=on manage=off; do
-    bspc rule -a "*:*:xmascot" "${r}"
+for r in state=floating layer=below sticky=on manage=off; do
+    bspc rule -a "*:XMascot" "${r}"
 done
