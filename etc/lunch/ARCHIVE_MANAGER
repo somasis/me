@@ -1,1 +1,1 @@
-mount-open -b archive -m archivemount
+mount-open -b archive -m archivemount -u "fusermount -u"

@@ -1,1 +1,1 @@
-mount-open -b ftp -m curlftpfs
+mount-open -b ftp -m curlftpfs -u "fusermount -u"
