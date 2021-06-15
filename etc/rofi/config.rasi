@@ -3,7 +3,7 @@ configuration {
     width: 100;
     lines: 24;
     columns: 3;
-    font: "monospace 11";
+    font: "monospace regular 12";
     bw: 0;
     location: 2;
     padding: 0;
