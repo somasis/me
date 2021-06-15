@@ -5,9 +5,9 @@ DUNST := ${XDG_CONFIG_HOME}/dunst/dunstrc.pub ${XDG_CONFIG_HOME}/dunst/dunstrc.s
 
 all: FRC dunst newsboat
 
-greasemonkey: FRC ${XDG_DATA_HOME}/qutebrowser/greasemonkey
 dunst: FRC ${XDG_CONFIG_HOME}/dunst/dunstrc
 newsboat: FRC ${XDG_CONFIG_HOME}/newsboat/urls
+qutebrowser: FRC qutebrowser-prune
 
 ${XDG_CONFIG_HOME}/%/:
 	mkdir -p ${XDG_CONFIG_HOME}/$*
