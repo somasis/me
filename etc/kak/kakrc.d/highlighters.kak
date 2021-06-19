@@ -1,5 +1,5 @@
 # Number lines, show whitespaces.
-add-highlighter global/user-highlight-nl number-lines -separator " ▏" -hlcursor -min-digits 4
+add-highlighter global/user-highlight-nl number-lines -hlcursor -min-digits 4
 add-highlighter global/user-highlight-whitespace show-whitespaces -spc " " -tab "→"
 add-highlighter global/user-highlight-matching show-matching
 add-highlighter global/user-highlight-wrap wrap -word
