@@ -36,7 +36,7 @@ super + g
 
 # Utility: emoji picker - super + e
 super + e
-    rofi-emoji -c
+    dmenu-emoji -c
 
 # Utility: ssh host picker - super + s
 super + s
