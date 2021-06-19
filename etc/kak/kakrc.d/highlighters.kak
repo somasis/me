@@ -1,8 +1,10 @@
 # Number lines, show whitespaces.
 add-highlighter global/user-highlight-nl number-lines -hlcursor -min-digits 4
 add-highlighter global/user-highlight-whitespace show-whitespaces -spc " " -tab "→"
-add-highlighter global/user-highlight-matching show-matching
-add-highlighter global/user-highlight-wrap wrap -word
+
+hook global -group user-highlight-matching WinCreate .* %{
+    add-highlighter window/user-highlight-matching show-matching
+}
 
 # Highlight issues, nasty code, and notes, in descending order of goodness.
 add-highlighter global/user-highlight-fixme regex \b(BUG|FIXME)\b 1:red+bf
