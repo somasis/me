@@ -27,7 +27,7 @@
 }
 
 /* Shrink sidebar. (thank you wifey) */
-.sidebar-2K8pFh {
+/*.sidebar-2K8pFh {
     width: 64px;
     opacity: .5;
 }
@@ -49,11 +49,10 @@
 
 .privateChannels-1nO12o,
 .container-3w7J-x {
-    display: grid;
     justify-content: stretch;
     align-content: flex-start;
 }
-
+*/
 /* Align user avatar in the sidebar to the users in the list. */
 .sidebar-2K8pFh .avatarWrapper-2yR4wp {
     margin-left: 8px;
