@@ -1,16 +1,16 @@
-/* Go back to blurple. */
 :root {
+    /* Match Arc's colors, slightly. */
     --brand-experiment: #7289da !important;
+
+    /* Use system fonts */
+    --font-primary: sans !important;
+    --font-code: monospace !important;
+    --font-display: sans !important;
 }
 
 /* Square everything */
 *, *::-webkit-scrollbar-thumb, *::-webkit-scrollbar-track {
     border-radius: 0px !important;
-}
-
-/* Use system fonts */
-::placeholder, body, button, input, select, textarea {
-    font-family: sans;
 }
 
 /* Disable animations */
