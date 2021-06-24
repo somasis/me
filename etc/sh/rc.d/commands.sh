@@ -9,9 +9,6 @@ alias vi='$EDITOR'
 alias gitolite='ssh git@rosa'
 alias laminar='ssh rosa laminarc'
 
-alias mutiny='doas chroot /mnt/mutiny su -l somasis'
-alias exherbo='doas chroot /mnt/exherbo su -l somasis'
-
 # Quick aliases for posting to my site.
 if [ -d ~/src/www/somas.is ]; then
     alias note='kak $(make -C ~/src/www/somas.is -s note-new)'

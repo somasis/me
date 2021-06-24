@@ -1,7 +1,7 @@
 #!/bin/sh
 # prompt - Set variables such as $PS1. See sh(1).
 
-PS1='\[\e[0m\]'
+PS1='\[\e[0m\]${CHROOT:+\[\e[1;31m\]${CHROOT} }'
 
 case "$(id -un)" in
     somasis)
@@ -12,8 +12,8 @@ esac
 # Set terminal title.
 PS1="${PS1}"'\[$(printf %b "\e]0;${SSH_CONNECTION:+ssh [${USER}@${HOSTNAME}]: }${PWD}\a")\]'
 
-# Show hostname only over ssh(1) connections.
-[ -n "${SSH_CONNECTION}" ] && PS1="${PS1}"'@\[\e[0;35m\]\h\[\e[0m\]'
+# Show hostname only over ssh(1) connections or chroots.
+[ -n "${SSH_CONNECTION}${CHROOT}" ] && PS1="${PS1}"'@\[\e[0;35m\]\h\[\e[0m\]'
 
 PS1="${PS1}"' \[\e[1;39m\]\w\[\e[0m\]'
 
